@@ -34,7 +34,7 @@ namespace EVEMon.Common.Serialization.Eve
         }
 
         [XmlAttribute("argID1")]
-        public int ArgID1 { get; set; }
+        public long ArgID1 { get; set; }
 
         [XmlAttribute("argName1")]
         public string ArgName1 { get; set; }
