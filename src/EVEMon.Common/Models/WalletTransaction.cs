@@ -128,16 +128,7 @@ namespace EVEMon.Common.Models
         /// </summary>
         public void UpdateStation()
         {
-            if (m_stationID > Int32.MaxValue)
-            {
-                // citadel
-                Station = new Station(ID);
-            }
-            else
-            {
-                // normal station
-                Station = Station.GetByID(m_stationID);
-            }
+            Station = Station.GetByID(m_stationID);
         }
 
         #endregion

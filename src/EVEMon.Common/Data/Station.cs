@@ -62,22 +62,6 @@ namespace EVEMon.Common.Data
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Station"/> class for the Citadel until a proper system is done to resolve them.
-        /// </summary>
-        /// <param name="src">The citadel ID.</param>
-        /// <exception cref="System.ArgumentNullException">src</exception>
-        /// <remarks>Should be redone when we have a system for citadels</remarks>
-        public Station(long src)
-        {
-            src.ThrowIfNull(nameof(src));
-
-            ID = src;
-            Name = "Citadel";
-            CorporationID = 0;
-            CorporationName = "";
-        }
-
         #endregion
 
 
