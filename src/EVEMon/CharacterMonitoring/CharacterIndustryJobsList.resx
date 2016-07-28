@@ -128,7 +128,7 @@
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADi
-        AAAAAk1TRnQBSQFMAgEBAwEAAXQBBwF0AQcBEAEAARABAAT/AREBAAj/AUIBTQE2BwABNgMAASgDAAFA
+        AAAAAk1TRnQBSQFMAgEBAwEAAYwBBwGMAQcBEAEAARABAAT/AREBAAj/AUIBTQE2BwABNgMAASgDAAFA
         AwABEAMAAQEBAAEQBgABCP8A/wD/AP8A/wD/AP8A/wAaAAFCAU0BPgcAAT4DAAEoAwABQAMAARADAAEB
         AQABAQUAAYAXAAP/AQAG/wIABv8CAAb/AgAG/wIABv8CAAb/AgAB8AEPAf4BfwL/AgAB+AEfAfwBPwL/
         AgAB/AE/AfgBHwL/AgAB/gF/AfABDwL/AgAG/wIABv8CAAb/AgAG/wIABv8CAAb/AgAL
@@ -137,18 +137,18 @@
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="industryExpPanelControl.ImageCollapse" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAABGdBTUEAALGPC/xhBQAAAHpJREFUKFOV
-        kcENgCAQBCnOKizFSrQPS/Lnh4eJL4GseOQ8lqCXDCHLDjxwMtOyxh5PNQ+CbffxCqEJzov4RRCKiEXC
-        YZxvdFFn/jhryZb0XqASkLIVQFMCTACVxG63GX1Jl6wAqASkbAVQJPZPTPj9wS9BBkGP3HQuAT/bEzE7
-        m9WyAAAAAElFTkSuQmCC
+        iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAABGdBTUEAALGPC/xhBQAAAG1JREFUKFNj
+        YICCqplb/hPCMLVgGqT4yesP///++4cTg+RB6ojWADMMrhGkGyboEjXjPwgj24gs9uHLd4htyJpAipEV
+        YTMEqyZkjei2guRwaoJpxBYwGJoI+QmnTbT1E7aIxRYIJEcwigZy0h4AP9sTMZRg/c8AAAAASUVORK5C
+        YII=
 </value>
   </data>
   <data name="industryExpPanelControl.ImageExpand" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAABGdBTUEAALGPC/xhBQAAAHZJREFUKFON
-        kcENgCAQBCnOKizFSrQPS/Lnh4eJL4FccC/nsQQvGR7LDjwuYJZtzyPeah0JjjPmJ6Uucq9iT5jmtclU
-        lMNfigBsHq+bS7bMxEZiJZ/Rn4CXQVfC60ykki0zsZFYyWcqjRYLfi3Y8hEwEoyozRAKykETMSVvxo8A
-        AAAASUVORK5CYII=
+        iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAABGdBTUEAALGPC/xhBQAAAGxJREFUKFNj
+        YICCqplb/hPCMLVgGqT4yesP///++4cTg+RB6vBqcImagWEAXCNIN7oNIA0wjCz34ct3iG3ompAVY9OI
+        oQmbInQxrDbBnIPNTyA5nJpw+QmnJtr6iVDEwvxJVAQjxxGKBnLSHgDKQRMxZY9towAAAABJRU5ErkJg
+        gg==
 </value>
   </data>
 </root>

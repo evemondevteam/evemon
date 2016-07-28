@@ -39,6 +39,8 @@ namespace EVEMon.CharacterMonitoring
             this.chPRPerDay = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvResearchPoints = new System.Windows.Forms.ListView();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.detailsToolStrupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.detailsMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.showInSkillBrowserMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showObjectInBrowserMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showInSkillBrowserMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
@@ -106,41 +108,56 @@ namespace EVEMon.CharacterMonitoring
             this.lvResearchPoints.TabIndex = 0;
             this.lvResearchPoints.UseCompatibleStateImageBehavior = false;
             this.lvResearchPoints.View = System.Windows.Forms.View.Details;
+            this.lvResearchPoints.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvResearchPoints_MouseDoubleClick);
             // 
             // contextMenu
             // 
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.detailsToolStrupMenuItem,
+            this.detailsMenuSeparator,
             this.showInSkillBrowserMenuItem,
             this.showObjectInBrowserMenuItem,
             this.showInSkillBrowserMenuSeparator,
             this.exportToCSVToolStripMenuItem});
             this.contextMenu.Name = "ShipPropertiesContextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(261, 98);
+            this.contextMenu.Size = new System.Drawing.Size(270, 126);
             this.contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenu_Opening);
+            // 
+            // detailsToolStrupMenuItem
+            // 
+            this.detailsToolStrupMenuItem.Name = "detailsToolStrupMenuItem";
+            this.detailsToolStrupMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.detailsToolStrupMenuItem.Text = "Details...";
+            this.detailsToolStrupMenuItem.Click += new System.EventHandler(this.detailsToolStrupMenuItem_Click);
+            // 
+            // detailsMenuSeparator
+            // 
+            this.detailsMenuSeparator.Name = "detailsMenuSeparator";
+            this.detailsMenuSeparator.Size = new System.Drawing.Size(266, 6);
             // 
             // showInSkillBrowserMenuItem
             // 
             this.showInSkillBrowserMenuItem.Name = "showInSkillBrowserMenuItem";
-            this.showInSkillBrowserMenuItem.Size = new System.Drawing.Size(260, 22);
+            this.showInSkillBrowserMenuItem.Size = new System.Drawing.Size(269, 22);
             this.showInSkillBrowserMenuItem.Text = "Show Field In Skill Browser...";
             this.showInSkillBrowserMenuItem.Click += new System.EventHandler(this.showInBrowserMenuItem_Click);
             // 
             // showObjectInBrowserMenuItem
             // 
             this.showObjectInBrowserMenuItem.Name = "showObjectInBrowserMenuItem";
-            this.showObjectInBrowserMenuItem.Size = new System.Drawing.Size(260, 22);
+            this.showObjectInBrowserMenuItem.Size = new System.Drawing.Size(269, 22);
             this.showObjectInBrowserMenuItem.Text = "Show Researchable In Item Browser...";
             this.showObjectInBrowserMenuItem.Click += new System.EventHandler(this.showInBrowserMenuItem_Click);
             // 
             // showInSkillBrowserMenuSeparator
             // 
             this.showInSkillBrowserMenuSeparator.Name = "showInSkillBrowserMenuSeparator";
-            this.showInSkillBrowserMenuSeparator.Size = new System.Drawing.Size(257, 6);
+            this.showInSkillBrowserMenuSeparator.Size = new System.Drawing.Size(266, 6);
             // 
             // exportToCSVToolStripMenuItem
             // 
             this.exportToCSVToolStripMenuItem.Name = "exportToCSVToolStripMenuItem";
-            this.exportToCSVToolStripMenuItem.Size = new System.Drawing.Size(260, 22);
+            this.exportToCSVToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
             this.exportToCSVToolStripMenuItem.Text = "Export To CSV...";
             this.exportToCSVToolStripMenuItem.Click += new System.EventHandler(this.exportToCSVToolStripMenuItem_Click);
             // 
@@ -172,5 +189,7 @@ namespace EVEMon.CharacterMonitoring
         private System.Windows.Forms.ToolStripMenuItem showInSkillBrowserMenuItem;
         private System.Windows.Forms.ToolStripSeparator showInSkillBrowserMenuSeparator;
         private System.Windows.Forms.ToolStripMenuItem showObjectInBrowserMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem detailsToolStrupMenuItem;
+        private System.Windows.Forms.ToolStripSeparator detailsMenuSeparator;
     }
 }
