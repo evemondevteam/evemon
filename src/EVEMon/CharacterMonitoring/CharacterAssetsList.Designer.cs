@@ -38,6 +38,10 @@
             this.chGroup = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chCategory = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.detailsToolStrupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.detailsMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.showInBrowserMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showInBrowserMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.exportToCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ilIcons = new System.Windows.Forms.ImageList(this.components);
             this.noPricesFoundLabel = new System.Windows.Forms.Label();
@@ -45,8 +49,6 @@
             this.totalCostThrobber = new EVEMon.Common.Controls.Throbber();
             this.estimatedCostPanel = new System.Windows.Forms.Panel();
             this.throbber = new EVEMon.Common.Controls.Throbber();
-            this.showInBrowserMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.showInBrowserMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.totalCostThrobber)).BeginInit();
             this.estimatedCostPanel.SuspendLayout();
@@ -84,6 +86,7 @@
             this.lvAssets.TabIndex = 3;
             this.lvAssets.UseCompatibleStateImageBehavior = false;
             this.lvAssets.View = System.Windows.Forms.View.Details;
+            this.lvAssets.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvAssets_MouseDoubleClick);
             // 
             // chItem
             // 
@@ -112,12 +115,38 @@
             // contextMenu
             // 
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.detailsToolStrupMenuItem,
+            this.detailsMenuSeparator,
             this.showInBrowserMenuItem,
             this.showInBrowserMenuSeparator,
             this.exportToCSVToolStripMenuItem});
             this.contextMenu.Name = "ItemAttributeContextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(171, 76);
+            this.contextMenu.Size = new System.Drawing.Size(171, 104);
             this.contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenu_Opening);
+            // 
+            // detailsToolStrupMenuItem
+            // 
+            this.detailsToolStrupMenuItem.Name = "detailsToolStrupMenuItem";
+            this.detailsToolStrupMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.detailsToolStrupMenuItem.Text = "Details...";
+            this.detailsToolStrupMenuItem.Click += new System.EventHandler(this.detailsToolStrupMenuItem_Click);
+            // 
+            // detailsMenuSeparator
+            // 
+            this.detailsMenuSeparator.Name = "detailsMenuSeparator";
+            this.detailsMenuSeparator.Size = new System.Drawing.Size(167, 6);
+            // 
+            // showInBrowserMenuItem
+            // 
+            this.showInBrowserMenuItem.Name = "showInBrowserMenuItem";
+            this.showInBrowserMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.showInBrowserMenuItem.Text = "Show In Browser...";
+            this.showInBrowserMenuItem.Click += new System.EventHandler(this.showInBrowserMenuItem_Click);
+            // 
+            // showInBrowserMenuSeparator
+            // 
+            this.showInBrowserMenuSeparator.Name = "showInBrowserMenuSeparator";
+            this.showInBrowserMenuSeparator.Size = new System.Drawing.Size(167, 6);
             // 
             // exportToCSVToolStripMenuItem
             // 
@@ -195,18 +224,6 @@
             this.throbber.TabStop = false;
             this.throbber.Visible = false;
             // 
-            // showInBrowserMenuSeparator
-            // 
-            this.showInBrowserMenuSeparator.Name = "showInBrowserMenuSeparator";
-            this.showInBrowserMenuSeparator.Size = new System.Drawing.Size(167, 6);
-            // 
-            // showInBrowserMenuItem
-            // 
-            this.showInBrowserMenuItem.Name = "showInBrowserMenuItem";
-            this.showInBrowserMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.showInBrowserMenuItem.Text = "Show In Browser...";
-            this.showInBrowserMenuItem.Click += new System.EventHandler(this.showInBrowserMenuItem_Click);
-            // 
             // CharacterAssetsList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -245,5 +262,7 @@
         private Common.Controls.Throbber throbber;
         private System.Windows.Forms.ToolStripMenuItem showInBrowserMenuItem;
         private System.Windows.Forms.ToolStripSeparator showInBrowserMenuSeparator;
+        private System.Windows.Forms.ToolStripMenuItem detailsToolStrupMenuItem;
+        private System.Windows.Forms.ToolStripSeparator detailsMenuSeparator;
     }
 }

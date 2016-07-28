@@ -17,6 +17,7 @@ using EVEMon.Common.Models;
 using EVEMon.Common.Models.Comparers;
 using EVEMon.Common.SettingsObjects;
 using EVEMon.SkillPlanner;
+using EVEMon.DetailsWindow;
 
 namespace EVEMon.CharacterMonitoring
 {
@@ -506,6 +507,18 @@ namespace EVEMon.CharacterMonitoring
        || x.Station.SolarSystem.Constellation.Name.ToUpperInvariant().Contains(text, ignoreCase: true)
        || x.Station.SolarSystem.Constellation.Region.Name.ToUpperInvariant().Contains(text, ignoreCase: true);
 
+        /// <summary>
+        /// Ensure there's something selected before showing the Detail Info Windows
+        /// </summary>
+        private void ShowDetailInfoWindow()
+        {
+            if (lvResearchPoints.SelectedItems.Count >= 1)
+            {
+                DetailInfoWindow info = new DetailInfoWindow(nameof(WalletJournal), lvResearchPoints.SelectedItems[0].Tag);
+                info.Show();
+            }
+        }
+
         #endregion
 
 
@@ -519,6 +532,26 @@ namespace EVEMon.CharacterMonitoring
         private void exportToCSVToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ListViewExporter.CreateCSV(lvResearchPoints);
+        }
+
+        /// <summary>
+        /// Show the Detail Info Windows on 'detail' contaxt menu clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void detailsToolStrupMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowDetailInfoWindow();
+        }
+
+        /// <summary>
+        /// Show the Detail Info Windows when the list is double clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lvResearchPoints_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ShowDetailInfoWindow();
         }
 
         /// <summary>
@@ -700,5 +733,6 @@ namespace EVEMon.CharacterMonitoring
         }
 
         #endregion
+
     }
 }
