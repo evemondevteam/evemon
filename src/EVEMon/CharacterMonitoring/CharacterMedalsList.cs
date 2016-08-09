@@ -355,6 +355,9 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="e">The <see cref="System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
         private void lbMedals_MouseWheel(object sender, MouseEventArgs e)
         {
+            if (e.Delta == 0)
+                return;
+
             // Update the drawing based upon the mouse wheel scrolling
             int numberOfItemLinesToMove = e.Delta * SystemInformation.MouseWheelScrollLines / Math.Abs(e.Delta);
             int lines = numberOfItemLinesToMove;

@@ -619,6 +619,8 @@ namespace EVEMon.CharacterMonitoring
         {
             if (!lbSkills.VerticalScrollBarVisible())
                 return;
+            if (e.Delta == 0)
+                return;
 
             // Update the drawing based upon the mouse wheel scrolling
             int numberOfItemLinesToMove = e.Delta * SystemInformation.MouseWheelScrollLines / Math.Abs(e.Delta);
