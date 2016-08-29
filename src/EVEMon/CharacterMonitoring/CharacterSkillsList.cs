@@ -620,6 +620,10 @@ namespace EVEMon.CharacterMonitoring
             if (!lbSkills.VerticalScrollBarVisible())
                 return;
 
+            // Return when for some reason the delta is equal to 0
+            if (e.Delta == 0)
+                return;
+
             // Update the drawing based upon the mouse wheel scrolling
             int numberOfItemLinesToMove = e.Delta * SystemInformation.MouseWheelScrollLines / Math.Abs(e.Delta);
             int lines = numberOfItemLinesToMove;
