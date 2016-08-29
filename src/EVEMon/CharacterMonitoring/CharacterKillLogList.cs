@@ -776,6 +776,10 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="e">The <see cref="System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
         private void lbKillLog_MouseWheel(object sender, MouseEventArgs e)
         {
+            // Return when for some reason the delta is equal to 0
+            if (e.Delta == 0)
+                return;
+
             // Update the drawing based upon the mouse wheel scrolling
             int numberOfItemLinesToMove = e.Delta * SystemInformation.MouseWheelScrollLines / Math.Abs(e.Delta);
             int lines = numberOfItemLinesToMove;
