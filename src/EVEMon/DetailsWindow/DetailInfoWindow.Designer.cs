@@ -42,7 +42,7 @@ namespace EVEMon.DetailsWindow
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(327, 231);
+            this.btnOk.Location = new System.Drawing.Point(327, 228);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 3;
@@ -52,6 +52,9 @@ namespace EVEMon.DetailsWindow
             // 
             // lvDetails
             // 
+            this.lvDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvDetails.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chProperty,
             this.chValue});
@@ -60,7 +63,7 @@ namespace EVEMon.DetailsWindow
             this.lvDetails.Location = new System.Drawing.Point(12, 12);
             this.lvDetails.MultiSelect = false;
             this.lvDetails.Name = "lvDetails";
-            this.lvDetails.Size = new System.Drawing.Size(390, 213);
+            this.lvDetails.Size = new System.Drawing.Size(390, 210);
             this.lvDetails.TabIndex = 4;
             this.lvDetails.UseCompatibleStateImageBehavior = false;
             this.lvDetails.View = System.Windows.Forms.View.Details;
@@ -77,12 +80,14 @@ namespace EVEMon.DetailsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 266);
+            this.ClientSize = new System.Drawing.Size(414, 262);
             this.Controls.Add(this.lvDetails);
             this.Controls.Add(this.btnOk);
-            this.MinimumSize = new System.Drawing.Size(400, 250);
+            this.MinimumSize = new System.Drawing.Size(430, 300);
             this.Name = "DetailInfoWindow";
             this.Text = "Details: ";
+            this.ResizeEnd += new System.EventHandler(this.DetailInfoWindow_ResizeEnd);
+            this.Resize += new System.EventHandler(this.DetailInfoWindow_Resize);
             this.ResumeLayout(false);
 
         }
