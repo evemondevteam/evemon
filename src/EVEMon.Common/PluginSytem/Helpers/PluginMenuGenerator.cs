@@ -11,7 +11,7 @@ namespace EVEMon.Common.PluginSytem.Helpers
         /// <summary>
         /// The enumerable of the loaded plugins.
         /// </summary>
-        public IEnumerable<ToolStripMenuItem> PluginData;
+        public ToolStripMenuItem[] PluginData;
 
         /// <summary>
         /// The amount of plugins loaded.
