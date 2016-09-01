@@ -6,9 +6,13 @@
     public interface IEVEMonPluginContract
     {
         /// <summary>
-        /// Define the plugin name.
+        /// Gets the plugin name.
         /// </summary>
-        /// <returns>Returns a value identifying the plugin by name.</returns>
-        string PluginName();
+        string PluginName { get; }
+
+        /// <summary>
+        /// Gets the plugin version information.
+        /// </summary>
+        string PluginVersion { get; }
     }
 }
