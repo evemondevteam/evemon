@@ -7,6 +7,9 @@ using EVEMon.Common.PluginSytem;
 
 namespace EVEMon.PluginViewer
 {
+    /// <summary>
+    /// Form displaying the loaded plugins.
+    /// </summary>
     public partial class PluginViewerForm : Form
     {
         #region Constructor
@@ -37,6 +40,7 @@ namespace EVEMon.PluginViewer
         }
 
         #endregion Event Handler
+
 
         #region Methods
 

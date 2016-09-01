@@ -6,14 +6,27 @@ using EVEMon.Common.PluginSytem;
 
 namespace EVEMon.PluginViewer
 {
+    /// <summary>
+    /// PluginViewer class used to see what plugins are loaded.
+    /// </summary>
     class PluginViewer : IPluginMenuItem
     {
 
         #region Fields
-
+        
+        /// <summary>
+        /// The MenuItem to be sent to the plugin interface.
+        /// </summary>
         private ToolStripMenuItem _mnuPluginViewer;
 
+        /// <summary>
+        /// The Plugin name constant.
+        /// </summary>
         private const string _pluginName = "Plugin Viewer";
+
+        /// <summary>
+        /// The plugin version constant.
+        /// </summary>
         private const string _pluginVersion = "0.1";
 
         #endregion Fields
@@ -21,14 +34,17 @@ namespace EVEMon.PluginViewer
 
         #region Constructor
 
+        /// <summary>
+        /// Constructor for the PluginViewer class.
+        /// </summary>
         public PluginViewer()
         {
+            // Initialize the menuitem.
             ToolStripMenuItem mnuPluginViewer = new ToolStripMenuItem();
             mnuPluginViewer.Name = "mnuPluginViewer";
             mnuPluginViewer.Size = new System.Drawing.Size(114, 20);
             mnuPluginViewer.Text = "Plugin Viewer...";
             mnuPluginViewer.Click += new System.EventHandler(mnuPluginViewer_Click);
-
             _mnuPluginViewer = mnuPluginViewer;
         }
 
@@ -37,6 +53,9 @@ namespace EVEMon.PluginViewer
 
         #region IPLuginMenuItem implementation
 
+        /// <summary>
+        /// Gets the MenuItemList information for the plugin system.
+        /// </summary>
         public IEnumerable<ToolStripMenuItem> MenuItemList
         {
             get
@@ -47,6 +66,9 @@ namespace EVEMon.PluginViewer
             }
         }
 
+        /// <summary>
+        /// Gets the plugin name for the plugin system.
+        /// </summary>
         public string PluginName
         {
             get
@@ -56,6 +78,9 @@ namespace EVEMon.PluginViewer
 
         }
 
+        /// <summary>
+        /// Gets the plugin version for the plugin system.
+        /// </summary>
         public string PluginVersion
         {
             get

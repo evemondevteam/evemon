@@ -4,7 +4,8 @@ using System.Threading;
 using System.Linq;
 
 // TODO: 
-// - use 1 plugin loader for each interface type request in a dictionary
+// - Use 1 plugin loader for each interface type request in a dictionary.
+// - Find a way to prevent loading non-EVEMon plugins that may be using the same file extension.
 
 namespace EVEMon.Common.PluginSytem
 {
