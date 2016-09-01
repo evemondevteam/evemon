@@ -9,7 +9,7 @@ namespace EVEMon.Common.PluginSytem.Helpers
     public class PluginMenuGenerator
     {
         /// <summary>
-        /// The enumerable of the loaded plugins.
+        /// The array of the loaded plugins.
         /// </summary>
         public ToolStripMenuItem[] PluginData;
 
