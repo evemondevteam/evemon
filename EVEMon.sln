@@ -52,6 +52,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.EVEMon", "tests\Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Helpers", "tests\Tests.Helpers\Tests.Helpers.csproj", "{1917E258-0979-4333-8B20-5D66E8986E1C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{894945A4-8C92-451A-9FFE-0C5402EBD68E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVEMon.PluginViewer", "plugins\EVEMon.PluginViewer\EVEMon.PluginViewer.csproj", "{E11D68FA-686E-45E0-9FA2-9EC9F90ECCA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +137,12 @@ Global
 		{1917E258-0979-4333-8B20-5D66E8986E1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1917E258-0979-4333-8B20-5D66E8986E1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1917E258-0979-4333-8B20-5D66E8986E1C}.Snapshot|Any CPU.ActiveCfg = Snapshot|Any CPU
+		{E11D68FA-686E-45E0-9FA2-9EC9F90ECCA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E11D68FA-686E-45E0-9FA2-9EC9F90ECCA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E11D68FA-686E-45E0-9FA2-9EC9F90ECCA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E11D68FA-686E-45E0-9FA2-9EC9F90ECCA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E11D68FA-686E-45E0-9FA2-9EC9F90ECCA2}.Snapshot|Any CPU.ActiveCfg = Release|Any CPU
+		{E11D68FA-686E-45E0-9FA2-9EC9F90ECCA2}.Snapshot|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,5 +162,6 @@ Global
 		{87682BB1-CCE5-4CA4-BDE8-1A2ACF0B3CE0} = {9AB16E7E-E520-4444-8E8E-165129CC93B3}
 		{FD639BF6-3414-4FB2-8325-61744D44F028} = {B2FD94FF-A895-4519-A97F-6DEA32F15F8E}
 		{1917E258-0979-4333-8B20-5D66E8986E1C} = {B2FD94FF-A895-4519-A97F-6DEA32F15F8E}
+		{E11D68FA-686E-45E0-9FA2-9EC9F90ECCA2} = {894945A4-8C92-451A-9FFE-0C5402EBD68E}
 	EndGlobalSection
 EndGlobal

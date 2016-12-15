@@ -47,6 +47,8 @@ using EVEMon.SkillPlanner;
 using EVEMon.Updater;
 using EVEMon.Watchdog;
 using EVEMon.WindowsApi;
+using EVEMon.Common.PluginSytem;
+using EVEMon.Common.PluginSytem.Helpers;
 
 namespace EVEMon
 {
@@ -116,6 +118,12 @@ namespace EVEMon
                 DisplayTestMenu();
 
             m_startMinimized = Environment.GetCommandLineArgs().Contains("-startMinimized");
+
+            PluginMenuGenerator pluginMenuGenetaror = new PluginMenuGenerator();
+            if (pluginMenuGenetaror.AnyPluginsAvailable())
+            {
+                pluginsToolStripMenuItem.DropDownItems.AddRange(pluginMenuGenetaror.PluginData);
+            }            
         }
 
         /// <summary>

@@ -194,6 +194,11 @@
     <Compile Include="Enumerations\CharacterSaveFormat.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Helpers\TaskHelper.cs" />
+    <Compile Include="PluginSytem\Core\PluginLibrary.cs" />
+    <Compile Include="PluginSytem\Core\PluginLoader.cs" />
+    <Compile Include="PluginSytem\Core\IEVEMonPluginContract.cs" />
+    <Compile Include="PluginSytem\Helpers\PluginMenuGenerator.cs" />
+    <Compile Include="PluginSytem\Interfaces\IPluginToolMenuItem.cs" />
     <Compile Include="Serialization\SerializableAPIError.cs" />
     <Compile Include="CloudStorageServices\CloudStorageServiceAPIFile.cs" />
     <Compile Include="Serialization\SerializableAPIResult.cs" />
@@ -1234,6 +1239,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets. -->

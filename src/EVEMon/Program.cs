@@ -12,6 +12,7 @@ using EVEMon.Common.Service;
 using EVEMon.Common.Threading;
 using EVEMon.ExceptionHandling;
 using EVEMon.WindowsApi;
+using EVEMon.Common.PluginSytem;
 
 namespace EVEMon
 {
@@ -76,6 +77,10 @@ namespace EVEMon
             // Initialization
             EveMonClient.Initialize();
             Settings.Initialize();
+
+            // Plugin system loading
+            PluginLibrary.pluginPathOverride = AppDomain.CurrentDomain.BaseDirectory + @"\plugins\";
+            PluginLibrary.Instance.FlushAndLoadPlugins();
 
             // Did something requested an exit before we entered Run() ?
             if (s_exitRequested)

@@ -95,6 +95,7 @@ namespace EVEMon
             this.secondSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forumsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userVoiceMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.twitterMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -311,7 +312,8 @@ namespace EVEMon
             this.plansToolStripMenuItem,
             this.toolsToolStripMenuItem,
             this.helpToolStripMenuItem,
-            this.testsToolStripMenuItem});
+            this.testsToolStripMenuItem,
+            this.pluginsToolStripMenuItem});
             this.mainMenuBar.Location = new System.Drawing.Point(0, 0);
             this.mainMenuBar.Name = "mainMenuBar";
             this.mainMenuBar.Size = new System.Drawing.Size(600, 24);
@@ -547,7 +549,7 @@ namespace EVEMon
             this.secondSeparator,
             this.optionsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
             // 
             // apiTesterToolStripMenuItem
@@ -696,11 +698,17 @@ namespace EVEMon
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "&Help";
             // 
+            // pluginsToolStripMenuItem
+            // 
+            this.pluginsToolStripMenuItem.Name = "pluginsToolStripMenuItem";
+            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.pluginsToolStripMenuItem.Text = "Plu&gins";
+            //
             // forumsMenuItem
             // 
             this.forumsMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("forumsMenuItem.Image")));
             this.forumsMenuItem.Name = "forumsMenuItem";
-            this.forumsMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.forumsMenuItem.Size = new System.Drawing.Size(230, 22);
             this.forumsMenuItem.Text = "&Forums";
             this.forumsMenuItem.Click += new System.EventHandler(this.forumsMenuItem_Click);
             // 
@@ -708,7 +716,7 @@ namespace EVEMon
             // 
             this.userVoiceMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("userVoiceMenuItem.Image")));
             this.userVoiceMenuItem.Name = "userVoiceMenuItem";
-            this.userVoiceMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.userVoiceMenuItem.Size = new System.Drawing.Size(230, 22);
             this.userVoiceMenuItem.Text = "&Suggest a Feature (UserVoice)";
             this.userVoiceMenuItem.Click += new System.EventHandler(this.userVoiceMenuItem_Click);
             // 
@@ -716,7 +724,7 @@ namespace EVEMon
             // 
             this.twitterMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("twitterMenuItem.Image")));
             this.twitterMenuItem.Name = "twitterMenuItem";
-            this.twitterMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.twitterMenuItem.Size = new System.Drawing.Size(230, 22);
             this.twitterMenuItem.Text = "Follow us on Twitter";
             this.twitterMenuItem.Click += new System.EventHandler(this.twitterMenuItem_Click);
             // 
@@ -724,20 +732,20 @@ namespace EVEMon
             // 
             this.readTheDocsManualToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("readTheDocsManualToolStripMenuItem.Image")));
             this.readTheDocsManualToolStripMenuItem.Name = "readTheDocsManualToolStripMenuItem";
-            this.readTheDocsManualToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.readTheDocsManualToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.readTheDocsManualToolStripMenuItem.Text = "Read The Docs (Manual)";
             this.readTheDocsManualToolStripMenuItem.Click += new System.EventHandler(this.readTheDocsManualMenuItem_Click);
             // 
             // helpAboutKnownProblemsToolStripSeparator
             // 
             this.helpAboutKnownProblemsToolStripSeparator.Name = "helpAboutKnownProblemsToolStripSeparator";
-            this.helpAboutKnownProblemsToolStripSeparator.Size = new System.Drawing.Size(226, 6);
+            this.helpAboutKnownProblemsToolStripSeparator.Size = new System.Drawing.Size(227, 6);
             // 
             // aboutMenuItem
             // 
             this.aboutMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("aboutMenuItem.Image")));
             this.aboutMenuItem.Name = "aboutMenuItem";
-            this.aboutMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.aboutMenuItem.Size = new System.Drawing.Size(230, 22);
             this.aboutMenuItem.Text = "&About...";
             this.aboutMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -751,7 +759,7 @@ namespace EVEMon
             this.testTimeoutOneSecToolStripMenuItem,
             this.restartToolStripMenuItem});
             this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
-            this.testsToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
+            this.testsToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
             this.testsToolStripMenuItem.Text = "Te&st";
             this.testsToolStripMenuItem.Visible = false;
             this.testsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.testToolStripMenuItem_DropDownOpening);
@@ -1271,6 +1279,7 @@ namespace EVEMon
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pluginsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mineralWorksheetMenuItem;
