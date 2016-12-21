@@ -31,9 +31,11 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CharacterPlanetaryList));
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.detailsToolStrupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.detailsMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.showInBrowserMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showInstallationInBrowserMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showCommodityInBrowserMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showInstallationInBrowserMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showPlanetInBrowserMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showInBrowserMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.exportToCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,12 +55,26 @@
             // contextMenu
             // 
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.detailsToolStrupMenuItem,
+            this.detailsMenuSeparator,
             this.showInBrowserMenuItem,
             this.showInBrowserMenuSeparator,
             this.exportToCSVToolStripMenuItem});
             this.contextMenu.Name = "ShipPropertiesContextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(189, 76);
+            this.contextMenu.Size = new System.Drawing.Size(189, 82);
             this.contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenu_Opening);
+            // 
+            // detailsToolStrupMenuItem
+            // 
+            this.detailsToolStrupMenuItem.Name = "detailsToolStrupMenuItem";
+            this.detailsToolStrupMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.detailsToolStrupMenuItem.Text = "Details...";
+            this.detailsToolStrupMenuItem.Click += new System.EventHandler(this.detailsToolStrupMenuItem_Click);
+            // 
+            // detailsMenuSeparator
+            // 
+            this.detailsMenuSeparator.Name = "detailsMenuSeparator";
+            this.detailsMenuSeparator.Size = new System.Drawing.Size(185, 6);
             // 
             // showInBrowserMenuItem
             // 
@@ -70,24 +86,24 @@
             this.showInBrowserMenuItem.Size = new System.Drawing.Size(188, 22);
             this.showInBrowserMenuItem.Text = "Show In Item Browser";
             // 
-            // showInstallationInBrowserMenuItem
-            // 
-            this.showInstallationInBrowserMenuItem.Name = "showInstallationInBrowserMenuItem";
-            this.showInstallationInBrowserMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.showInstallationInBrowserMenuItem.Text = "Installation...";
-            this.showInstallationInBrowserMenuItem.Click += new System.EventHandler(this.showInBrowserMenuItem_Click);
-            // 
             // showCommodityInBrowserMenuItem
             // 
             this.showCommodityInBrowserMenuItem.Name = "showCommodityInBrowserMenuItem";
-            this.showCommodityInBrowserMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.showCommodityInBrowserMenuItem.Size = new System.Drawing.Size(147, 22);
             this.showCommodityInBrowserMenuItem.Text = "Commodity...";
             this.showCommodityInBrowserMenuItem.Click += new System.EventHandler(this.showInBrowserMenuItem_Click);
+            // 
+            // showInstallationInBrowserMenuItem
+            // 
+            this.showInstallationInBrowserMenuItem.Name = "showInstallationInBrowserMenuItem";
+            this.showInstallationInBrowserMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.showInstallationInBrowserMenuItem.Text = "Installation...";
+            this.showInstallationInBrowserMenuItem.Click += new System.EventHandler(this.showInBrowserMenuItem_Click);
             // 
             // showPlanetInBrowserMenuItem
             // 
             this.showPlanetInBrowserMenuItem.Name = "showPlanetInBrowserMenuItem";
-            this.showPlanetInBrowserMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.showPlanetInBrowserMenuItem.Size = new System.Drawing.Size(147, 22);
             this.showPlanetInBrowserMenuItem.Text = "Planet...";
             this.showPlanetInBrowserMenuItem.Click += new System.EventHandler(this.showInBrowserMenuItem_Click);
             // 
@@ -145,6 +161,7 @@
             this.lvPlanetary.TabIndex = 3;
             this.lvPlanetary.UseCompatibleStateImageBehavior = false;
             this.lvPlanetary.View = System.Windows.Forms.View.Details;
+            this.lvPlanetary.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvPlanetary_MouseDoubleClick);
             // 
             // chState
             // 
@@ -210,5 +227,7 @@
         private System.Windows.Forms.ToolStripMenuItem showInstallationInBrowserMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showCommodityInBrowserMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showPlanetInBrowserMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem detailsToolStrupMenuItem;
+        private System.Windows.Forms.ToolStripSeparator detailsMenuSeparator;
     }
 }

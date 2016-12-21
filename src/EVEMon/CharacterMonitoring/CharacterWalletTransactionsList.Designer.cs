@@ -37,6 +37,7 @@
             this.chPrice = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chQuantity = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.detailsToolStrupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ilIcons = new System.Windows.Forms.ImageList(this.components);
             this.contextMenu.SuspendLayout();
@@ -73,6 +74,7 @@
             this.lvWalletTransactions.TabIndex = 4;
             this.lvWalletTransactions.UseCompatibleStateImageBehavior = false;
             this.lvWalletTransactions.View = System.Windows.Forms.View.Details;
+            this.lvWalletTransactions.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvWalletTransactions_MouseDoubleClick);
             // 
             // chDate
             // 
@@ -97,14 +99,22 @@
             // contextMenu
             // 
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.detailsToolStrupMenuItem,
             this.exportToCSVToolStripMenuItem});
             this.contextMenu.Name = "ShipPropertiesContextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(157, 26);
+            this.contextMenu.Size = new System.Drawing.Size(158, 48);
+            // 
+            // detailsToolStrupMenuItem
+            // 
+            this.detailsToolStrupMenuItem.Name = "detailsToolStrupMenuItem";
+            this.detailsToolStrupMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.detailsToolStrupMenuItem.Text = "Details...";
+            this.detailsToolStrupMenuItem.Click += new System.EventHandler(this.detailsToolStrupMenuItem_Click);
             // 
             // exportToCSVToolStripMenuItem
             // 
             this.exportToCSVToolStripMenuItem.Name = "exportToCSVToolStripMenuItem";
-            this.exportToCSVToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.exportToCSVToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.exportToCSVToolStripMenuItem.Text = "Export To CSV...";
             this.exportToCSVToolStripMenuItem.Click += new System.EventHandler(this.exportToCSVToolStripMenuItem_Click);
             // 
@@ -140,5 +150,6 @@
         private System.Windows.Forms.ColumnHeader chQuantity;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem exportToCSVToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem detailsToolStrupMenuItem;
     }
 }
