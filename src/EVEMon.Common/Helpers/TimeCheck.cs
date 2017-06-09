@@ -70,12 +70,13 @@ namespace EVEMon.Common.Helpers
 
                         //var addresses = task.Dns.GetHostEntry(ntpServer).AddressList;
                         var ipEndPoint = new IPEndPoint(task.Result.First(), 123);
-                        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-                        socket.Connect(ipEndPoint);
-                        socket.Send(ntpData);
-                        socket.Receive(ntpData);
-                        socket.Close();
+                        using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+                        {
+                            socket.Connect(ipEndPoint);
+                            socket.Send(ntpData);
+                            socket.Receive(ntpData);
+                            socket.Close();
+                        }
 
                         ulong intPart = (ulong)ntpData[40] << 24 | (ulong)ntpData[41] << 16 | (ulong)ntpData[42] << 8 | (ulong)ntpData[43];
                         ulong fractPart = (ulong)ntpData[44] << 24 | (ulong)ntpData[45] << 16 | (ulong)ntpData[46] << 8 | (ulong)ntpData[47];
