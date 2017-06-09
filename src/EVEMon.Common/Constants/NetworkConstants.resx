@@ -567,4 +567,7 @@
   <data name="APICorporationBookmarks" xml:space="preserve">
     <value>/corp/Bookmarks.xml.aspx</value>
   </data>
+  <data name="GlobalNTPPool" xml:space="preserve">
+    <value>pool.ntp.org</value>
+  </data>
 </root>

@@ -34,7 +34,8 @@ namespace EVEMon.Common.Helpers
         }
 
         /// <summary>
-        /// Method to determine if the user's clock is syncrhonised to NIST time.
+        /// Method to determine if the user's clock is syncrhonised to NTP time pool.
+        /// Updated to move to NTP (global NTP pool) rather than NIST port 13 time check, which is being deprecated
         /// </summary>
         private static async Task BeginCheckAsync()
         {
@@ -47,12 +48,12 @@ namespace EVEMon.Common.Helpers
 
             EveMonClient.Trace();
 
-            Uri url = new Uri(NetworkConstants.NISTTimeServer);
+            string ntpServer = NetworkConstants.GlobalNTPPool;// "pool.ntp.org";
             DateTime serverTimeToLocalTime;
             bool isSynchronised;
 
-            await Dns.GetHostAddressesAsync(url.Host)
-                .ContinueWith(async task =>
+            await Dns.GetHostAddressesAsync(ntpServer)
+                .ContinueWith(task =>
                 {
                     IPAddress[] ipAddresses = task.Result;
 
@@ -63,25 +64,26 @@ namespace EVEMon.Common.Helpers
                     {
                         DateTime dateTimeNowUtc;
                         DateTime localTime = DateTime.Now;
-                        using (TcpClient tcpClient = new TcpClient())
-                        {
-                            await tcpClient.ConnectAsync(ipAddresses.First(), url.Port);
+                        
+                        var ntpData = new byte[48];
+                        ntpData[0] = 0x1B; //LeapIndicator = 0 (no warning), VersionNum = 3 (IPv4 only), Mode = 3 (Client Mode)
 
-                            using (NetworkStream netStream = tcpClient.GetStream())
-                            {
-                                // Set a three seconds timeout
-                                netStream.ReadTimeout = (int)TimeSpan.FromSeconds(3).TotalMilliseconds;
+                        //var addresses = task.Dns.GetHostEntry(ntpServer).AddressList;
+                        var ipEndPoint = new IPEndPoint(task.Result.First(), 123);
+                        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-                                byte[] data = new byte[24];
-                                await netStream.ReadAsync(data, 0, data.Length);
-                                data = data.Skip(7).Take(17).ToArray();
-                                string dateTimeText = Encoding.ASCII.GetString(data);
-                                dateTimeNowUtc = DateTime.ParseExact(dateTimeText,
-                                    "yy-MM-dd HH:mm:ss",
-                                    CultureInfo.CurrentCulture.DateTimeFormat,
-                                    DateTimeStyles.AssumeUniversal);
-                            }
-                        }
+                        socket.Connect(ipEndPoint);
+                        socket.Send(ntpData);
+                        socket.Receive(ntpData);
+                        socket.Close();
+
+                        ulong intPart = (ulong)ntpData[40] << 24 | (ulong)ntpData[41] << 16 | (ulong)ntpData[42] << 8 | (ulong)ntpData[43];
+                        ulong fractPart = (ulong)ntpData[44] << 24 | (ulong)ntpData[45] << 16 | (ulong)ntpData[46] << 8 | (ulong)ntpData[47];
+
+                        var milliseconds = (intPart * 1000) + ((fractPart * 1000) / 0x100000000L);
+                        var networkDateTime = (new DateTime(1900, 1, 1)).AddMilliseconds((long)milliseconds);
+
+                        dateTimeNowUtc = networkDateTime;
 
                         serverTimeToLocalTime = dateTimeNowUtc.ToLocalTime();
                         TimeSpan timediff =
