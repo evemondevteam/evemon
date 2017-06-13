@@ -1213,6 +1213,15 @@ namespace EVEMon.Common.Constants {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to pool.ntp.org.
+        /// </summary>
+        public static string GlobalNTPPool {
+            get {
+                return ResourceManager.GetString("GlobalNTPPool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://ssl.google-analytics.com/collect.
         /// </summary>
         public static string GoogleAnalyticsUrl {
