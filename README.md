@@ -5,13 +5,15 @@
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/EVEMon.svg?style=social)](https://twitter.com/evemon)
 
-# **EVEMon** 
+[![Build status](https://ci.appveyor.com/api/projects/status/2d5cmvi5y6ox0gle?svg=true)](https://ci.appveyor.com/project/richard-slater/evemon)
+
+# **EVEMon**
 
 A lightweight, easy-to-use standalone Windows application designed to assist you in keeping track of your EVE Online character progression.
 
 For complete info on *How To Contribute* please visit the [wiki](https://bitbucket.org/EVEMonDevTeam/evemon/wiki) section
 
-**Owner:** 
+**Owner:**
 
 [EVEMonDevTeam](https://github.com/evemondevteam/) (GitHub)
 

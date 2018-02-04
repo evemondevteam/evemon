@@ -1,0 +1,11 @@
+version: 3.0.{build}
+
+build:
+  parallel: true
+  project: EVEMon.sln
+
+cache:
+  - packages -> **\packages.config
+
+install:
+  - nuget restore
