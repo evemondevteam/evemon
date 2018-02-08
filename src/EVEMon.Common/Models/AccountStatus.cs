@@ -32,8 +32,7 @@ namespace EVEMon.Common.Models
         /// <param name="statusType">Type (Alpha, Omega, Unknown).</param>
         public AccountStatus (APIKey apiKey)
         {
-            if (apiKey == null || 
-                (apiKey != null &&  apiKey.Expiration < DateTime.UtcNow && apiKey.Expiration != DateTime.MinValue))
+            if (apiKey == null || (apiKey != null && apiKey.Expiration == DateTime.MinValue))
             {
                 CurrentStatus = AccountStatusType.Unknown;
             }
