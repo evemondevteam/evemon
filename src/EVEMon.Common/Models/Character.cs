@@ -76,17 +76,9 @@ namespace EVEMon.Common.Models
             UISettings = new CharacterUISettings();
         }
 
-        public void UpdateAccountStatus()
+        public void UpdateAccountStatus(AccountStatusType statusType = AccountStatusType.Unknown)
         {
-            APIKey apiKey = Identity.FindAPIKeyWithAccess(CCPAPICharacterMethods.AccountStatus);
-            if (apiKey != null)
-            {
-                CharacterStatus = new AccountStatus(apiKey);
-            }
-            else if (CharacterStatus == null)
-            {
-                CharacterStatus = new AccountStatus(AccountStatusType.Unknown);
-            }
+            CharacterStatus = new AccountStatus(statusType);
         }
 
         #endregion
@@ -443,7 +435,7 @@ namespace EVEMon.Common.Models
         /// <returns>Skill points earned per hour when training this skill</returns>
         public override float GetBaseSPPerHour(StaticSkill skill)
         {
-            return CharacterStatus.TrainingRate* base.GetBaseSPPerHour(skill);
+            return CharacterStatus.TrainingRate * base.GetBaseSPPerHour(skill);
         }
 
         #endregion

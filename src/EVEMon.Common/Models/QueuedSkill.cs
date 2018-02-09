@@ -32,6 +32,32 @@ namespace EVEMon.Common.Models
                 // Not paused, we should trust CCP
                 StartTime = serial.StartTime;
                 EndTime = serial.EndTime;
+
+                // Try to determine account status based on training time
+                var timeleft = (EndTime - StartTime).TotalHours;
+                if (timeleft > 0)
+                {
+                    var spPerHour = Skill.GetLeftPointsRequiredToLevel(Level) / timeleft;
+                    if (spPerHour > 0)
+                    {
+                        AccountStatus.AccountStatusType statusType;
+                        var rate = (int)Math.Round(((BaseCharacter)character).GetBaseSPPerHour(Skill) / spPerHour, 0);
+                        switch (rate)
+                        {
+                            case 1:
+                                statusType = AccountStatus.AccountStatusType.Omega;
+                                break;
+                            case 2:
+                                statusType = AccountStatus.AccountStatusType.Alpha;
+                                break;
+                            default:
+                                statusType = AccountStatus.AccountStatusType.Unknown;
+                                break;
+                        }
+
+                        character.UpdateAccountStatus(statusType);
+                    }
+                }
             }
             else
             {
