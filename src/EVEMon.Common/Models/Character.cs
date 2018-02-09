@@ -78,6 +78,32 @@ namespace EVEMon.Common.Models
 
         public void UpdateAccountStatus(AccountStatusType statusType = AccountStatusType.Unknown)
         {
+            if (CurrentlyTrainingSkill != null && CurrentlyTrainingSkill.IsTraining)
+            {
+                // Try to determine account status based on training time
+                var timeleft = (CurrentlyTrainingSkill.EndTime - CurrentlyTrainingSkill.StartTime).TotalHours;
+                if (timeleft > 0)
+                {
+                    var spPerHour = CurrentlyTrainingSkill.Skill.GetLeftPointsRequiredToLevel(CurrentlyTrainingSkill.Level) / timeleft;
+                    if (spPerHour > 0)
+                    {
+                        var rate = (int)Math.Round(GetOmegaSPPerHour(CurrentlyTrainingSkill.Skill) / spPerHour, 0);
+                        switch (rate)
+                        {
+                            case 1:
+                                statusType = AccountStatusType.Omega;
+                                break;
+                            case 2:
+                                statusType = AccountStatusType.Alpha;
+                                break;
+                            default:
+                                statusType = AccountStatusType.Unknown;
+                                break;
+                        }
+                    }
+                }
+            }
+
             CharacterStatus = new AccountStatus(statusType);
         }
 

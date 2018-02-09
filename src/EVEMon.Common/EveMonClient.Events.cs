@@ -639,6 +639,7 @@ namespace EVEMon.Common
                 return;
 
             Trace(character.Name);
+            character.UpdateAccountStatus();
             Settings.Save();
             CharacterSkillQueueUpdated?.ThreadSafeInvoke(null, new CharacterChangedEventArgs(character));
         }
