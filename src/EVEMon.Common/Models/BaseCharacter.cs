@@ -41,6 +41,12 @@ namespace EVEMon.Common.Models
             return GetOmegaSPPerHour(skill);
         }
 
+        /// <summary>
+        /// Computes the SP per hour for the given skill, if the account status is Omega (subscribed)
+        /// </summary>
+        /// <param name="skill">The skill.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">skill</exception>
         public float GetOmegaSPPerHour(StaticSkill skill)
         {
             skill.ThrowIfNull(nameof(skill));
