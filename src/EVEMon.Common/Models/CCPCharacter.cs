@@ -297,7 +297,7 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the skill currently in training, even when it is paused.
         /// </summary>
-        public override QueuedSkill CurrentlyTrainingSkill => SkillQueue.CurrentlyTraining;
+        public override QueuedSkill CurrentlyTrainingSkill => SkillQueue?.CurrentlyTraining;
 
         /// <summary>
         /// Gets a value indicating whether the character has insufficient balance to complete its buy orders.

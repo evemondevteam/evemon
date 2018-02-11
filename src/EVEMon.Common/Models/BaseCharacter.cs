@@ -38,6 +38,17 @@ namespace EVEMon.Common.Models
         /// <exception cref="System.ArgumentNullException">skill</exception>
         public virtual float GetBaseSPPerHour(StaticSkill skill)
         {
+            return GetOmegaSPPerHour(skill);
+        }
+
+        /// <summary>
+        /// Computes the SP per hour for the given skill, if the account status is Omega (subscribed)
+        /// </summary>
+        /// <param name="skill">The skill.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">skill</exception>
+        public float GetOmegaSPPerHour(StaticSkill skill)
+        {
             skill.ThrowIfNull(nameof(skill));
 
             if (skill.PrimaryAttribute == EveAttribute.None || skill.SecondaryAttribute == EveAttribute.None)

@@ -27,25 +27,6 @@ namespace EVEMon.Common.Models
         }
 
         /// <summary>
-        /// Creates an AccountStatus object from APIKey
-        /// </summary>
-        /// <param name="statusType">Type (Alpha, Omega, Unknown).</param>
-        public AccountStatus (APIKey apiKey)
-        {
-            if (apiKey == null || 
-                (apiKey != null &&  apiKey.Expiration < DateTime.UtcNow && apiKey.Expiration != DateTime.MinValue))
-            {
-                CurrentStatus = AccountStatusType.Unknown;
-            }
-            else
-            {
-                CurrentStatus = apiKey.AccountExpires > DateTime.UtcNow ?
-                   AccountStatusType.Omega :
-                   AccountStatusType.Alpha;
-            }
-        }
-        
-        /// <summary>
         /// Spits out a friendly name for the Account Status
         /// </summary>
         public override string ToString()

@@ -197,16 +197,5 @@ namespace EVEMon.Common.Collections.Global
 
             return serial;
         }
-
-        /// <summary>
-        /// Update character account statuses. Used after APIKeys list is updated
-        /// </summary>
-        internal void UpdateAccountStatuses()
-        {
-            foreach (Character character in Items)
-            {
-                character.UpdateAccountStatus();
-            }
-        }
     }
 }
