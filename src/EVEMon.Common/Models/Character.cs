@@ -81,24 +81,28 @@ namespace EVEMon.Common.Models
             if (CurrentlyTrainingSkill != null && CurrentlyTrainingSkill.IsTraining)
             {
                 // Try to determine account status based on training time
-                var timeleft = (CurrentlyTrainingSkill.EndTime - CurrentlyTrainingSkill.StartTime).TotalHours;
-                if (timeleft > 0)
+                var hoursToTrain = (CurrentlyTrainingSkill.EndTime - CurrentlyTrainingSkill.StartTime).TotalHours;
+                if (hoursToTrain > 0)
                 {
-                    var spPerHour = CurrentlyTrainingSkill.Skill.GetLeftPointsRequiredToLevel(CurrentlyTrainingSkill.Level) / timeleft;
-                    if (spPerHour > 0)
+                    var spToTrain = (CurrentlyTrainingSkill.EndSP - CurrentlyTrainingSkill.StartSP);
+                    if (spToTrain > 0)
                     {
-                        var rate = (int)Math.Round(GetOmegaSPPerHour(CurrentlyTrainingSkill.Skill) / spPerHour, 0);
-                        switch (rate)
+                        var spPerHour = spToTrain / hoursToTrain;
+                        if (spPerHour > 0)
                         {
-                            case 1:
-                                statusType = AccountStatusType.Omega;
-                                break;
-                            case 2:
-                                statusType = AccountStatusType.Alpha;
-                                break;
-                            default:
-                                statusType = AccountStatusType.Unknown;
-                                break;
+                            var rate = (int)Math.Round(GetOmegaSPPerHour(CurrentlyTrainingSkill.Skill) / spPerHour, 0);
+                            switch (rate)
+                            {
+                                case 1:
+                                    statusType = AccountStatusType.Omega;
+                                    break;
+                                case 2:
+                                    statusType = AccountStatusType.Alpha;
+                                    break;
+                                default:
+                                    statusType = AccountStatusType.Unknown;
+                                    break;
+                            }
                         }
                     }
                 }
