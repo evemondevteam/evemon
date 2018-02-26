@@ -706,7 +706,11 @@ namespace EVEMon.LogitechG15
             int suffixIndex = 0;
             float newWidth;
 
-            do
+				if (width <= 0.0f) {
+					 return String.Empty;
+				}
+
+				do
             {
                 value /= 1000M;
                 suffixIndex++;
