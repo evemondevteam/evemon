@@ -16,8 +16,9 @@ namespace EVEMon.Common.Models
 
         #region Fields
 
-        private readonly int m_entityID;
+        private readonly long m_entityID;
         private readonly Character m_character;
+        private string m_entityName;
         private Image m_image;
 
         #endregion
@@ -35,7 +36,7 @@ namespace EVEMon.Common.Models
             m_character = character;
 
             m_entityID = src.ID;
-            EntityName = src.Name;
+            m_entityName = EveMonConstants.UnknownText;
             StandingValue = src.StandingValue;
             Group = src.Group;
         }
@@ -49,7 +50,8 @@ namespace EVEMon.Common.Models
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
-        public string EntityName { get; }
+        public string EntityName => m_entityName.IsEmptyOrUnknown() ?
+            (m_entityName = EveIDToName.GetIDToName(m_entityID)) : m_entityName;
 
         /// <summary>
         /// Gets or sets the standing value.

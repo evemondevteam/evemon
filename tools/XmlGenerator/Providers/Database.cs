@@ -353,7 +353,7 @@ namespace EVEMon.XmlGenerator.Providers
             DgmTypeEffectsTable = TypeEffects();
             Util.UpdateProgress(s_totalTablesCount);
 
-			// TODO - Find out what this used to be and find a way around it... Is it even useful?
+			// Find out what this used to be and find a way around it... Is it even useful?
 			//DgmTypeTraitsTable = TypeTraits();
             //Util.UpdateProgress(s_totalTablesCount);
 
@@ -362,7 +362,7 @@ namespace EVEMon.XmlGenerator.Providers
             EveUnitsTable = Units();
             Util.UpdateProgress(s_totalTablesCount);
             
-			// TODO - Find out what this used to be and find a way around it... Be interesting to see if BPs apepar in the new invItems table and their traits in invTraits
+			// Find out what this used to be and find a way around it... Be interesting to see if BPs apepar in the new invItems table and their traits in invTraits
 			//InvBlueprintTypesTable = BlueprintTypes();
             //Util.UpdateProgress(s_totalTablesCount);
 
@@ -397,7 +397,7 @@ namespace EVEMon.XmlGenerator.Providers
             MapSolarSystemsTable = SolarSystems();
             Util.UpdateProgress(s_totalTablesCount);
 
-			// TODO - Figure out what this used to be and what it became. Do we even need to worry about Industry right now?
+			// Figure out what this used to be and what it became. Do we even need to worry about Industry right now?
             //RamTypeRequirementsTable = TypeRequirements();
             //Util.UpdateProgress(s_totalTablesCount);
 

@@ -29,13 +29,14 @@ namespace EVEMon.Common.Models.Collections
         /// <param name="src"></param>
         internal void Import(IEnumerable<SerializableOrderBase> src)
         {
+            long id = m_character.CharacterID;
             Items.Clear();
             foreach (SerializableOrderBase srcOrder in src)
             {
                 if (srcOrder is SerializableBuyOrder)
-                    Items.Add(new BuyOrder(srcOrder) { OwnerID = m_character.CharacterID });
+                    Items.Add(new BuyOrder(srcOrder) { OwnerID = id });
                 else
-                    Items.Add(new SellOrder(srcOrder) { OwnerID = m_character.CharacterID });
+                    Items.Add(new SellOrder(srcOrder) { OwnerID = id });
             }
         }
 
@@ -45,46 +46,39 @@ namespace EVEMon.Common.Models.Collections
         /// <param name="src"></param>
         /// <param name="endedOrders"></param>
         /// <returns>The list of expired orders.</returns>
-        internal void Import(IEnumerable<SerializableOrderListItem> src, List<MarketOrder> endedOrders)
+        internal void Import(IEnumerable<SerializableOrderListItem> src,
+            ICollection<MarketOrder> endedOrders)
         {
+            var now = DateTime.UtcNow;
             // Mark all orders for deletion 
-            // If they are found again on the API feed, they won't be deleted
-            // and those set as ignored will be left as ignored
+            // If they are found again on the API feed, they will not be deleted and those set
+            // as ignored will be left as ignored
             foreach (MarketOrder order in Items)
-            {
                 order.MarkedForDeletion = true;
-            }
-
-            // Import the orders from the API
-            List<MarketOrder> newOrders = new List<MarketOrder>();
-            foreach (SerializableOrderListItem srcOrder in src.Select(
-                srcOrder => new
-                {
-                    srcOrder,
-                    limit = srcOrder.Issued.AddDays(srcOrder.Duration + MarketOrder.MaxExpirationDays)
-                }).Where(order => order.limit >= DateTime.UtcNow).Where(
-                    order => !Items.Any(x => x.TryImport(order.srcOrder, endedOrders))).Select(
-                        order => order.srcOrder))
+            var newOrders = new LinkedList<MarketOrder>();
+            foreach (SerializableOrderListItem srcOrder in src)
             {
-                // It's a new order, let's add it
-                if (srcOrder.IsBuyOrder != 0)
+                var limit = srcOrder.Issued.AddDays(srcOrder.Duration + MarketOrder.
+                    MaxExpirationDays);
+                if (limit >= now && !Items.Any(x => x.TryImport(srcOrder, endedOrders)))
                 {
-                    BuyOrder order = new BuyOrder(srcOrder);
-                    if (order.Item != null)
-                        newOrders.Add(order);
-                }
-                else
-                {
-                    SellOrder order = new SellOrder(srcOrder);
-                    if (order.Item != null)
-                        newOrders.Add(order);
+                    // New order
+                    if (srcOrder.IsBuyOrder != 0)
+                    {
+                        BuyOrder order = new BuyOrder(srcOrder);
+                        if (order.Item != null)
+                            newOrders.AddLast(order);
+                    }
+                    else
+                    {
+                        SellOrder order = new SellOrder(srcOrder);
+                        if (order.Item != null)
+                            newOrders.AddLast(order);
+                    }
                 }
             }
-
             // Add the items that are no longer marked for deletion
             newOrders.AddRange(Items.Where(x => !x.MarkedForDeletion));
-
-            // Replace the old list with the new one
             Items.Clear();
             Items.AddRange(newOrders);
         }
@@ -94,8 +88,8 @@ namespace EVEMon.Common.Models.Collections
         /// </summary>
         /// <returns></returns>
         /// <remarks>Used to export only the corporation orders issued by a character.</remarks>
-        internal IEnumerable<SerializableOrderBase> ExportOnlyIssuedByCharacter()
-            => Items.Where(order => order.OwnerID == m_character.CharacterID).Select(order => order.Export());
+        internal IEnumerable<SerializableOrderBase> ExportOnlyIssuedByCharacter() => Items.
+            Where(order => order.OwnerID == m_character.CharacterID).Select(order => order.Export());
 
         /// <summary>
         /// Exports the orders to a serialization object for the settings file.

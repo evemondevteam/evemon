@@ -2,17 +2,17 @@
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.XPath;
-using System.Xml.Xsl;
 using EVEMon.Common.Enumerations.CCPAPI;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Net;
+using System.Xml.Xsl;
 
 namespace EVEMon.Common.Serialization.Eve
 {
     [XmlRoot("eveapi")]
     public sealed class CCPAPIResult<T> : IAPIResult
     {
-        private readonly CCPAPIErrors m_error;
+        private readonly APIErrorType m_error;
         private readonly string m_errorMessage;
         private readonly Exception m_exception;
 
@@ -24,7 +24,7 @@ namespace EVEMon.Common.Serialization.Eve
         /// </summary>
         public CCPAPIResult()
         {
-            m_error = CCPAPIErrors.None;
+            m_error = APIErrorType.None;
             m_errorMessage = String.Empty;
             m_exception = null;
         }
@@ -49,7 +49,7 @@ namespace EVEMon.Common.Serialization.Eve
         public CCPAPIResult(HttpWebClientServiceException exception)
             : this(exception as Exception)
         {
-            m_error = CCPAPIErrors.Http;
+            m_error = APIErrorType.Http;
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace EVEMon.Common.Serialization.Eve
         public CCPAPIResult(XmlException exception)
             : this((Exception)exception)
         {
-            m_error = CCPAPIErrors.Xml;
+            m_error = APIErrorType.Xml;
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace EVEMon.Common.Serialization.Eve
         public CCPAPIResult(XsltException exception)
             : this(exception as Exception)
         {
-            m_error = CCPAPIErrors.Xslt;
+            m_error = APIErrorType.Xml;
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace EVEMon.Common.Serialization.Eve
         public CCPAPIResult(InvalidOperationException exception)
             : this(exception as Exception)
         {
-            m_error = CCPAPIErrors.Xml;
+            m_error = APIErrorType.Xml;
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace EVEMon.Common.Serialization.Eve
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="message">The message.</param>
-        public CCPAPIResult(CCPAPIErrors error, string message)
+        public CCPAPIResult(APIErrorType error, string message)
         {
             m_error = error;
             m_errorMessage = message;
@@ -107,7 +107,7 @@ namespace EVEMon.Common.Serialization.Eve
         /// <summary>
         /// Gets true if there is an error.
         /// </summary>
-        public bool HasError => CCPError != null || m_error != CCPAPIErrors.None || Result == null;
+        public bool HasError => CCPError != null || m_error != APIErrorType.None || Result == null;
 
         /// <summary>
         /// Gets true if EVE database is out of service.
@@ -119,21 +119,17 @@ namespace EVEMon.Common.Serialization.Eve
         {
             get
             {
-                if (CCPError != null && (CCPError.IsUnexpectedDatabaseFailure ||
-                                         CCPError.IsEVEBackendDatabaseDisabled ||
-                                         CCPError.IsWebSiteDatabaseDisabled))
+                if (CCPError != null && (CCPError.IsUnexpectedDatabaseFailure || CCPError.
+                    IsEVEBackendDatabaseDisabled || CCPError.IsWebSiteDatabaseDisabled))
                 {
                     if (EveMonClient.EVEDatabaseDisabled)
                         return true;
-
                     EveMonClient.Notifications.NotifyEVEDatabaseError(this);
                     EveMonClient.EVEDatabaseDisabled = true;
                     return true;
                 }
-
                 if (!EveMonClient.EVEDatabaseDisabled)
                     return false;
-
                 EveMonClient.Notifications.InvalidateAPIError();
                 EveMonClient.EVEDatabaseDisabled = false;
                 return false;
@@ -141,9 +137,9 @@ namespace EVEMon.Common.Serialization.Eve
         }
 
         /// <summary>
-        /// Gets the type of the error or <see cref="CCPAPIErrors.None"/> when there was no error.
+        /// Gets the type of the error or <see cref="APIErrorType.None"/> when there was no error.
         /// </summary>
-        public CCPAPIErrors ErrorType => CCPError != null ? CCPAPIErrors.CCP : m_error;
+        public APIErrorType ErrorType => CCPError != null ? APIErrorType.CCP : m_error;
 
         /// <summary>
         /// Gets the exception.
@@ -207,6 +203,9 @@ namespace EVEMon.Common.Serialization.Eve
 
         [XmlElement("result")]
         public T Result { get; set; }
+
+        [XmlIgnore]
+        public int ErrorCode => CCPError?.ErrorCode ?? 0;
 
         #endregion
 

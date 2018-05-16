@@ -6,7 +6,7 @@ namespace EVEMon.Common.Serialization.Eve
     public sealed class SerializableStandingsListItem
     {
         [XmlAttribute("fromID")]
-        public int ID { get; set; }
+        public long ID { get; set; }
 
         [XmlAttribute("fromName")]
         public string Name { get; set; }

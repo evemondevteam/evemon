@@ -3,12 +3,16 @@ using EVEMon.Common.Data;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Service;
+
 
 namespace EVEMon.Common.Models
 {
     public sealed class WalletTransaction
     {
         private readonly long m_stationID;
+        private readonly long m_clientID;
+        private string m_clientName;
 
 
         #region Constructor
@@ -28,7 +32,8 @@ namespace EVEMon.Common.Models
             ItemName = src.TypeName;
             Quantity = src.Quantity;
             Price = src.Price;
-            ClientName = src.ClientName;
+            m_clientID = src.ClientID;
+            m_clientName = EveIDToName.GetIDToName(m_clientID);
             TransactionType = src.TransactionType == "buy" ? TransactionType.Buy : TransactionType.Sell;
             TransactionFor = src.TransactionFor == "personal" ? IssuedFor.Character : IssuedFor.Corporation;
             m_stationID = src.StationID;
@@ -81,7 +86,8 @@ namespace EVEMon.Common.Models
         /// <value>
         /// The name of the client.
         /// </value>
-        public string ClientName { get; }
+        public string ClientName => m_clientName.IsEmptyOrUnknown() ?
+            (m_clientName = EveIDToName.GetIDToName(m_clientID)) : m_clientName;
 
         /// <summary>
         /// Gets the station.
@@ -128,18 +134,10 @@ namespace EVEMon.Common.Models
         /// </summary>
         public void UpdateStation()
         {
-            if (m_stationID > Int32.MaxValue)
-            {
-                // citadel
-                Station = new Station(ID);
-            }
-            else
-            {
-                // normal station
-                Station = Station.GetByID(m_stationID);
-            }
+            Station = EveIDToStation.GetIDToStation(m_stationID);
         }
 
         #endregion
+
     }
 }

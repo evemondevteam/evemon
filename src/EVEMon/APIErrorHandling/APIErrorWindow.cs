@@ -1,15 +1,16 @@
-﻿using System;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
-using EVEMon.Common;
+﻿using EVEMon.Common;
 using EVEMon.Common.Controls;
 using EVEMon.Common.CustomEventArgs;
+using EVEMon.Common.Enumerations.CCPAPI;
 using EVEMon.Common.Helpers;
 using EVEMon.Common.Net;
 using EVEMon.Common.Notifications;
 using EVEMon.Common.Serialization.Eve;
+using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 
 namespace EVEMon.ApiErrorHandling
 {
@@ -45,7 +46,7 @@ namespace EVEMon.ApiErrorHandling
 
                 m_notification = value;
                 ErrorLabel.Text = GetErrorLabelText(value);
-                DetailsTextBox.Text = GetXmlData(value.Result);
+                /* DetailsTextBox.Text = GetXmlData(value.Result) ;*/
                 DisplayTroubleshooter(value.Result.Exception);
             }
         }
@@ -151,39 +152,26 @@ namespace EVEMon.ApiErrorHandling
         {
             switch (result.ErrorType)
             {
-                case Common.Enumerations.CCPAPI.CCPAPIErrors.None:
+                case APIErrorType.None:
                     return "No error specified";
 
-                case Common.Enumerations.CCPAPI.CCPAPIErrors.CCP:
-                    return $"CCP Error {result.CCPError.ErrorCode} : {result.CCPError.ErrorMessage}";
+                case APIErrorType.CCP:
+                    return $"CCP Error: {result.ErrorMessage}";
 
-                case Common.Enumerations.CCPAPI.CCPAPIErrors.Http:
+                case APIErrorType.Http:
                     return $"HTTP error: {result.ErrorMessage}";
 
-                case Common.Enumerations.CCPAPI.CCPAPIErrors.Xml:
+                case APIErrorType.Xml:
                     return $"XML error: {result.ErrorMessage}";
 
-                case Common.Enumerations.CCPAPI.CCPAPIErrors.Xslt:
+                case APIErrorType.Json:
                     return $"XSLT error: {result.ErrorMessage}";
 
                 default:
                     throw new NotImplementedException();
             }
         }
-
-        /// <summary>
-        /// Gets the XML data from the result.
-        /// </summary>
-        /// <param name="result">The result.</param>
-        /// <returns></returns>
-        private static string GetXmlData(IAPIResult result)
-        {
-            if (result == null || result.XmlDocument == null)
-                return "There was no associated XML document.";
-
-            return Util.GetXmlStringRepresentation(result.XmlDocument);
-        }
-
+        
         /// <summary>
         /// On closing, disposes of the troubleshooter.
         /// </summary>
@@ -211,18 +199,12 @@ namespace EVEMon.ApiErrorHandling
             builder.AppendLine($"EVEMon {EveMonClient.FileVersionInfo.FileVersion}")
                 .AppendLine()
                 .AppendLine("API Error:")
-                .AppendLine(GetErrorLabelText(Notification))
-                .AppendLine()
-                .AppendLine(GetXmlData(Notification.Result));
+                .AppendLine(GetErrorLabelText(Notification));
 
             if (m_troubleshooter != null)
-            {
-                builder
-                    .AppendLine()
-                    .Append(m_troubleshooterUsed
-                        ? "A troubleshooter was displayed and used."
-                        : "A troubleshooter was displayed but not used.");
-            }
+                builder.AppendLine().Append(m_troubleshooterUsed
+                    ? "A troubleshooter was displayed and used."
+                    : "A troubleshooter was displayed but not used.");
 
             try
             {

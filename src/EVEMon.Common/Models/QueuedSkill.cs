@@ -19,7 +19,8 @@ namespace EVEMon.Common.Models
         /// <param name="isPaused">When true, the training is currently paused.</param>
         /// <param name="startTimeWhenPaused">Training starttime when the queue is actually paused.
         /// Indeed, in such case, CCP returns empty start and end time, so we compute a "what if we start now" scenario.</param>
-        internal QueuedSkill(Character character, SerializableQueuedSkill serial, bool isPaused, ref DateTime startTimeWhenPaused)
+        internal QueuedSkill(Character character, SerializableQueuedSkill serial,
+            bool isPaused, ref DateTime startTimeWhenPaused)
         {
             Owner = character;
             StartSP = serial.StartSP;
@@ -90,14 +91,9 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the fraction completed, between 0 and 1.
         /// </summary>
-        public float FractionCompleted
-            => Skill == null
-                ? 0
-                : Skill == Skill.UnknownSkill
-                    ? (float)
-                        (1 -
-                         EndTime.Subtract(DateTime.UtcNow).TotalMilliseconds / EndTime.Subtract(StartTime).TotalMilliseconds)
-                    : Skill.FractionCompleted;
+        public float FractionCompleted => Skill == null ? 0.0f : (Skill == Skill.UnknownSkill ?
+            (float)(1.0 - EndTime.Subtract(DateTime.UtcNow).TotalMilliseconds /
+            EndTime.Subtract(StartTime).TotalMilliseconds) : Skill.FractionCompleted);
 
         /// <summary>
         /// Computes an estimation of the current SP.
@@ -106,7 +102,8 @@ namespace EVEMon.Common.Models
         {
             get
             {
-                int estimatedSP = (int)(EndSP - EndTime.Subtract(DateTime.UtcNow).TotalHours * SkillPointsPerHour);
+                int estimatedSP = (int)(EndSP - EndTime.Subtract(DateTime.UtcNow).TotalHours *
+                    SkillPointsPerHour);
                 return IsTraining ? Math.Max(estimatedSP, StartSP) : StartSP;
             }
         }
@@ -135,7 +132,7 @@ namespace EVEMon.Common.Models
                     case 3:
                         return EndSP / 8000;
                     case 4:
-                        return EndSP / Convert.ToInt32(Math.Ceiling(Math.Pow(2, 2.5 * Level - 2.5) * 250));
+                        return EndSP / 45255;
                     case 5:
                         return EndSP / 256000;
                 }
@@ -147,9 +144,9 @@ namespace EVEMon.Common.Models
         /// Gets the training speed.
         /// </summary>
         /// <returns></returns>
-        public double SkillPointsPerHour => Skill == Skill.UnknownSkill
-            ? Math.Ceiling((EndSP - StartSP) / EndTime.Subtract(StartTime).TotalHours)
-            : Skill.SkillPointsPerHour;
+        public double SkillPointsPerHour => (Skill == Skill.UnknownSkill) ?
+            Math.Ceiling((EndSP - StartSP) / EndTime.Subtract(StartTime).TotalHours) :
+            Skill.SkillPointsPerHour;
 
         /// <summary>
         /// Computes the remaining time.
@@ -176,8 +173,8 @@ namespace EVEMon.Common.Models
             get
             {
                 var ccpCharacter = Owner as CCPCharacter;
-                return Skill.IsTraining ||
-                       (ccpCharacter != null && ccpCharacter.SkillQueue.IsTraining && ccpCharacter.SkillQueue.First() == this);
+                return Skill.IsTraining || (ccpCharacter != null && ccpCharacter.SkillQueue.
+                    IsTraining && ccpCharacter.SkillQueue.First() == this);
             }
         }
 

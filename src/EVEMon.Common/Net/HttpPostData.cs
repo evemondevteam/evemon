@@ -11,15 +11,24 @@ namespace EVEMon.Common.Net
     /// </summary>
     public sealed class HttpPostData
     {
+        /// <summary>
+        /// The content type used if none is specified. Defaults to
+        /// "application/x-www-form-urlencoded".
+        /// </summary>
+        public const string DEFAULT_CONTENT_TYPE = "application/x-www-form-urlencoded";
+
         private readonly string m_data;
+        private readonly DataCompression m_compression;
         private readonly IEnumerable<byte> m_content;
+        private readonly string m_contentType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpPostData"/> class.
         /// </summary>
         /// <param name="data">The data.</param>
         /// <param name="dataCompression">The compression.</param>
-        public HttpPostData(string data, DataCompression dataCompression = DataCompression.None)
+        public HttpPostData(string data, DataCompression dataCompression = DataCompression.None,
+            string contentType = DEFAULT_CONTENT_TYPE)
         {
             m_data = data;
 
@@ -38,12 +47,25 @@ namespace EVEMon.Common.Net
                 default:
                     throw new NotImplementedException();
             }
+
+            m_compression = dataCompression;
+            m_contentType = contentType ?? DEFAULT_CONTENT_TYPE;
         }
 
         /// <summary>
         /// Gets the content's bytes.
         /// </summary>
         public IEnumerable<byte> Content => m_content;
+
+        /// <summary>
+        /// Gets the MIME content type.
+        /// </summary>
+        public string ContentType => m_contentType;
+
+        /// <summary>
+        /// Gets the compression tpye used.
+        /// </summary>
+        public DataCompression Compression => m_compression;
 
         /// <summary>
         /// Gets the number of bytes of the content.

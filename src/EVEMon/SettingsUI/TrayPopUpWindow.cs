@@ -113,7 +113,7 @@ namespace EVEMon.SettingsUI
                     case TrayPopupGrouping.None:
                         return charactersList;
                     case TrayPopupGrouping.Account:
-                        newCharacters.AddRange(charactersList.Where(x => x.Identity.APIKeys.Any()));
+                        newCharacters.AddRange(charactersList.Where(x => x.Identity.ESIKeys.Any()));
                         return newCharacters.GroupBy(AccountAPIKeyOrDefault).SelectMany(y => y);
                     case TrayPopupGrouping.TrainingAtTop:
                         newCharacters.AddRange(charactersList.Where(x => x.IsTraining));
@@ -134,9 +134,9 @@ namespace EVEMon.SettingsUI
         /// </summary>
         /// <param name="character">The character.</param>
         /// <returns>The API key for characters in the same account; otherwise the default API key of the character</returns>
-        private static APIKey AccountAPIKeyOrDefault(Character character) => character.Identity.APIKeys
+        private static ESIKey AccountAPIKeyOrDefault(Character character) => character.Identity.ESIKeys
             .First(apiKey => EveMonClient.MonitoredCharacters
-                .Any(monitoredCharacter => monitoredCharacter.Identity.APIKeys.Contains(apiKey)));
+                .Any(monitoredCharacter => monitoredCharacter.Identity.ESIKeys.Contains(apiKey)));
 
         /// <summary>
         /// Performs the custom layout.
@@ -157,11 +157,11 @@ namespace EVEMon.SettingsUI
             if (Settings.UI.SystemTrayPopup.GroupBy == TrayPopupGrouping.Account &&
                 Settings.UI.SystemTrayPopup.IndentGroupedAccounts)
             {
-                List<APIKey> prevAPIKeys = new List<APIKey>();
+                List<ESIKey> prevAPIKeys = new List<ESIKey>();
                 foreach (Character character in characters)
                 {
                     OverviewItem charPanel = GetOverviewItem(character);
-                    List<APIKey> apiKeys = character.Identity.APIKeys.ToList();
+                    List<ESIKey> apiKeys = character.Identity.ESIKeys.ToList();
 
                     if (!apiKeys.Exists(apiKey => prevAPIKeys.Contains(apiKey)))
                     {
@@ -234,13 +234,16 @@ namespace EVEMon.SettingsUI
         private void PerformSupplementalControlsLayout()
         {
             // Skip if the user do not want to be warned about accounts not in training
+            // No longer possible to determine since ESI keys are for only one character
+#if false
             string warningMessage;
-            if (Settings.UI.SystemTrayPopup.ShowWarning && APIKey.HasCharactersNotTraining(out warningMessage))
+            if (Settings.UI.SystemTrayPopup.ShowWarning && ESIKey.HasCharactersNotTraining(out warningMessage))
             {
                 FlowLayoutPanel warningPanel = CreateAccountsNotTrainingPanel(warningMessage);
                 if (!MainFlowLayoutPanel.IsDisposed)
                     MainFlowLayoutPanel.Controls.Add(warningPanel);
             }
+#endif
 
             // Server Status
             if (Settings.UI.SystemTrayPopup.ShowServerStatus)
@@ -265,6 +268,7 @@ namespace EVEMon.SettingsUI
             }
         }
 
+#if false
         /// <summary>
         /// Creates a panel contains the warning message for accounts not in training.
         /// </summary>
@@ -342,6 +346,7 @@ namespace EVEMon.SettingsUI
 
             return warningPanel;
         }
+#endif
 
         /// <summary>
         /// Completes the layout after new controls have been added.

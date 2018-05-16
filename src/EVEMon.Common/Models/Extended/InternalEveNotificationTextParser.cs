@@ -27,113 +27,111 @@ namespace EVEMon.Common.Models.Extended
         public override void Parse(EveNotification notification, KeyValuePair<YamlNode, YamlNode> pair,
             IDictionary<string, string> parsedDict)
         {
-            switch (pair.Key.ToString().ToUpperInvariant())
+            string key = pair.Key.ToString(), value = pair.Value.ToString();
+            switch (key.ToUpperInvariant())
             {
-                case "CHARID":
-                case "SENDERCHARID":
-                case "RECEIVERCHARID":
-                case "OWNERID":
-                case "LOCATIONOWNERID":
-                case "DESTROYERID":
-                case "INVOKINGCHARID":
-                case "CORPID":
-                case "PODKILLERID":
-                case "NEWCEOID":
-                case "OLDCEOID":
-                {
-                    parsedDict[pair.Key.ToString()] = EveIDToName.GetIDToName(pair.Value.ToString());
-                    break;
-                }
-                case "CLONESTATIONID":
-                case "CORPSTATIONID":
-                case "LOCATIONID":
-                {
-                    parsedDict[pair.Key.ToString()] = Station.GetByID(int.Parse(pair.Value.ToString())).Name;
-                    break;
-                }
-                case "SHIPTYPEID":
-                case "TYPEID":
-                {
-                    parsedDict[pair.Key.ToString()] = StaticItems.GetItemByID(int.Parse(pair.Value.ToString())).Name;
-                    break;
-                }
-                case "MEDALID":
-                {
-                    var medal = notification.CCPCharacter.CharacterMedals
-                        .FirstOrDefault(x => x.ID.ToString() == pair.Value.ToString());
+            case "CHARID":
+            case "SENDERCHARID":
+            case "RECEIVERCHARID":
+            case "OWNERID":
+            case "LOCATIONOWNERID":
+            case "DESTROYERID":
+            case "INVOKINGCHARID":
+            case "PODKILLERID":
+            case "NEWCEOID":
+            case "OLDCEOID":
+            case "CORPID":
+            case "VICTIMID":
+            case "DECLAREDBYID":
+            case "AGAINSTID":
+                parsedDict[key] = EveIDToName.GetIDToName(long.Parse(value));
+                break;
+            case "CLONESTATIONID":
+            case "CORPSTATIONID":
+            case "LOCATIONID":
+                parsedDict[key] = EveIDToStation.GetIDToStation(long.Parse(value))?.Name ??
+                    EveMonConstants.UnknownText;
+                break;
+            case "SOLARSYSTEMID":
+                parsedDict[key] = StaticGeography.GetSolarSystemName(int.Parse(value));
+                break;
+            case "SHIPTYPEID":
+            case "TYPEID":
+            case "STRUCTURETYPEID":
+            case "VICTIMSHIPTYPEID":
+                parsedDict[key] = StaticItems.GetItemName(int.Parse(value));
+                break;
+            case "MEDALID":
+                var medal = notification.CCPCharacter.CharacterMedals.FirstOrDefault(x =>
+                    (x.ID.ToString() == value));
 
-                    parsedDict[pair.Key.ToString()] = medal == null
-                        ? EveMonConstants.UnknownText
-                        : medal.Title ?? EveMonConstants.UnknownText;
-                    parsedDict.Add("medalDescription", medal == null
-                        ? EveMonConstants.UnknownText
-                        : medal.Description ?? EveMonConstants.UnknownText);
+                parsedDict[key] = medal?.Title ?? EveMonConstants.UnknownText;
+                parsedDict.Add("medalDescription", medal?.Description ??
+                    EveMonConstants.UnknownText);
+                break;
+            case "ENDDATE":
+            case "STARTDATE":
+            case "DECLOAKTIME":
+                parsedDict[key] = string.Format(CultureConstants.InvariantCulture,
+                    "{0:dddd, MMMM d, yyyy HH:mm} (EVE Time)", long.Parse(value).
+                    WinTimeStampToDateTime());
+                break;
+            case "NOTIFICATION_CREATED":
+                parsedDict[key] = string.Format(CultureConstants.InvariantCulture,
+                    "{0:dddd, MMMM d, yyyy} (EVE Time)", long.Parse(value).
+                    WinTimeStampToDateTime());
+                break;
+            case "CAMPAIGNEVENTTYPE":
+                switch (value)
+                {
+                case "1":
+                    parsedDict[key] = "Territorial Claim Unit";
+                    break;
+                case "2":
+                    parsedDict[key] = "Infrastructure Hub";
+                    break;
+                case "3":
+                    parsedDict[key] = "Station";
+                    break;
+                default:
+                    parsedDict[key] = EveMonConstants.UnknownText;
                     break;
                 }
-                case "ENDDATE":
-                case "STARTDATE":
-                {
-                    parsedDict[pair.Key.ToString()] = string.Format(CultureConstants.InvariantCulture,
-                        "{0:dddd, MMMM d, yyyy HH:mm} (EVE Time)", long.Parse(pair.Value.ToString())
-                            .WinTimeStampToDateTime());
+                break;
+            case "TYPEIDS":
+                YamlSequenceNode typeIDs = pair.Value as YamlSequenceNode;
+                if (typeIDs == null)
                     break;
-                }
-                case "NOTIFICATION_CREATED":
+                switch (notification.TypeID)
                 {
-                    parsedDict[pair.Key.ToString()] = string.Format(CultureConstants.InvariantCulture,
-                        "{0:dddd, MMMM d, yyyy} (EVE Time)", long.Parse(pair.Value.ToString())
-                            .WinTimeStampToDateTime());
-                    break;
-                }
-                case "TYPEIDS":
-                {
-                    YamlSequenceNode typeIDs = pair.Value as YamlSequenceNode;
-
-                    if (typeIDs == null)
-                        break;
-
-                    switch (notification.TypeID)
+                    case 56:
+                    case 57:
                     {
-                        case 56:
-                        case 57:
+                        if (!typeIDs.Any())
+                            parsedDict[key] = "None were in the clone";
+                        else
                         {
-                            if (!typeIDs.Any())
-                                parsedDict[pair.Key.ToString()] = "None were in the clone";
-                            else
+                            StringBuilder sb = new StringBuilder();
+                            foreach (var typeID in typeIDs)
                             {
-                                StringBuilder sb = new StringBuilder();
-                                foreach (var typeID in typeIDs)
-                                {
-                                    sb
-                                        .AppendLine()
-                                        .AppendLine($"Type: {StaticItems.GetItemByID(int.Parse(typeID.ToString())).Name}");
-                                }
-                                parsedDict[pair.Key.ToString()] = sb.ToString();
+                                int type = 0;
+                                int.TryParse(typeID.ToString(), out type);
+                                sb.AppendLine().AppendLine($"Type: {StaticItems.GetItemName(type)}");
                             }
+                            parsedDict[key] = sb.ToString();
                         }
-                            break;
                     }
-                    break;
-                }
-                case "ISHOUSEWARMINGGIFT":
-                {
-                    if (!Convert.ToBoolean(pair.Value))
                         break;
-
-                    switch (notification.TypeID)
-                    {
-                        case 34:
-                            // Tritanium
-                            parsedDict[pair.Key.ToString()] = StaticItems.GetItemByID(34).Name;
-                            break;
-                    }
-                    break;
                 }
-                case "LEVEL":
-                {
-                    parsedDict[pair.Key.ToString()] = $"{Standing.Status(double.Parse(pair.Value.ToString()))} Standing";
-                    break;
-                }
+                break;
+            case "ISHOUSEWARMINGGIFT":
+                if (Convert.ToBoolean(pair.Value) && notification.TypeID == 34)
+                    // Tritanium
+                    parsedDict[key] = StaticItems.GetItemName(notification.TypeID);
+                break;
+            case "LEVEL":
+                parsedDict[key] = $"{Standing.Status(double.Parse(value))} Standing";
+                break;
             }
         }
     }

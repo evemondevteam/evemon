@@ -178,6 +178,7 @@ namespace EVEMon.CharacterMonitoring
             EveMonClient.TimerTick += EveMonClient_TimerTick;
             EveMonClient.ConquerableStationListUpdated += EveMonClient_ConquerableStationListUpdated;
             EveMonClient.CharacterWalletTransactionsUpdated += EveMonClient_CharacterWalletTransactionsUpdated;
+            EveMonClient.EveIDToNameUpdated += EveMonClient_EveIDToNameUpdated;
             Disposed += OnDisposed;
         }
 
@@ -191,6 +192,7 @@ namespace EVEMon.CharacterMonitoring
             EveMonClient.TimerTick -= EveMonClient_TimerTick;
             EveMonClient.ConquerableStationListUpdated -= EveMonClient_ConquerableStationListUpdated;
             EveMonClient.CharacterWalletTransactionsUpdated -= EveMonClient_CharacterWalletTransactionsUpdated;
+            EveMonClient.EveIDToNameUpdated -= EveMonClient_EveIDToNameUpdated;
             Disposed -= OnDisposed;
         }
 
@@ -553,7 +555,6 @@ namespace EVEMon.CharacterMonitoring
                                       WalletTransactionColumn column)
         {
             bool numberFormat = Settings.UI.MainWindow.WalletTransactions.NumberAbsFormat;
-            ConquerableStation outpost = walletTransaction.Station as ConquerableStation;
 
             switch (column)
             {
@@ -583,9 +584,7 @@ namespace EVEMon.CharacterMonitoring
                     item.Text = walletTransaction.ClientName;
                     break;
                 case WalletTransactionColumn.Location:
-                    item.Text = outpost != null
-                        ? outpost.FullLocation
-                        : walletTransaction.Station.FullLocation;
+                    item.Text = walletTransaction.Station.FullLocation;
                     break;
                 case WalletTransactionColumn.Region:
                     item.Text = walletTransaction.Station.SolarSystem.Constellation.Region.Name;
@@ -595,9 +594,7 @@ namespace EVEMon.CharacterMonitoring
                     item.ForeColor = walletTransaction.Station.SolarSystem.SecurityLevelColor;
                     break;
                 case WalletTransactionColumn.Station:
-                    item.Text = outpost != null
-                        ? outpost.FullName
-                        : walletTransaction.Station.Name;
+                    item.Text = walletTransaction.Station.Name;
                     break;
                 case WalletTransactionColumn.TransactionFor:
                     item.Text = walletTransaction.TransactionFor.ToString();
@@ -772,6 +769,16 @@ namespace EVEMon.CharacterMonitoring
                 walletTransaction.UpdateStation();
             }
 
+            UpdateColumns();
+        }
+
+        /// <summary>
+        /// When EVE ID to name updates, update the list.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        private void EveMonClient_EveIDToNameUpdated(object sender, EventArgs e)
+        {
             UpdateColumns();
         }
 

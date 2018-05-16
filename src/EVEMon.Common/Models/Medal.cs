@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using EVEMon.Common.Constants;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Serialization.Eve;
 using EVEMon.Common.Service;
+using EVEMon.Common.Extensions;
 
 namespace EVEMon.Common.Models
 {
@@ -102,16 +102,14 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the issuer.
         /// </summary>
-        public string Issuer => m_issuer == EveMonConstants.UnknownText
-            ? m_issuer = EveIDToName.GetIDToName(IssuerID)
-            : m_issuer;
+        public string Issuer => m_issuer.IsEmptyOrUnknown() ? (m_issuer =
+            EveIDToName.GetIDToName(IssuerID)) : m_issuer;
 
         /// <summary>
         /// Gets the corporation name.
         /// </summary>
-        public string CorporationName => m_corporationName == EveMonConstants.UnknownText
-            ? m_corporationName = EveIDToName.GetIDToName(IssuerID)
-            : m_corporationName;
+        public string CorporationName => m_corporationName.IsEmptyOrUnknown() ?
+            (m_corporationName = EveIDToName.GetIDToName(IssuerID)) : m_corporationName;
 
         #endregion
 

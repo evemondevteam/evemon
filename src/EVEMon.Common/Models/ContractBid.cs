@@ -1,5 +1,4 @@
 using System;
-using EVEMon.Common.Constants;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Serialization.Eve;
 using EVEMon.Common.Serialization.Settings;
@@ -66,9 +65,8 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the bidder.
         /// </summary>
-        public string Bidder => m_bidder == EveMonConstants.UnknownText
-            ? m_bidder = EveIDToName.GetIDToName(m_bidderId)
-            : m_bidder;
+        public string Bidder => m_bidder.IsEmptyOrUnknown() ? (m_bidder = EveIDToName.
+            GetIDToName(m_bidderId)) : m_bidder;
 
         /// <summary>
         /// Gets the bid date.

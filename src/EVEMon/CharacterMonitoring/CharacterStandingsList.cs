@@ -82,6 +82,7 @@ namespace EVEMon.CharacterMonitoring
 
             EveMonClient.CharacterStandingsUpdated += EveMonClient_CharacterStandingsUpdated;
             EveMonClient.SettingsChanged += EveMonClient_SettingsChanged;
+            EveMonClient.EveIDToNameUpdated += EveMonClient_EveIDToNameUpdated;
             Disposed += OnDisposed;
         }
 
@@ -94,6 +95,7 @@ namespace EVEMon.CharacterMonitoring
         {
             EveMonClient.CharacterStandingsUpdated -= EveMonClient_CharacterStandingsUpdated;
             EveMonClient.SettingsChanged -= EveMonClient_SettingsChanged;
+            EveMonClient.EveIDToNameUpdated -= EveMonClient_EveIDToNameUpdated;
             Disposed -= OnDisposed;
         }
 
@@ -554,6 +556,16 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void EveMonClient_SettingsChanged(object sender, EventArgs e)
+        {
+            UpdateContent();
+        }
+
+        /// <summary>
+        /// When the EVE ID to name changes we update the content.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        private void EveMonClient_EveIDToNameUpdated(object sender, EventArgs e)
         {
             UpdateContent();
         }

@@ -154,6 +154,7 @@ namespace EVEMon.CharacterMonitoring
 
             EveMonClient.CharacterKillLogUpdated += EveMonClient_CharacterKillLogUpdated;
             EveMonClient.SettingsChanged += EveMonClient_SettingsChanged;
+            EveMonClient.EveIDToNameUpdated += EveMonClient_EveIDToNameUpdated;
             Disposed += OnDisposed;
         }
 
@@ -166,6 +167,7 @@ namespace EVEMon.CharacterMonitoring
         {
             EveMonClient.CharacterKillLogUpdated -= EveMonClient_CharacterKillLogUpdated;
             EveMonClient.SettingsChanged -= EveMonClient_SettingsChanged;
+            EveMonClient.EveIDToNameUpdated -= EveMonClient_EveIDToNameUpdated;
             Disposed -= OnDisposed;
         }
 
@@ -228,7 +230,8 @@ namespace EVEMon.CharacterMonitoring
             lbKillLog.BeginUpdate();
             try
             {
-                IEnumerable<KillLog> kills = Character.KillLog;
+                var kills = new List<KillLog>(Character.KillLog);
+                kills.Sort();
                 IEnumerable<IGrouping<KillGroup, KillLog>> groups = kills.GroupBy(x => x.Group).OrderBy(x => (int)x.Key);
 
                 // Scroll through groups
@@ -246,6 +249,7 @@ namespace EVEMon.CharacterMonitoring
                     foreach (KillLog kill in group)
                     {
                         kill.KillLogVictimShipImageUpdated += kill_KillLogVictimShipImageUpdated;
+                        kill.UpdateCharacterNames();
                         lbKillLog.Items.Add(kill);
                     }
                 }
@@ -303,37 +307,35 @@ namespace EVEMon.CharacterMonitoring
             int scrollBarPosition = lvKillLog.GetVerticalScrollBarPosition();
 
             // Store the selected item (if any) to restore it after the update
-            int selectedItem = lvKillLog.SelectedItems.Count > 0
-                ? lvKillLog.SelectedItems[0].Tag.GetHashCode()
-                : 0;
+            int selectedItem = lvKillLog.SelectedItems.Count > 0 ?
+                lvKillLog.SelectedItems[0].Tag.GetHashCode() : 0;
 
             lvKillLog.BeginUpdate();
             try
             {
-                IEnumerable<KillLog> killlog = Character.KillLog.Where(x => IsTextMatching(x, m_textFilter));
+                IEnumerable<KillLog> killLog = Character.KillLog.Where(x => IsTextMatching(x, m_textFilter));
 
                 UpdateSort();
 
                 lvKillLog.Items.Clear();
                 lvKillLog.Groups.Clear();
 
-                foreach (IGrouping<KillGroup, KillLog> group in killlog.GroupBy(x => x.Group).OrderBy(x => x.Key))
+                foreach (IGrouping<KillGroup, KillLog> group in killLog.GroupBy(x => x.Group).OrderBy(x => x.Key))
                 {
                     string groupText = $"{group.Key} ({group.Count()})";
                     ListViewGroup listGroup = new ListViewGroup(groupText);
                     lvKillLog.Groups.Add(listGroup);
 
                     // Add the items
-                    lvKillLog.Items.AddRange(
-                        group.Select(kill => new
+                    lvKillLog.Items.AddRange(group.Select(kill => new
+                    {
+                        kill,
+                        item = new ListViewItem(kill.KillTime.ToLocalTime().ToString(CultureConstants.DefaultCulture), listGroup)
                         {
-                            kill,
-                            item = new ListViewItem(kill.KillTime.ToLocalTime().ToString(CultureConstants.DefaultCulture), listGroup)
-                            {
-                                UseItemStyleForSubItems = false,
-                                Tag = kill
-                            }
-                        }).Select(x => CreateSubItems(x.kill, x.item)).ToArray());
+                            UseItemStyleForSubItems = false,
+                            Tag = kill
+                        }
+                    }).Select(x => CreateSubItems(x.kill, x.item)).ToArray());
                 }
 
                 // Restore the selected item (if any)
@@ -368,6 +370,8 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="item">The item.</param>
         private ListViewItem CreateSubItems(KillLog kill, ListViewItem item)
         {
+            kill.UpdateCharacterNames();
+
             // Add enough subitems to match the number of columns
             while (item.SubItems.Count < lvKillLog.Columns.Count + 1)
             {
@@ -1041,8 +1045,7 @@ namespace EVEMon.CharacterMonitoring
         /// <returns>
         /// 	<c>true</c> if [is text matching] [the specified x]; otherwise, <c>false</c>.
         /// </returns>
-        private static bool IsTextMatching(KillLog x, string text)
-            => String.IsNullOrEmpty(text) ||
+        private static bool IsTextMatching(KillLog x, string text) => string.IsNullOrEmpty(text) ||
                x.Victim.ShipTypeName.ToUpperInvariant().Contains(text, ignoreCase: true) ||
                x.Victim.Name.ToUpperInvariant().Contains(text, ignoreCase: true) ||
                x.Victim.CorporationName.ToUpperInvariant().Contains(text, ignoreCase: true) ||
@@ -1060,7 +1063,7 @@ namespace EVEMon.CharacterMonitoring
             StringBuilder sb = new StringBuilder();
             sb.Append(text1);
 
-            if (!String.IsNullOrEmpty(text2) && text2 != EveMonConstants.UnknownText)
+            if (!text2.IsEmptyOrUnknown())
                 sb.Append($" / {text2}");
 
             return sb.ToString();
@@ -1161,6 +1164,16 @@ namespace EVEMon.CharacterMonitoring
             if (e.Character != Character)
                 return;
 
+            UpdateKillLogView();
+        }
+
+        /// <summary>
+        /// When the ID to name conversion updates, we refresh the content.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        private void EveMonClient_EveIDToNameUpdated(object sender, EventArgs e)
+        {
             UpdateKillLogView();
         }
 

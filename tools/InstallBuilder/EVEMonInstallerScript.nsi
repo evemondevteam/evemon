@@ -93,7 +93,8 @@ Function .onInit
 	IfFileExists "$INSTDIR\EVEMon.exe" 0 done
 
     MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
-    "Setup detected that another version of EVEMon is already installed. $\n$\n\
+    "Setup detected that another version of EVEMon is already installed.$\n\
+	Note that settings must be reset if upgrading from any EVEMon version before 4.0.$\n$\n\
 	Click `OK` to remove the existing version or `Cancel` to cancel this installation." \
     IDOK uninstall
 	Abort

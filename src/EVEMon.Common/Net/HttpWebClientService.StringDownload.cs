@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using EVEMon.Common.Enumerations;
+using EVEMon.Common.Extensions;
 
 namespace EVEMon.Common.Net
 {
@@ -19,7 +20,7 @@ namespace EVEMon.Common.Net
         /// <param name="postdata">The post data.</param>
         /// <param name="dataCompression">The post data compression method.</param>
         /// <returns></returns>
-        public static DownloadResult<String> DownloadString(Uri url, HttpMethod method = null, bool acceptEncoded = false,
+        public static DownloadResult<string> DownloadString(Uri url, HttpMethod method = null, bool acceptEncoded = false,
             string postdata = null, DataCompression dataCompression = DataCompression.None)
             => DownloadStringAsync(url, method, acceptEncoded, postdata, dataCompression).Result;
         
@@ -31,29 +32,34 @@ namespace EVEMon.Common.Net
         /// <param name="acceptEncoded">if set to <c>true</c> accept encoded response.</param>
         /// <param name="postdata">The post data.</param>
         /// <param name="dataCompression">The post data compression method.</param>
-        public static async Task<DownloadResult<String>> DownloadStringAsync(Uri url, HttpMethod method = null, bool acceptEncoded = false,
-            string postdata = null, DataCompression dataCompression = DataCompression.None)
+        /// <param name="token">The ESI token, or null if none is used.</param>
+        public static async Task<DownloadResult<string>> DownloadStringAsync(Uri url,
+            HttpMethod method = null, bool acceptEncoded = false, string postdata = null,
+            DataCompression dataCompression = DataCompression.None, string token = null)
         {
             string urlValidationError;
             if (!IsValidURL(url, out urlValidationError))
                 throw new ArgumentException(urlValidationError);
 
-            HttpPostData postData = String.IsNullOrWhiteSpace(postdata) ? null : new HttpPostData(postdata, dataCompression);
+            HttpPostData postData = string.IsNullOrWhiteSpace(postdata) ? null : new HttpPostData(postdata, dataCompression);
             HttpClientServiceRequest request = new HttpClientServiceRequest();
+            request.AuthToken = token;
+            request.AcceptEncoded = acceptEncoded;
+            request.DataCompression = dataCompression;
             try
             {
-                HttpResponseMessage response =
-                    await request.SendAsync(url, method, postData, dataCompression, acceptEncoded, StringAccept).ConfigureAwait(false);
+                HttpResponseMessage response = await request.SendAsync(url, method, postData,
+                    StringAccept).ConfigureAwait(false);
 
                 using (response)
                 {
                     Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                    return GetString(request.BaseUrl, stream);
+                    return GetString(request.BaseUrl, stream, response);
                 }
             }
             catch (HttpWebClientServiceException ex)
             {
-                return new DownloadResult<String>(String.Empty, ex);
+                return new DownloadResult<string>(string.Empty, ex);
             }
         }
 
@@ -62,16 +68,19 @@ namespace EVEMon.Common.Net
         /// </summary>
         /// <param name="requestBaseUrl">The request base URL.</param>
         /// <param name="stream">The stream.</param>
-        /// <returns></returns>
-        private static DownloadResult<String> GetString(Uri requestBaseUrl, Stream stream)
+        /// <param name="response">The response from the server.</param>
+        private static DownloadResult<string> GetString(Uri requestBaseUrl, Stream stream,
+            HttpResponseMessage response)
         {
-            String text = String.Empty;
+            string text = string.Empty;
             HttpWebClientServiceException error = null;
+            int responseCode = (int)response.StatusCode;
+            DateTime serverTime = response.Headers.ServerTimeUTC();
 
             if (stream == null)
             {
                 error = HttpWebClientServiceException.Exception(requestBaseUrl, new ArgumentNullException(nameof(stream)));
-                return new DownloadResult<String>(text, error);
+                return new DownloadResult<string>(text, error, responseCode, serverTime);
             }
 
             try
@@ -84,7 +93,7 @@ namespace EVEMon.Common.Net
                 error = HttpWebClientServiceException.Exception(requestBaseUrl, ex);
             }
 
-            return new DownloadResult<String>(text, error);
+            return new DownloadResult<string>(text, error, responseCode, serverTime);
         }
     }
 }

@@ -108,8 +108,8 @@
       <HintPath>..\..\packages\NetOffice.Core.Net40.1.7.3.0\lib\net40\NetOffice.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="OfficeApi, Version=1.7.3.0, Culture=neutral, PublicKeyToken=a39beb0835c43c8e, processorArchitecture=MSIL">
@@ -160,11 +160,20 @@
     </Compile>
     <Compile Include="AsyncPump.cs" />
     <Compile Include="CloudStorageServices\AuthenticationSteps.cs" />
+    <Compile Include="Collections\Global\GlobalAPIProviderCollection.cs" />
+    <Compile Include="Constants\NetworkConstants1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NetworkConstants.resx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CustomCursors.cs" />
-    <Compile Include="Entities\Dockable.cs" />
-    <Compile Include="Entities\ServerStatus.cs" />
+    <Compile Include="Data\Faction.cs" />
     <Compile Include="Enumerations\AttributeOptimizationStrategy.cs" />
     <Compile Include="Enumerations\BlinkAction.cs" />
+    <Compile Include="Enumerations\CCPAPI\CCPAPIContactType.cs" />
+    <Compile Include="Enumerations\CCPAPI\ESIAPIGenericMethods.cs" />
+    <Compile Include="Enumerations\CCPAPI\CCPAPILocationType.cs" />
+    <Compile Include="Enumerations\CCPAPI\CCPAPIPlanetTypes.cs" />
     <Compile Include="Enumerations\UISettings\AssetGrouping.cs" />
     <Compile Include="Enumerations\UISettings\CacheStyle.cs" />
     <Compile Include="Enumerations\UISettings\CalendarProvider.cs" />
@@ -197,6 +206,112 @@
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Helpers\TaskHelper.cs" />
     <Compile Include="Models\AccountStatus.cs" />
+    <Compile Include="Models\ESIMethod.cs" />
+    <Compile Include="Models\Extended\ESIMethods.cs" />
+    <Compile Include="Net\HttpWebClientService.StringDownload.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIContactsList.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIMedals.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIPlanet.cs" />
+    <Compile Include="Serialization\Eve\SerializableLocation.cs" />
+    <Compile Include="Serialization\Hammertime\HammertimeStructure.cs" />
+    <Compile Include="Serialization\JsonResult.cs" />
+    <Compile Include="Serialization\Esi\EsiResult.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIError.cs" />
+    <Compile Include="Serialization\Esi\EsiAPITokenInfo.cs" />
+    <Compile Include="Serialization\Esi\EsiAccountBalanceListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiAllianceHistoryListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiAllianceInfo.cs" />
+    <Compile Include="Serialization\Esi\EsiAPICorpAccountBalance.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIAllianceHistory.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIAssetList.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIAttributes.cs" />
+    <Compile Include="Serialization\Esi\EsiAPICalendarEvent.cs" />
+    <Compile Include="Serialization\Esi\EsiAPICalendarEventAttendees.cs" />
+    <Compile Include="Serialization\Esi\EsiAPICalendarEvents.cs" />
+    <Compile Include="Serialization\Esi\EsiAPICharacterNames.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIClones.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIContactNotifications.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIContractBids.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIContractItems.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIContracts.cs" />
+    <Compile Include="Serialization\Esi\EsiAPICorporationSheet.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIDivisions.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIEmploymentHistory.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIEveFactionalWarfareStats.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIFactionalWarfareStats.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIEveFactionWars.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIIndustryJobs.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIJumpFatigue.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIKillLog.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIKillMail.cs" />
+    <Compile Include="Serialization\Esi\EsiAPILocation.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIMailBody.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIMailingLists.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIMailMessages.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIMarketOrders.cs" />
+    <Compile Include="Serialization\Esi\EsiAPINotifications.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIPlanetaryColoniesList.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIPlanetaryColony.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIResearchPoints.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIServerStatus.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIShip.cs" />
+    <Compile Include="Serialization\Esi\EsiAPISkillQueue.cs" />
+    <Compile Include="Serialization\Esi\EsiAPISkills.cs" />
+    <Compile Include="Serialization\Esi\EsiAPISovStructures.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIStandings.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIStation.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIStructure.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIType.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIWalletJournal.cs" />
+    <Compile Include="Serialization\Esi\EsiAPIWalletTransactions.cs" />
+    <Compile Include="Serialization\Esi\EsiAssetListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiCalendarEventAttendeeListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiCalendarEventListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiJumpCloneListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiCharacterBase.cs" />
+    <Compile Include="Serialization\Esi\EsiCharacterNameListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiAPICharacterSheet.cs" />
+    <Compile Include="Serialization\Esi\EsiSkillListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiContactListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiContactNotifyListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiContractBidsListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiContractItemsListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiContractListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiDivisionListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiEmploymentHistoryListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiEveFactionalWarfareStatsListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiEveFactionWarsListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiEveFactionWarfareTotals.cs" />
+    <Compile Include="Serialization\Esi\EsiJobListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiKillLogAttackersListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiKillLogItemListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiKillLogListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiKillLogVictim.cs" />
+    <Compile Include="Serialization\Esi\EsiLocationBase.cs" />
+    <Compile Include="Serialization\Esi\EsiMailBase.cs" />
+    <Compile Include="Serialization\Esi\EsiMailingListsListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiMailMessagesListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiMailRecipientListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiMedalsListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiNotificationsListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiOrderListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiPlanetaryColonyListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiPlanetaryContentsListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiPlanetaryExtractorDetails.cs" />
+    <Compile Include="Serialization\Esi\EsiPlanetaryExtractorHead.cs" />
+    <Compile Include="Serialization\Esi\EsiPlanetaryFactoryDetails.cs" />
+    <Compile Include="Serialization\Esi\EsiPlanetaryLink.cs" />
+    <Compile Include="Serialization\Esi\EsiPlanetaryPin.cs" />
+    <Compile Include="Serialization\Esi\EsiPlanetaryRoute.cs" />
+    <Compile Include="Serialization\Esi\EsiPosition.cs" />
+    <Compile Include="Serialization\Esi\EsiSkillQueueListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiRefTypeString.cs" />
+    <Compile Include="Serialization\Esi\EsiResearchListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiStandingsListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiSovStructureListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiWalletJournalExtra.cs" />
+    <Compile Include="Serialization\Esi\EsiWalletJournalListItem.cs" />
+    <Compile Include="Serialization\Esi\EsiWalletTransactionsListItem.cs" />
     <Compile Include="Serialization\SerializableAPIError.cs" />
     <Compile Include="CloudStorageServices\CloudStorageServiceAPIFile.cs" />
     <Compile Include="Serialization\SerializableAPIResult.cs" />
@@ -239,12 +354,11 @@
     <Compile Include="Enumerations\AgentType.cs" />
     <Compile Include="Enumerations\AmarrMilitiaRank.cs" />
     <Compile Include="Enumerations\Ancestry.cs" />
-    <Compile Include="Enumerations\CCPAPI\CCPAPICharacterMethods.cs" />
-    <Compile Include="Enumerations\CCPAPI\CCPAPICorporationMethods.cs" />
-    <Compile Include="Enumerations\CCPAPI\CCPAPIGenericMethods.cs" />
+    <Compile Include="Enumerations\CCPAPI\ESIAPICharacterMethods.cs" />
+    <Compile Include="Enumerations\CCPAPI\ESIAPICorporationMethods.cs" />
     <Compile Include="Enumerations\CCPAPI\CCPAPIKeyType.cs" />
     <Compile Include="Enumerations\CCPAPI\CCPAPIMethodsEnum.cs" />
-    <Compile Include="Enumerations\CCPAPI\CCPAPIErrors.cs" />
+    <Compile Include="Enumerations\CCPAPI\APIErrorType.cs" />
     <Compile Include="Enumerations\CCPAPI\CCPJobCompletedStatus.cs" />
     <Compile Include="Enumerations\CCPAPI\CCPOrderState.cs" />
     <Compile Include="Enumerations\Bloodline.cs" />
@@ -321,7 +435,7 @@
     <Compile Include="Net\DownloadResult.cs" />
     <Compile Include="Net\HttpClientServiceRequest.cs" />
     <Compile Include="Net\HttpWebClientService.cs" />
-    <Compile Include="Net\HttpWebClientService.StringDownload.cs" />
+    <Compile Include="Net\HttpWebClientService.StreamDownload.cs" />
     <Compile Include="Net\HttpWebClientService.XmlDownload.cs" />
     <Compile Include="Serialization\FittingClf\SerializableClfFittingChargeType.cs" />
     <Compile Include="Serialization\FittingClf\SerializableClfFittingDroneType.cs" />
@@ -335,7 +449,6 @@
     <Compile Include="Serialization\Osmium\Loadout\SerializableOsmiumLoadoutFeed.cs" />
     <Compile Include="MarketPricer\EveCentral\ECItemPricer.cs" />
     <Compile Include="MarketPricer\PricerMarketOrdersQueryResult.cs" />
-    <Compile Include="Helpers\ApiTesterUIHelper.cs" />
     <Compile Include="Models\Asset.cs" />
     <Compile Include="Data\Certificate.cs" />
     <Compile Include="Data\CertificateLevel.cs" />
@@ -352,12 +465,10 @@
     <Compile Include="Models\Collections\AssetCollection.cs" />
     <Compile Include="Models\Collections\CharacterIdentityIgnoreList.cs" />
     <Compile Include="Models\Collections\ContactCollection.cs" />
-    <Compile Include="Models\Collections\ContractBidCollection.cs" />
     <Compile Include="Models\Collections\ContractCollection.cs" />
     <Compile Include="Models\Comparers\AssetComparer.cs" />
     <Compile Include="Models\Comparers\ContractComparer.cs" />
     <Compile Include="Models\Comparers\ContractItemComparer.cs" />
-    <Compile Include="Models\Extended\APIMethods.cs" />
     <Compile Include="Serialization\EveCentral\MarketPricer\SerializableECItemPriceItem.cs" />
     <Compile Include="Serialization\EveCentral\MarketPricer\SerializableECItemPriceListItem.cs" />
     <Compile Include="Serialization\EveCentral\MarketPricer\SerializableECItemPrices.cs" />
@@ -367,6 +478,8 @@
     <Compile Include="Serialization\Datafiles\SerializableMasteryCertificate.cs" />
     <Compile Include="Serialization\Datafiles\SerializableMasteryShip.cs" />
     <Compile Include="Models\Comparers\SerializableSettingsComparer.cs" />
+    <Compile Include="Serialization\Datafiles\SerializableStationList.cs" />
+    <Compile Include="Service\SSOWebServer.cs" />
     <Compile Include="Service\CodeCompiler.cs" />
     <Compile Include="Controls\AutoEllipsisToolStripRenderer.cs" />
     <Compile Include="Controls\BorderPanel.cs">
@@ -444,13 +557,13 @@
     <Compile Include="Controls\TrayIcon.Designer.cs">
       <DependentUpon>TrayIcon.cs</DependentUpon>
     </Compile>
-    <Compile Include="QueryMonitor\APIKeyQueryMonitor.cs" />
+    <Compile Include="QueryMonitor\ESIKeyQueryMonitor.cs" />
     <Compile Include="QueryMonitor\CharacterDataQuerying.cs" />
     <Compile Include="QueryMonitor\CorporationDataQuerying.cs" />
     <Compile Include="QueryMonitor\CorporationQueryMonitor.cs" />
     <Compile Include="CustomEventArgs\ApiErrorTroubleshooterEventArgs.cs" />
-    <Compile Include="CustomEventArgs\APIKeyCreationEventArgs.cs" />
-    <Compile Include="CustomEventArgs\APIKeyInfoChangedEventArgs.cs" />
+    <Compile Include="CustomEventArgs\ESIKeyCreationEventArgs.cs" />
+    <Compile Include="CustomEventArgs\ESIKeyInfoChangedEventArgs.cs" />
     <Compile Include="CustomEventArgs\AttributeChangedEventArgs.cs" />
     <Compile Include="CustomEventArgs\CloudStorageServiceProviderEventArgs.cs" />
     <Compile Include="CustomEventArgs\CharacterChangedEventArgs.cs" />
@@ -503,9 +616,9 @@
     <Compile Include="Service\EveFlag.cs" />
     <Compile Include="Models\EveMailingList.cs" />
     <Compile Include="Models\Collections\EveMailingListCollection.cs" />
-    <Compile Include="Models\Extended\ExternalEveNotificationTextParser.cs" />
     <Compile Include="Models\Extended\InternalEveNotificationTextParser.cs" />
     <Compile Include="Models\Extended\EveNotificationTextParser.cs" />
+    <Compile Include="Service\EveIDToStation.cs" />
     <Compile Include="Service\EveNotificationType.cs" />
     <Compile Include="Models\CalendarEventAttendee.cs" />
     <Compile Include="Service\EveRefType.cs" />
@@ -679,6 +792,8 @@
     <Compile Include="Serialization\Settings\SerializableContract.cs" />
     <Compile Include="Serialization\Settings\SerializableContractBid.cs" />
     <Compile Include="Serialization\Settings\SerializableEndPoint.cs" />
+    <Compile Include="Service\IDToObjectProvider.cs" />
+    <Compile Include="Service\SSOAuthenticationService.cs" />
     <Compile Include="SettingsObjects\CertificateBrowserSettings.cs" />
     <Compile Include="SettingsObjects\CloudStorageServiceProviderSettings.cs" />
     <Compile Include="SettingsObjects\CombatLogSettings.cs" />
@@ -711,7 +826,7 @@
     <Compile Include="Models\Standing.cs" />
     <Compile Include="Models\Collections\StandingCollection.cs" />
     <Compile Include="Extensions\StaticSkillExtensions.cs" />
-    <Compile Include="Models\APIKey.cs" />
+    <Compile Include="Models\ESIKey.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Helpers\UIHelper.cs" />
     <Compile Include="Models\UpcomingCalendarEvent.cs" />
@@ -820,11 +935,6 @@
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
     <Compile Include="Net\HttpPostData.cs" />
-    <Compile Include="Constants\NetworkConstants.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>NetworkConstants.resx</DependentUpon>
-    </Compile>
     <Compile Include="Models\APIMethod.cs" />
     <Compile Include="Service\AutoShrink.cs" />
     <Compile Include="Serialization\Eve\CCPAPIError.cs" />
@@ -927,7 +1037,6 @@
     </Compile>
     <Compile Include="Controls\ResolutionAction.cs" />
     <Compile Include="Constants\CultureConstants.cs" />
-    <Compile Include="Models\ConquerableStation.cs" />
     <Compile Include="Data\Blueprint.cs" />
     <Compile Include="Data\BlueprintCollection.cs" />
     <Compile Include="Data\BlueprintMarketGroupCollection.cs" />
@@ -1096,11 +1205,9 @@
     <Compile Include="Models\SkillLevel.cs" />
     <Compile Include="Extensions\TimeExtensions.cs" />
     <Compile Include="Models\UriCharacter.cs" />
-    <Compile Include="Collections\Global\GlobalAPIProviderCollection.cs" />
     <Compile Include="Collections\Global\GlobalCharacterIdentityCollection.cs" />
     <Compile Include="Collections\Global\GlobalMonitoredCharacterCollection.cs" />
     <Compile Include="Serialization\Eve\ISerializableWithLocalClock.cs" />
-    <Compile Include="SettingsObjects\APIProvidersSettings.cs" />
     <Compile Include="Serialization\Eve\SerializableCharacterSkill.cs" />
     <Compile Include="Serialization\Eve\SerializableAPICharacters.cs" />
     <Compile Include="Serialization\Eve\SerializableAPIServerStatus.cs" />
@@ -1122,7 +1229,7 @@
     <EmbeddedResource Include="Constants\NetworkConstants.resx">
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>NetworkConstants.Designer.cs</LastGenOutput>
+      <LastGenOutput>NetworkConstants1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CopySaveOptionsWindow.resx">
       <DependentUpon>CopySaveOptionsWindow.cs</DependentUpon>
@@ -1236,11 +1343,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\..\IO.Swagger\IO.Swagger.csproj">
-      <Project>{B2580BE4-CDE5-49E7-B929-BDACCCEBF019}</Project>
-      <Name>IO.Swagger</Name>
-    </ProjectReference>
+    <None Include="Resources\callback_ok.htm" />
+    <None Include="Resources\callback_fail.htm" />
+    <Content Include="Resources\chrFactions.txt" />
+    <Content Include="Serialization\RefTypes.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

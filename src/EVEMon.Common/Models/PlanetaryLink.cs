@@ -1,9 +1,10 @@
-﻿using EVEMon.Common.Serialization.Eve;
+﻿using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models
 {
     public sealed class PlanetaryLink
     {
+
         #region Constructor
 
         /// <summary>
@@ -11,7 +12,7 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="colony">The colony.</param>
         /// <param name="src">The source.</param>
-        internal PlanetaryLink(PlanetaryColony colony, SerializablePlanetaryLink src)
+        internal PlanetaryLink(PlanetaryColony colony, EsiPlanetaryLink src)
         {
             Colony = colony;
             SourcePinID = src.SourcePinID;
@@ -57,5 +58,6 @@ namespace EVEMon.Common.Models
         public short LinkLevel { get; private set; }
 
         #endregion
+
     }
 }

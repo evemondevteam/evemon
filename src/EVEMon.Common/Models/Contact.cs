@@ -21,6 +21,7 @@ namespace EVEMon.Common.Models
         private readonly long m_contactID;
         private readonly ContactType m_contactType;
         private Image m_image;
+        private string m_contactName;
 
         #endregion
 
@@ -32,18 +33,24 @@ namespace EVEMon.Common.Models
         internal Contact(SerializableContactListItem src)
         {
             m_contactID = src.ContactID;
-            Name = src.ContactName;
+            m_contactName = EveIDToName.GetIDToName(m_contactID);
             IsInWatchlist = src.InWatchlist;
             Standing = src.Standing;
-            Group = src.Group == ContactGroup.Personal && StaticGeography.AllAgents.Any(x => x.ID == m_contactID)
-                ? ContactGroup.Agent
-                : src.Group;
+            Group = src.Group == ContactGroup.Personal && StaticGeography.AllAgents.Any(
+                x => x.ID == m_contactID) ? ContactGroup.Agent : src.Group;
 
-            m_contactType = src.ContactTypeID == DBConstants.CorporationID
-                ? m_contactType = ContactType.Corporation
-                : src.ContactTypeID == DBConstants.AllianceID
-                    ? m_contactType = ContactType.Alliance
-                    : ContactType.Character;
+            switch (src.ContactTypeID)
+            {
+            case DBConstants.CorporationID:
+                m_contactType = ContactType.Corporation;
+                break;
+            case DBConstants.AllianceID:
+                m_contactType = ContactType.Alliance;
+                break;
+            default:
+                m_contactType = ContactType.Character;
+                break;
+            }
         }
 
 
@@ -55,7 +62,8 @@ namespace EVEMon.Common.Models
         /// <value>
         /// The name of the contact.
         /// </value>
-        public string Name { get; }
+        public string Name => (m_contactName.IsEmptyOrUnknown()) ? (m_contactName =
+            EveIDToName.GetIDToName(m_contactID)) : m_contactName;
 
         /// <summary>
         /// Gets a value indicating whether the contact is in the watchlist.

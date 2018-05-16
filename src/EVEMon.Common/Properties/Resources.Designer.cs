@@ -91,6 +91,52 @@ namespace EVEMon.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html lang=&quot;en&quot; xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
+        ///    &lt;title&gt;Error&lt;/title&gt;
+        ///    &lt;style&gt;
+        ///        p, body { color: #FFFFFF; font-family: ProximaNova-Regular, Arial }
+        ///		h2 { text-align: center; margin-bottom: 10px; text-shadow: 1px 1px 2px #7F7F7F; font-size: 30px; font-family: &quot;ProximaNova-SemiBold&quot;,Arial }
+        ///        body { background: #000000 url(https://login.eveonline.com/Images/site-bg.jpg) no-repeat center center fixed }
+        ///        #content { bac [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string CallbackFail {
+            get {
+                return ResourceManager.GetString("CallbackFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html lang=&quot;en&quot; xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
+        ///    &lt;title&gt;Authentication Successful&lt;/title&gt;
+        ///    &lt;style&gt;
+        ///        p, body { color: #FFFFFF; font-family: ProximaNova-Regular, Arial }
+        ///		h2 { text-align: center; margin-bottom: 10px; text-shadow: 1px 1px 2px #7F7F7F; font-size: 30px; font-family: &quot;ProximaNova-SemiBold&quot;,Arial }
+        ///        body { background: #000000 url(https://login.eveonline.com/Images/site-bg.jpg) no-repeat center center fixed }
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string CallbackOK {
+            get {
+                return ResourceManager.GetString("CallbackOK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to factionID,factionName,description,raceIDs,solarSystemID,corporationID,sizeFactor,stationCount,stationSystemCount,militiaCorporationID,iconID
+        ///500001,Caldari State,&quot;The Caldari State is ruled by several mega-corporations. There is no central government to speak of - all territories within the State are owned and ruled by corporations. Duty and discipline are required traits in Caldari citizens, plus unquestioning loyalty to the corporation they live to serve. The corporations compete aggressively amongst the [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string chrFactions {
+            get {
+                return ResourceManager.GetString("chrFactions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap Collapse {
@@ -258,10 +304,9 @@ namespace EVEMon.Common.Properties {
         ///  &lt;rowset name=&quot;flags&quot; key=&quot;flagID&quot; columns=&quot;flagID,flagName,flagText&quot;&gt;
         ///    &lt;row flagID=&quot;0&quot; flagName=&quot;None&quot; flagText=&quot;None&quot; /&gt;
         ///    &lt;row flagID=&quot;1&quot; flagName=&quot;Wallet&quot; flagText=&quot;Wallet&quot; /&gt;
-        ///    &lt;row flagID=&quot;2&quot; flagName=&quot;Factory&quot; flagText=&quot;Factory&quot; /&gt;
+        ///    &lt;row flagID=&quot;2&quot; flagName=&quot;Offices&quot; flagText=&quot;OfficeFolder&quot; /&gt;
         ///    &lt;row flagID=&quot;3&quot; flagName=&quot;Wardrobe&quot; flagText=&quot;Wardrobe&quot; /&gt;
-        ///    &lt;row flagID=&quot;4&quot; flagName=&quot;Hangar&quot; flagText=&quot;Hangar&quot; /&gt;
-        ///    [rest of string was truncated]&quot;;.
+        ///    &lt;row flagID=&quot;4&quot; flagName=&quot;Hangar&quot; flagText=&quot;Hangar&quot; /&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         public static string Flags {
             get {
@@ -372,6 +417,25 @@ namespace EVEMon.Common.Properties {
             get {
                 object obj = ResourceManager.GetObject("Officer", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;
+        ///&lt;eveapi version=&quot;2&quot;&gt;
+        ///  &lt;currentTime&gt;2018-03-27 00:53:15&lt;/currentTime&gt;
+        ///  &lt;result&gt;
+        ///    &lt;rowset name=&quot;refTypes&quot; key=&quot;refTypeID&quot; columns=&quot;refTypeID,refTypeName&quot;&gt;
+        ///      &lt;row refTypeID=&quot;0&quot; refTypeName=&quot;Undefined&quot; /&gt;
+        ///      &lt;row refTypeID=&quot;1&quot; refTypeName=&quot;Player Trading&quot; /&gt;
+        ///      &lt;row refTypeID=&quot;2&quot; refTypeName=&quot;Market Transaction&quot; /&gt;
+        ///      &lt;row refTypeID=&quot;3&quot; refTypeName=&quot;GM Cash Transfer&quot; /&gt;
+        ///      &lt;row refTypeID=&quot;4&quot; refTypeName=&quot;ATM Withdraw&quot; /&gt;
+        ///      &lt;row refTypeID= [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string RefTypes {
+            get {
+                return ResourceManager.GetString("RefTypes", resourceCulture);
             }
         }
         

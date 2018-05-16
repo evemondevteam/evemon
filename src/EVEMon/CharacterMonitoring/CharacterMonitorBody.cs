@@ -134,7 +134,7 @@ namespace EVEMon.CharacterMonitoring
         private void OnDisposed(object sender, EventArgs e)
         {
             EveMonClient.TimerTick -= EveMonClient_TimerTick;
-            EveMonClient.APIKeyInfoUpdated -= EveMonClient_APIKeyInfoUpdated;
+            EveMonClient.ESIKeyInfoUpdated -= EveMonClient_APIKeyInfoUpdated;
             EveMonClient.SettingsChanged -= EveMonClient_SettingsChanged;
             EveMonClient.CharacterAssetsUpdated -= EveMonClient_UpdatePageControls;
             EveMonClient.MarketOrdersUpdated -= EveMonClient_UpdatePageControls;
@@ -165,7 +165,7 @@ namespace EVEMon.CharacterMonitoring
             try
             {
                 // Hides or shows the warning about a character with no API key
-                warningLabel.Visible = !m_character.Identity.APIKeys.Any();
+                warningLabel.Visible = !m_character.Identity.ESIKeys.Any();
             }
             finally
             {
@@ -237,7 +237,7 @@ namespace EVEMon.CharacterMonitoring
         /// </summary>
         private void UpdateFeaturesMenu()
         {
-            if (EveMonClient.APIKeys.Any(apiKey => !apiKey.IsProcessed) || !m_character.Identity.APIKeys.Any())
+            if (EveMonClient.ESIKeys.Any(apiKey => !apiKey.IsProcessed) || !m_character.Identity.ESIKeys.Any())
                 return;
 
             CCPCharacter ccpCharacter = m_character as CCPCharacter;
@@ -402,8 +402,8 @@ namespace EVEMon.CharacterMonitoring
                     if (!monitor.QueryOnStartup || !monitor.Enabled || monitor.LastResult != null)
                         continue;
 
-                    if (monitor.Method is CCPAPICharacterMethods &&
-                        (CCPAPICharacterMethods)monitor.Method == CCPAPICharacterMethods.FactionalWarfareStats &&
+                    if (monitor.Method is ESIAPICharacterMethods &&
+                        (ESIAPICharacterMethods)monitor.Method == ESIAPICharacterMethods.FactionalWarfareStats &&
                         ccpCharacter.IsFactionalWarfareNotEnlisted)
                     {
                         monitor.Enabled = !ccpCharacter.IsFactionalWarfareNotEnlisted;
@@ -1644,7 +1644,7 @@ namespace EVEMon.CharacterMonitoring
                 skillQueueIcon.Visible = employmentIcon.Visible = false;
 
             // Subscribe event
-            EveMonClient.APIKeyInfoUpdated += EveMonClient_APIKeyInfoUpdated;
+            EveMonClient.ESIKeyInfoUpdated += EveMonClient_APIKeyInfoUpdated;
         }
 
         /// <summary>
@@ -1668,26 +1668,26 @@ namespace EVEMon.CharacterMonitoring
             if (page == null)
                 return monitors;
 
-            if (Enum.IsDefined(typeof(CCPAPICharacterMethods), page.Tag))
+            if (Enum.IsDefined(typeof(ESIAPICharacterMethods), page.Tag))
             {
-                CCPAPICharacterMethods method =
-                    (CCPAPICharacterMethods)Enum.Parse(typeof(CCPAPICharacterMethods), (string)page.Tag);
+                ESIAPICharacterMethods method =
+                    (ESIAPICharacterMethods)Enum.Parse(typeof(ESIAPICharacterMethods), (string)page.Tag);
                 if (ccpCharacter.QueryMonitors[method] != null)
                     monitors.Add(ccpCharacter.QueryMonitors[method]);
             }
 
-            if (Enum.IsDefined(typeof(CCPAPIGenericMethods), page.Tag))
+            if (Enum.IsDefined(typeof(ESIAPIGenericMethods), page.Tag))
             {
-                CCPAPIGenericMethods method = (CCPAPIGenericMethods)Enum.Parse(typeof(CCPAPIGenericMethods), (string)page.Tag);
+                ESIAPIGenericMethods method = (ESIAPIGenericMethods)Enum.Parse(typeof(ESIAPIGenericMethods), (string)page.Tag);
                 if (ccpCharacter.QueryMonitors[method] != null)
                     monitors.Add(ccpCharacter.QueryMonitors[method]);
             }
 
             string corpMethod = $"Corporation{page.Tag}";
-            if (Enum.IsDefined(typeof(CCPAPICorporationMethods), corpMethod))
+            if (Enum.IsDefined(typeof(ESIAPICorporationMethods), corpMethod))
             {
-                CCPAPICorporationMethods method =
-                    (CCPAPICorporationMethods)Enum.Parse(typeof(CCPAPICorporationMethods), corpMethod);
+                ESIAPICorporationMethods method =
+                    (ESIAPICorporationMethods)Enum.Parse(typeof(ESIAPICorporationMethods), corpMethod);
                 if (ccpCharacter.QueryMonitors[method] != null)
                     monitors.Add(ccpCharacter.QueryMonitors[method]);
             }

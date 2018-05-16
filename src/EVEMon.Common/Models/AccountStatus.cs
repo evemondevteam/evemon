@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EVEMon.Common.Models
 {
@@ -10,12 +6,9 @@ namespace EVEMon.Common.Models
     {
         public enum AccountStatusType { Unknown, Alpha, Omega };
         
-        //TODO: Refactor, move constants
         private const float trainingRateUnknown = 1.0f;
         private const float trainingRateAlpha = 0.5f;
         private const float trainingRateOmega = 1.0f;
-
-        //TODO: Refactor to create IAPIKey interface and use dependency injection here
 
         /// <summary>
         /// Creates an AccountStatus object with defined type
@@ -24,25 +17,6 @@ namespace EVEMon.Common.Models
         public AccountStatus(AccountStatusType statusType)
         {
             CurrentStatus = statusType;
-        }
-
-        /// <summary>
-        /// Creates an AccountStatus object from APIKey
-        /// </summary>
-        /// <param name="statusType">Type (Alpha, Omega, Unknown).</param>
-        public AccountStatus (APIKey apiKey)
-        {
-            if (apiKey == null || 
-                (apiKey != null &&  apiKey.Expiration < DateTime.UtcNow && apiKey.Expiration != DateTime.MinValue))
-            {
-                CurrentStatus = AccountStatusType.Unknown;
-            }
-            else
-            {
-                CurrentStatus = apiKey.AccountExpires > DateTime.UtcNow ?
-                   AccountStatusType.Omega :
-                   AccountStatusType.Alpha;
-            }
         }
         
         /// <summary>

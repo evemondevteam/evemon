@@ -28,18 +28,17 @@ namespace EVEMon.Common.Net
         /// <param name="chain">The chain.</param>
         /// <param name="sslpolicyerrors">The sslpolicyerrors.</param>
         /// <returns></returns>
-        internal static bool DummyCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain,
-            SslPolicyErrors sslpolicyerrors) => true;
+        internal static bool DummyCertificateValidationCallback(object sender, X509Certificate
+            certificate, X509Chain chain, SslPolicyErrors sslpolicyerrors) => true;
 
         /// <summary>
         /// Gets the web client.
         /// </summary>
         /// <returns></returns>
-        public static WebClient GetWebClient()
-            => new WebClient
-            {
-                Proxy = HttpClientServiceRequest.GetWebProxy()
-            };
+        public static WebClient GetWebClient() => new WebClient
+        {
+            Proxy = HttpClientServiceRequest.GetWebProxy()
+        };
 
         /// <summary>
         /// Gets the HTTP client.
@@ -47,9 +46,7 @@ namespace EVEMon.Common.Net
         /// <param name="httpClientHandler">The HTTP client handler.</param>
         /// <returns></returns>
         public static HttpClient GetHttpClient(HttpClientHandler httpClientHandler = null) =>
-            httpClientHandler == null
-                ? new HttpClient()
-                : new HttpClient(httpClientHandler);
+            httpClientHandler == null ? new HttpClient() : new HttpClient(httpClientHandler);
 
         /// <summary>
         /// Validates a Url as acceptable for an HttpWebServiceRequest.

@@ -71,6 +71,8 @@ namespace EVEMon.Common.Helpers
                         var ipEndPoint = new IPEndPoint(task.Result.First(), 123);
                         using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
                         {
+                            socket.ReceiveTimeout = 10000;
+                            socket.SendTimeout = 10000;
                             socket.Connect(ipEndPoint);
                             socket.Send(ntpData);
                             socket.Receive(ntpData);

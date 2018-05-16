@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using EVEMon.Common.Constants;
+﻿using EVEMon.Common.Constants;
 using EVEMon.Common.Helpers;
 using EVEMon.Common.Models;
 using EVEMon.Common.Net;
 using EVEMon.Common.Serialization;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EVEMon.Common.Service
 {
     public static class EveFlag
     {
-        private static Collection<SerializableEveFlagsListItem> s_eveFlags =
-            new Collection<SerializableEveFlagsListItem>();
+        private static Dictionary<int, SerializableEveFlagsListItem> s_eveFlags =
+            new Dictionary<int, SerializableEveFlagsListItem>();
         private static bool s_isLoaded;
         private static bool s_queryPending;
         private static DateTime s_nextCheckTime;
@@ -33,8 +33,31 @@ namespace EVEMon.Common.Service
             else
                 EnsureImportation();
 
-            SerializableEveFlagsListItem flag = s_eveFlags?.FirstOrDefault(x => x.ID == id);
+            SerializableEveFlagsListItem flag = null;
+            if (s_eveFlags != null)
+                flag = s_eveFlags[id];
+
             return flag?.Text ?? EveMonConstants.UnknownText;
+        }
+
+        /// <summary>
+        /// Gets the description of the flag.
+        /// </summary>
+        /// <param name="name">The flag name.</param>
+        /// <returns></returns>
+        internal static int GetFlagID(string name)
+        {
+            if (EveMonClient.IsDebugBuild)
+                EnsureInitialized();
+            else
+                EnsureImportation();
+
+            SerializableEveFlagsListItem flag = null;
+            if (s_eveFlags != null)
+                flag = s_eveFlags.Values.FirstOrDefault(x => x.Name.Equals(name,
+                    StringComparison.InvariantCultureIgnoreCase));
+            
+            return flag?.ID ?? 0;
         }
 
         /// <summary>
@@ -107,7 +130,11 @@ namespace EVEMon.Common.Service
 
             EveMonClient.Trace("begin");
 
-            s_eveFlags = result.EVEFlags;
+            s_eveFlags.Clear();
+            // This is way faster to look up flags
+            foreach (var flag in result.EVEFlags)
+                s_eveFlags.Add(flag.ID, flag);
+
             s_isLoaded = true;
 
             EveMonClient.Trace("done");

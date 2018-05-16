@@ -350,8 +350,7 @@ namespace EVEMon.CharacterMonitoring
             lvAssets.BeginUpdate();
             try
             {
-                List<Asset> assets = m_list
-                    .Where(x => x.Item != null && x.SolarSystem != null)
+                List<Asset> assets = m_list.Where(x => x.Item != null && x.SolarSystem != null)
                     .Where(x => IsTextMatching(x, m_textFilter)).ToList();
 
                 UpdateSort();

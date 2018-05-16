@@ -3,6 +3,7 @@ using System.Linq;
 using EVEMon.Common.Constants;
 using EVEMon.Common.Data;
 using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Service;
 
 namespace EVEMon.Common.Models
 {
@@ -133,7 +134,7 @@ namespace EVEMon.Common.Models
         /// </summary>
         public void UpdateStation()
         {
-            Station = Station.GetByID(m_stationID);
+            Station = EveIDToStation.GetIDToStation(m_stationID);
         }
 
         #endregion

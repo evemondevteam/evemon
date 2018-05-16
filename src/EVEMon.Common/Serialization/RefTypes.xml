@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<eveapi version="2">
+  <currentTime>2018-03-27 00:53:15</currentTime>
+  <result>
+    <rowset name="refTypes" key="refTypeID" columns="refTypeID,refTypeName">
+      <row refTypeID="0" refTypeName="Undefined" />
+      <row refTypeID="1" refTypeName="Player Trading" />
+      <row refTypeID="2" refTypeName="Market Transaction" />
+      <row refTypeID="3" refTypeName="GM Cash Transfer" />
+      <row refTypeID="4" refTypeName="ATM Withdraw" />
+      <row refTypeID="5" refTypeName="ATM Deposit" />
+      <row refTypeID="6" refTypeName="Backward Compatible" />
+      <row refTypeID="7" refTypeName="Mission Reward" />
+      <row refTypeID="8" refTypeName="Clone Activation" />
+      <row refTypeID="9" refTypeName="Inheritance" />
+      <row refTypeID="10" refTypeName="Player Donation" />
+      <row refTypeID="11" refTypeName="Corporation Payment" />
+      <row refTypeID="12" refTypeName="Docking Fee" />
+      <row refTypeID="13" refTypeName="Office Rental Fee" />
+      <row refTypeID="14" refTypeName="Factory Slot Rental Fee" />
+      <row refTypeID="15" refTypeName="Repair Bill" />
+      <row refTypeID="16" refTypeName="Bounty" />
+      <row refTypeID="17" refTypeName="Bounty Prize" />
+      <row refTypeID="18" refTypeName="Agents_temporary" />
+      <row refTypeID="19" refTypeName="Insurance" />
+      <row refTypeID="20" refTypeName="Mission Expiration" />
+      <row refTypeID="21" refTypeName="Mission Completion" />
+      <row refTypeID="22" refTypeName="Shares" />
+      <row refTypeID="23" refTypeName="Courier Mission Escrow" />
+      <row refTypeID="24" refTypeName="Mission Cost" />
+      <row refTypeID="25" refTypeName="Agent Miscellaneous" />
+      <row refTypeID="26" refTypeName="LP Store" />
+      <row refTypeID="27" refTypeName="Agent Location Services" />
+      <row refTypeID="28" refTypeName="Agent Donation" />
+      <row refTypeID="29" refTypeName="Agent Security Services" />
+      <row refTypeID="30" refTypeName="Agent Mission Collateral Paid" />
+      <row refTypeID="31" refTypeName="Agent Mission Collateral Refunded" />
+      <row refTypeID="32" refTypeName="Agents_preward" />
+      <row refTypeID="33" refTypeName="Agent Mission Reward" />
+      <row refTypeID="34" refTypeName="Agent Mission Time Bonus Reward" />
+      <row refTypeID="35" refTypeName="CSPA" />
+      <row refTypeID="36" refTypeName="CSPAOfflineRefund" />
+      <row refTypeID="37" refTypeName="Corporation Account Withdrawal" />
+      <row refTypeID="38" refTypeName="Corporation Dividend Payment" />
+      <row refTypeID="39" refTypeName="Corporation Registration Fee" />
+      <row refTypeID="40" refTypeName="Corporation Logo Change Cost" />
+      <row refTypeID="41" refTypeName="Release Of Impounded Property" />
+      <row refTypeID="42" refTypeName="Market Escrow" />
+      <row refTypeID="43" refTypeName="Agent Services Rendered" />
+      <row refTypeID="44" refTypeName="Market Fine Paid" />
+      <row refTypeID="45" refTypeName="Corporation Liquidation" />
+      <row refTypeID="46" refTypeName="Brokers Fee" />
+      <row refTypeID="47" refTypeName="Corporation Bulk Payment" />
+      <row refTypeID="48" refTypeName="Alliance Registration Fee" />
+      <row refTypeID="49" refTypeName="War Fee" />
+      <row refTypeID="50" refTypeName="Alliance Maintainance Fee" />
+      <row refTypeID="51" refTypeName="Contraband Fine" />
+      <row refTypeID="52" refTypeName="Clone Transfer" />
+      <row refTypeID="53" refTypeName="Acceleration Gate Fee" />
+      <row refTypeID="54" refTypeName="Transaction Tax" />
+      <row refTypeID="55" refTypeName="Jump Clone Installation Fee" />
+      <row refTypeID="56" refTypeName="Manufacturing" />
+      <row refTypeID="57" refTypeName="Researching Technology" />
+      <row refTypeID="58" refTypeName="Researching Time Productivity" />
+      <row refTypeID="59" refTypeName="Researching Material Productivity" />
+      <row refTypeID="60" refTypeName="Copying" />
+      <row refTypeID="61" refTypeName="Duplicating" />
+      <row refTypeID="62" refTypeName="Reverse Engineering" />
+      <row refTypeID="63" refTypeName="Contract Auction Bid" />
+      <row refTypeID="64" refTypeName="Contract Auction Bid Refund" />
+      <row refTypeID="65" refTypeName="Contract Collateral" />
+      <row refTypeID="66" refTypeName="Contract Reward Refund" />
+      <row refTypeID="67" refTypeName="Contract Auction Sold" />
+      <row refTypeID="68" refTypeName="Contract Reward" />
+      <row refTypeID="69" refTypeName="Contract Collateral Refund" />
+      <row refTypeID="70" refTypeName="Contract Collateral Payout" />
+      <row refTypeID="71" refTypeName="Contract Price" />
+      <row refTypeID="72" refTypeName="Contract Brokers Fee" />
+      <row refTypeID="73" refTypeName="Contract Sales Tax" />
+      <row refTypeID="74" refTypeName="Contract Deposit" />
+      <row refTypeID="75" refTypeName="Contract Deposit Sales Tax" />
+      <row refTypeID="76" refTypeName="Secure EVE Time Code Exchange" />
+      <row refTypeID="77" refTypeName="Contract Auction Bid (corp)" />
+      <row refTypeID="78" refTypeName="Contract Collateral Deposited (corp)" />
+      <row refTypeID="79" refTypeName="Contract Price Payment (corp)" />
+      <row refTypeID="80" refTypeName="Contract Brokers Fee (corp)" />
+      <row refTypeID="81" refTypeName="Contract Deposit (corp)" />
+      <row refTypeID="82" refTypeName="Contract Deposit Refund" />
+      <row refTypeID="83" refTypeName="Contract Reward Deposited" />
+      <row refTypeID="84" refTypeName="Contract Reward Deposited (corp)" />
+      <row refTypeID="85" refTypeName="Bounty Prizes" />
+      <row refTypeID="86" refTypeName="Advertisement Listing Fee" />
+      <row refTypeID="87" refTypeName="Medal Creation" />
+      <row refTypeID="88" refTypeName="Medal Issued" />
+      <row refTypeID="89" refTypeName="Betting" />
+      <row refTypeID="90" refTypeName="DNA Modification Fee" />
+      <row refTypeID="91" refTypeName="Sovereignity bill" />
+      <row refTypeID="92" refTypeName="Bounty Prize Corporation Tax" />
+      <row refTypeID="93" refTypeName="Agent Mission Reward Corporation Tax" />
+      <row refTypeID="94" refTypeName="Agent Mission Time Bonus Reward Corporation Tax" />
+      <row refTypeID="95" refTypeName="Upkeep adjustment fee" />
+      <row refTypeID="96" refTypeName="Planetary Import Tax" />
+      <row refTypeID="97" refTypeName="Planetary Export Tax" />
+      <row refTypeID="98" refTypeName="Planetary Construction" />
+      <row refTypeID="99" refTypeName="Corporate Reward Payout" />
+      <row refTypeID="101" refTypeName="Bounty Surcharge" />
+      <row refTypeID="102" refTypeName="Contract Reversal" />
+      <row refTypeID="103" refTypeName="Corporate Reward Tax" />
+      <row refTypeID="106" refTypeName="Store Purchase" />
+      <row refTypeID="107" refTypeName="Store Purchase Refund" />
+      <row refTypeID="108" refTypeName="PLEX sold for Aurum" />
+      <row refTypeID="109" refTypeName="Lottery Give Away" />
+      <row refTypeID="111" refTypeName="Aurum Token exchanged for Aur" />
+      <row refTypeID="112" refTypeName="Datacore Fee" />
+      <row refTypeID="113" refTypeName="War fee surrender" />
+      <row refTypeID="114" refTypeName="War ally contract" />
+      <row refTypeID="115" refTypeName="Bounty Reimbursement" />
+      <row refTypeID="116" refTypeName="Kill Right Fee" />
+      <row refTypeID="117" refTypeName="Security Processing Fee" />
+      <row refTypeID="118" refTypeName="Escrow for Industry Team Auction" />
+      <row refTypeID="119" refTypeName="Reimbursement of escrow" />
+      <row refTypeID="120" refTypeName="Industry Job Tax" />
+      <row refTypeID="122" refTypeName="Infrastructure Hub maintenance" />
+      <row refTypeID="123" refTypeName="Asset Safety recovery Tax" />
+      <row refTypeID="124" refTypeName="Opportunity reward" />
+      <row refTypeID="125" refTypeName="Project Discovery reward" />
+      <row refTypeID="126" refTypeName="Project Discovery Tax" />
+      <row refTypeID="127" refTypeName="Reprocessing Tax" />
+      <row refTypeID="128" refTypeName="Jump Clone Activation Fee" />
+      <row refTypeID="129" refTypeName="Operation Bonus" />
+      <row refTypeID="131" refTypeName="Resource Wars Site Completion" />
+      <row refTypeID="132" refTypeName="Duel Wager Escrow" />
+      <row refTypeID="133" refTypeName="Duel Wager Payment" />
+      <row refTypeID="134" refTypeName="Duel Wager Refund" />
+      <row refTypeID="135" refTypeName="Reactions" />
+      <row refTypeID="136" refTypeName="External Trade Freeze" />
+      <row refTypeID="137" refTypeName="External Trade Thaw" />
+      <row refTypeID="138" refTypeName="External Trade Delivery" />
+      <row refTypeID="10001" refTypeName="Modify ISK" />
+      <row refTypeID="10002" refTypeName="Primary Marketplace Purchase" />
+      <row refTypeID="10003" refTypeName="Battle Reward" />
+      <row refTypeID="10004" refTypeName="New Character Starting Funds" />
+      <row refTypeID="10005" refTypeName="Corporation Account Withdrawal" />
+      <row refTypeID="10006" refTypeName="Corporation Account Deposit" />
+      <row refTypeID="10007" refTypeName="Battle WP Win Reward" />
+      <row refTypeID="10008" refTypeName="Battle WP Loss Reward" />
+      <row refTypeID="10009" refTypeName="Battle Win Reward" />
+      <row refTypeID="10010" refTypeName="Battle Loss Reward" />
+      <row refTypeID="10011" refTypeName="Reset ISK for Character Reset" />
+      <row refTypeID="10012" refTypeName="District Contract Deposit" />
+      <row refTypeID="10013" refTypeName="District Contract Deposit Refund" />
+      <row refTypeID="10014" refTypeName="District Contract Collateral" />
+      <row refTypeID="10015" refTypeName="District Contract Collateral Refund" />
+      <row refTypeID="10016" refTypeName="District Contract Reward" />
+      <row refTypeID="10017" refTypeName="District Clone Transportation" />
+      <row refTypeID="10018" refTypeName="District Clone Transportation Refund" />
+      <row refTypeID="10019" refTypeName="District Infrastructure" />
+      <row refTypeID="10020" refTypeName="District Clone Sales" />
+      <row refTypeID="10021" refTypeName="District Clone Purchase" />
+      <row refTypeID="10022" refTypeName="Biomass Reward" />
+      <row refTypeID="10023" refTypeName="ISK Swap Reward" />
+      <row refTypeID="11001" refTypeName="Modify AUR" />
+      <row refTypeID="11002" refTypeName="Respec payment" />
+      <row refTypeID="11003" refTypeName="Entitlement" />
+      <row refTypeID="11004" refTypeName="Reset Reimbursement" />
+      <row refTypeID="11005" refTypeName="Reset AUR for Character Reset" />
+      <row refTypeID="12001" refTypeName="Daily mission CP" />
+      <row refTypeID="12002" refTypeName="Warbarge CP" />
+      <row refTypeID="12003" refTypeName="Donate CP" />
+      <row refTypeID="12004" refTypeName="Use CP for clone packs" />
+      <row refTypeID="12005" refTypeName="Use CP for moving clones" />
+      <row refTypeID="12006" refTypeName="Use CP for selling clones" />
+      <row refTypeID="12007" refTypeName="Use CP for changing reinforcement" />
+      <row refTypeID="12008" refTypeName="Use CP for changing surface infrastructure" />
+      <row refTypeID="13001" refTypeName="Daily mission DK" />
+      <row refTypeID="13002" refTypeName="Planetary conquest DK" />
+      <row refTypeID="13003" refTypeName="Use DK for purchasing items" />
+      <row refTypeID="13004" refTypeName="Use DK for rerolling market" />
+      <row refTypeID="13005" refTypeName="Selling Clones DK" />
+    </rowset>
+  </result>
+  <cachedUntil>2018-03-28 00:53:15</cachedUntil>
+</eveapi>

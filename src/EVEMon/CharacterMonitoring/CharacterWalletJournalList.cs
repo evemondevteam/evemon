@@ -233,11 +233,10 @@ namespace EVEMon.CharacterMonitoring
         /// </summary>
         public void AutoResizeColumns()
         {
-            m_columns.ForEach(column =>
-                                  {
-                                      if (column.Visible)
-                                          column.Width = -2;
-                                  });
+            m_columns.ForEach(column => {
+                if (column.Visible)
+                    column.Width = -2;
+            });
 
             UpdateColumns();
         }
@@ -298,8 +297,7 @@ namespace EVEMon.CharacterMonitoring
 
             // Store the selected item (if any) to restore it after the update
             int selectedItem = lvWalletJournal.SelectedItems.Count > 0
-                ? lvWalletJournal.SelectedItems[0].Tag.GetHashCode()
-                : 0;
+                ? lvWalletJournal.SelectedItems[0].Tag.GetHashCode() : 0;
 
             lvWalletJournal.BeginUpdate();
             try
@@ -408,17 +406,15 @@ namespace EVEMon.CharacterMonitoring
             lvWalletJournal.Groups.Clear();
 
             // Add the items
-            lvWalletJournal.Items
-                .AddRange(walletJournalTransactions
-                    .Select(walletJournal => new
-                    {
-                        walletJournal,
-                        item = new ListViewItem($"{walletJournal.Date.ToLocalTime()}")
-                        {
-                            UseItemStyleForSubItems = false,
-                            Tag = walletJournal
-                        }
-                    }).Select(x => CreateSubItems(x.walletJournal, x.item)).ToArray());
+            lvWalletJournal.Items.AddRange(walletJournalTransactions.Select(walletJournal => new
+            {
+                walletJournal,
+                item = new ListViewItem($"{walletJournal.Date.ToLocalTime()}")
+                {
+                    UseItemStyleForSubItems = false,
+                    Tag = walletJournal
+                }
+            }).Select(x => CreateSubItems(x.walletJournal, x.item)).ToArray());
         }
 
         /// <summary>
@@ -444,17 +440,15 @@ namespace EVEMon.CharacterMonitoring
                 lvWalletJournal.Groups.Add(listGroup);
 
                 // Add the items in every group
-                lvWalletJournal.Items
-                    .AddRange(group
-                        .Select(walletJournal => new
-                        {
-                            walletJournal,
-                            item = new ListViewItem($"{walletJournal.Date.ToLocalTime()}", listGroup)
-                            {
-                                UseItemStyleForSubItems = false,
-                                Tag = walletJournal
-                            }
-                        }).Select(x => CreateSubItems(x.walletJournal, x.item)).ToArray());
+                lvWalletJournal.Items.AddRange(group.Select(walletJournal => new
+                {
+                    walletJournal,
+                    item = new ListViewItem($"{walletJournal.Date.ToLocalTime()}", listGroup)
+                    {
+                        UseItemStyleForSubItems = false,
+                        Tag = walletJournal
+                    }
+                }).Select(x => CreateSubItems(x.walletJournal, x.item)).ToArray());
             }
         }
 

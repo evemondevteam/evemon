@@ -7,10 +7,10 @@ using EVEMon.Common.Serialization.Eve;
 
 namespace EVEMon.Common.QueryMonitor
 {
-    public sealed class CorporationQueryMonitor<T> : QueryMonitor<T>
+    public sealed class CorporationQueryMonitor<T> : QueryMonitor<T> where T : class
     {
         private readonly Character m_character;
-        private APIKey m_apiKey;
+        private ESIKey m_esiKey;
 
         /// <summary>
         /// Constructor.
@@ -18,17 +18,35 @@ namespace EVEMon.Common.QueryMonitor
         /// <param name="character"></param>
         /// <param name="method"></param>
         /// <param name="onUpdated"></param>
-        public CorporationQueryMonitor(Character character, Enum method, Action<CCPAPIResult<T>> onUpdated)
-            : base(method, onUpdated)
+        internal CorporationQueryMonitor(CCPCharacter character, Enum method, Action<T>
+            onSuccess, NotifyErrorCallback onFailure) : base(method, (result) =>
+            {
+                if (character.Monitored)
+                {
+                    // "No corp role(s)" = 403
+                    if (result.HasError)
+                    {
+                        int rolesError = result.ErrorMessage?.IndexOf("role",
+                            StringComparison.InvariantCultureIgnoreCase) ?? -1;
+                        // Do not invoke onFailure on corp roles error since we cannot actually
+                        // determine whether the key had the roles until we try
+                        if ((result.ErrorCode != 403 || rolesError <= 0) && character.
+                                ShouldNotifyError(result, method))
+                            onFailure.Invoke(character, result);
+                    }
+                    else
+                        onSuccess.Invoke(result.Result);
+                }
+            })
         {
             m_character = character;
         }
 
         /// <summary>
-        /// Gets the required API key information are known.
+        /// Returns true if the required API key information is known.
         /// </summary>
         /// <returns>False if an API key was required and not found.</returns>
-        protected override bool HasAPIKey => m_character.Identity.APIKeys.Any(apiKey => apiKey.IsCorporationType);
+        protected override bool HasAPIKey => m_character.Identity.ESIKeys.Any();
 
         /// <summary>
         /// Gets a value indicating whether this monitor has access to data.
@@ -40,8 +58,8 @@ namespace EVEMon.Common.QueryMonitor
         {
             get
             {
-                m_apiKey = m_character.Identity.FindAPIKeyWithAccess((CCPAPICorporationMethods)Method);
-                return m_apiKey != null;
+                m_esiKey = m_character.Identity.FindAPIKeyWithAccess((ESIAPICorporationMethods)Method);
+                return m_esiKey != null;
             }
         }
 
@@ -51,11 +69,13 @@ namespace EVEMon.Common.QueryMonitor
         /// <param name="provider">The API provider to use.</param>
         /// <param name="callback">The callback invoked on the UI thread after a result has been queried.</param>
         /// <exception cref="System.ArgumentNullException">provider</exception>
-        protected override void QueryAsyncCore(APIProvider provider, Action<CCPAPIResult<T>> callback)
+        protected override void QueryAsyncCore(APIProvider provider, APIProvider.
+            ESIRequestCallback<T> callback)
         {
             provider.ThrowIfNull(nameof(provider));
 
-            provider.QueryMethodAsync(Method, m_apiKey.ID, m_apiKey.VerificationCode, m_character.CharacterID, callback);
+            provider.QueryEsiAsync(Method, m_esiKey.AccessToken, m_character.CorporationID,
+                callback);
         }
     }
 }

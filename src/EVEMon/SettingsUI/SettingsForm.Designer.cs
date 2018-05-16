@@ -34,48 +34,31 @@ namespace EVEMon.SettingsUI
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Node1");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Node2");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Node3");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Node4");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Node5");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Node6");
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Node7");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Node8");
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Node0", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Updates", 11, 11);
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Network", 7, 7);
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Logitech Keyboards", 4, 4);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Portable EVE Clients", 15, 15);
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Market Price Providers", 16, 16);
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("General", 10, 10, new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
             treeNode4,
-            treeNode5,
-            treeNode6,
-            treeNode7,
-            treeNode8});
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Updates", 11, 11);
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Network", 7, 7);
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Logitech Keyboards", 4, 4);
-            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Portable EVE Clients", 15, 15);
-            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Market Price Providers", 16, 16);
-            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("General", 10, 10, new System.Windows.Forms.TreeNode[] {
-            treeNode10,
-            treeNode11,
-            treeNode12,
-            treeNode14,
-            treeNode15});
-            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Main Window", 6, 6);
-            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Icons", 13, 13);
-            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Messages", 14, 14);
-            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Skill Planner", 8, 8, new System.Windows.Forms.TreeNode[] {
-            treeNode18,
-            treeNode19});
-            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("System Tray Icon", 2, 2);
-            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("External Calendar", 5, 5);
-            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Scheduler", 1, 1, new System.Windows.Forms.TreeNode[] {
-            treeNode22});
-            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Skill Completion Mails", 12, 12);
-            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Notifications", 9, 9, new System.Windows.Forms.TreeNode[] {
-            treeNode24});
-            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Cloud Storage Service", 17, 17);
+            treeNode5});
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Main Window", 6, 6);
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Icons", 13, 13);
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Messages", 14, 14);
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Skill Planner", 8, 8, new System.Windows.Forms.TreeNode[] {
+            treeNode8,
+            treeNode9});
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("System Tray Icon", 2, 2);
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("External Calendar", 5, 5);
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Scheduler", 1, 1, new System.Windows.Forms.TreeNode[] {
+            treeNode12});
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Skill Completion Mails", 12, 12);
+            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Notifications", 9, 9, new System.Windows.Forms.TreeNode[] {
+            treeNode14});
+            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Cloud Storage Service", 17, 17);
             this.systemTrayIconGroupBox = new System.Windows.Forms.GroupBox();
             this.rbSystemTrayOptionsNever = new System.Windows.Forms.RadioButton();
             this.rbSystemTrayOptionsAlways = new System.Windows.Forms.RadioButton();
@@ -103,7 +86,6 @@ namespace EVEMon.SettingsUI
             this.lblGeneralPage = new System.Windows.Forms.Label();
             this.lblEnvironment = new System.Windows.Forms.Label();
             this.lblSkillPlannerPage = new System.Windows.Forms.Label();
-            this.lblNetworkPageAPIProvider = new System.Windows.Forms.Label();
             this.lblNetworkPageProxy = new System.Windows.Forms.Label();
             this.lblProxyHostIPAddress = new System.Windows.Forms.Label();
             this.lblProxyPort = new System.Windows.Forms.Label();
@@ -146,6 +128,7 @@ namespace EVEMon.SettingsUI
             this.mainWindowPage = new EVEMon.Common.Controls.MultiPanel.MultiPanelPage();
             this.OverviewGroupBox = new System.Windows.Forms.GroupBox();
             this.overviewPanel = new System.Windows.Forms.Panel();
+            this.cbShowSkillpointsOnOverview = new System.Windows.Forms.CheckBox();
             this.overviewPortraitSizeComboBox = new System.Windows.Forms.ComboBox();
             this.skillPlannerPage = new EVEMon.Common.Controls.MultiPanel.MultiPanelPage();
             this.cbAdvanceEntryAdd = new System.Windows.Forms.CheckBox();
@@ -156,11 +139,12 @@ namespace EVEMon.SettingsUI
             this.cbHighlightPrerequisites = new System.Windows.Forms.CheckBox();
             this.cbHighlightPlannedSkills = new System.Windows.Forms.CheckBox();
             this.networkPage = new EVEMon.Common.Controls.MultiPanel.MultiPanelPage();
-            this.ApiProxyGroupBox = new System.Windows.Forms.GroupBox();
-            this.btnDeleteAPIServer = new System.Windows.Forms.Button();
-            this.btnAddAPIServer = new System.Windows.Forms.Button();
-            this.cbAPIServer = new System.Windows.Forms.ComboBox();
-            this.btnEditAPIServer = new System.Windows.Forms.Button();
+            this.esiSettingsGroupBox = new System.Windows.Forms.GroupBox();
+            this.lblClientSecret = new System.Windows.Forms.Label();
+            this.lblClientID = new System.Windows.Forms.Label();
+            this.esiSettingsLabel = new System.Windows.Forms.LinkLabel();
+            this.clientSecretTextBox = new System.Windows.Forms.TextBox();
+            this.clientIDTextBox = new System.Windows.Forms.TextBox();
             this.ProxyServerGroupBox = new System.Windows.Forms.GroupBox();
             this.customProxyCheckBox = new System.Windows.Forms.CheckBox();
             this.customProxyPanel = new System.Windows.Forms.Panel();
@@ -228,7 +212,7 @@ namespace EVEMon.SettingsUI
             this.marketPriceProviderPageLabel = new System.Windows.Forms.Label();
             this.cloudStorageServicePage = new EVEMon.Common.Controls.MultiPanel.MultiPanelPage();
             this.providerAuthenticationGroupBox = new System.Windows.Forms.GroupBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cloudStorageGroupBox = new System.Windows.Forms.GroupBox();
             this.cloudStorageProviderLogoPictureBox = new System.Windows.Forms.PictureBox();
             this.cloudStorageProvidersComboBox = new System.Windows.Forms.ComboBox();
             this.lblSelectedProvider = new System.Windows.Forms.Label();
@@ -241,7 +225,6 @@ namespace EVEMon.SettingsUI
             this.portableEveClientsControl = new EVEMon.SettingsUI.PortableEveClientsControl();
             this.cloudStorageServiceControl = new EVEMon.SettingsUI.CloudStorageServiceControl();
             this.settingsFileStorageControl = new EVEMon.SettingsUI.SettingsFileStorageControl();
-            this.cbShowSkillpointsOnOverview = new System.Windows.Forms.CheckBox();
             this.systemTrayIconGroupBox.SuspendLayout();
             this.bottomPanel.SuspendLayout();
             this.CharacterMonitorGroupBox.SuspendLayout();
@@ -257,7 +240,7 @@ namespace EVEMon.SettingsUI
             this.overviewPanel.SuspendLayout();
             this.skillPlannerPage.SuspendLayout();
             this.networkPage.SuspendLayout();
-            this.ApiProxyGroupBox.SuspendLayout();
+            this.esiSettingsGroupBox.SuspendLayout();
             this.ProxyServerGroupBox.SuspendLayout();
             this.customProxyPanel.SuspendLayout();
             this.emailNotificationsPage.SuspendLayout();
@@ -284,7 +267,7 @@ namespace EVEMon.SettingsUI
             this.gbMarketPriceProviders.SuspendLayout();
             this.cloudStorageServicePage.SuspendLayout();
             this.providerAuthenticationGroupBox.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.cloudStorageGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cloudStorageProviderLogoPictureBox)).BeginInit();
             this.settingsFileStorageGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -620,18 +603,6 @@ namespace EVEMon.SettingsUI
             this.lblSkillPlannerPage.Text = "You can select whether to highlight any entry in the Skill Planner according to i" +
     "ts status and more.";
             // 
-            // lblNetworkPageAPIProvider
-            // 
-            this.lblNetworkPageAPIProvider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblNetworkPageAPIProvider.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.lblNetworkPageAPIProvider.Location = new System.Drawing.Point(12, 17);
-            this.lblNetworkPageAPIProvider.Name = "lblNetworkPageAPIProvider";
-            this.lblNetworkPageAPIProvider.Size = new System.Drawing.Size(374, 29);
-            this.lblNetworkPageAPIProvider.TabIndex = 8;
-            this.lblNetworkPageAPIProvider.Text = "By default, EVEMon queries CCP for the API data. You can implement your own provi" +
-    "der and make EVEMon use it.";
-            // 
             // lblNetworkPageProxy
             // 
             this.lblNetworkPageProxy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -639,7 +610,7 @@ namespace EVEMon.SettingsUI
             this.lblNetworkPageProxy.ForeColor = System.Drawing.SystemColors.MenuHighlight;
             this.lblNetworkPageProxy.Location = new System.Drawing.Point(9, 17);
             this.lblNetworkPageProxy.Name = "lblNetworkPageProxy";
-            this.lblNetworkPageProxy.Size = new System.Drawing.Size(382, 32);
+            this.lblNetworkPageProxy.Size = new System.Drawing.Size(399, 32);
             this.lblNetworkPageProxy.TabIndex = 8;
             this.lblNetworkPageProxy.Text = "By default, EVEMon will use the same Proxy settings as Internet Explorer (can be " +
     "configured through the Control Panel).";
@@ -650,7 +621,7 @@ namespace EVEMon.SettingsUI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblProxyHostIPAddress.Location = new System.Drawing.Point(50, 8);
             this.lblProxyHostIPAddress.Name = "lblProxyHostIPAddress";
-            this.lblProxyHostIPAddress.Size = new System.Drawing.Size(165, 13);
+            this.lblProxyHostIPAddress.Size = new System.Drawing.Size(182, 13);
             this.lblProxyHostIPAddress.TabIndex = 3;
             this.lblProxyHostIPAddress.Text = "Host/IP Address";
             this.lblProxyHostIPAddress.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -661,7 +632,7 @@ namespace EVEMon.SettingsUI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblProxyPort.Location = new System.Drawing.Point(221, 8);
             this.lblProxyPort.Name = "lblProxyPort";
-            this.lblProxyPort.Size = new System.Drawing.Size(39, 13);
+            this.lblProxyPort.Size = new System.Drawing.Size(56, 13);
             this.lblProxyPort.TabIndex = 4;
             this.lblProxyPort.Text = "Port";
             this.lblProxyPort.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -861,26 +832,6 @@ namespace EVEMon.SettingsUI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tvlist.Location = new System.Drawing.Point(3, 30);
             this.tvlist.Name = "tvlist";
-            treeNode1.Name = "Node1";
-            treeNode1.Text = "Node1";
-            treeNode2.Name = "Node2";
-            treeNode2.Text = "Node2";
-            treeNode3.Name = "Node3";
-            treeNode3.Text = "Node3";
-            treeNode4.Name = "Node4";
-            treeNode4.Text = "Node4";
-            treeNode5.Name = "Node5";
-            treeNode5.Text = "Node5";
-            treeNode6.Name = "Node6";
-            treeNode6.Text = "Node6";
-            treeNode7.Name = "Node7";
-            treeNode7.Text = "Node7";
-            treeNode8.Name = "Node8";
-            treeNode8.Text = "Node8";
-            treeNode9.Name = "Node0";
-            treeNode9.Text = "Node0";
-            this.tvlist.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode9});
             this.tvlist.Size = new System.Drawing.Size(213, 152);
             this.tvlist.TabIndex = 9;
             // 
@@ -976,94 +927,94 @@ namespace EVEMon.SettingsUI
             this.treeView.ItemHeight = 20;
             this.treeView.Location = new System.Drawing.Point(6, 6);
             this.treeView.Name = "treeView";
-            treeNode10.ImageIndex = 11;
-            treeNode10.Name = "UpdatesNode";
-            treeNode10.SelectedImageIndex = 11;
-            treeNode10.Tag = "updatesPage";
-            treeNode10.Text = "Updates";
-            treeNode11.ImageIndex = 7;
-            treeNode11.Name = "networkNode";
-            treeNode11.SelectedImageIndex = 7;
-            treeNode11.Tag = "networkPage";
-            treeNode11.Text = "Network";
-            treeNode12.ImageIndex = 4;
-            treeNode12.Name = "g15Node";
-            treeNode12.SelectedImageIndex = 4;
-            treeNode12.Tag = "g15Page";
-            treeNode12.Text = "Logitech Keyboards";
-            treeNode14.ImageIndex = 15;
-            treeNode14.Name = "PortableEveClientsNode";
-            treeNode14.SelectedImageIndex = 15;
-            treeNode14.Tag = "portableEveClientsPage";
-            treeNode14.Text = "Portable EVE Clients";
-            treeNode15.ImageIndex = 16;
-            treeNode15.Name = "MarketPriceProvidersNode";
-            treeNode15.SelectedImageIndex = 16;
-            treeNode15.Tag = "marketPriceProvidersPage";
-            treeNode15.Text = "Market Price Providers";
-            treeNode16.ImageIndex = 10;
-            treeNode16.Name = "generalNode";
-            treeNode16.SelectedImageIndex = 10;
-            treeNode16.Tag = "generalPage";
-            treeNode16.Text = "General";
-            treeNode17.ImageIndex = 6;
-            treeNode17.Name = "Node3";
-            treeNode17.SelectedImageIndex = 6;
-            treeNode17.Tag = "mainWindowPage";
-            treeNode17.Text = "Main Window";
-            treeNode18.ImageIndex = 13;
-            treeNode18.Name = "IconsNode";
-            treeNode18.SelectedImageIndex = 13;
-            treeNode18.Tag = "iconsPage";
-            treeNode18.Text = "Icons";
-            treeNode19.ImageIndex = 14;
-            treeNode19.Name = "MassagesNode";
-            treeNode19.SelectedImageIndex = 14;
-            treeNode19.Tag = "messagesPage";
-            treeNode19.Text = "Messages";
-            treeNode20.ImageIndex = 8;
-            treeNode20.Name = "Node4";
-            treeNode20.SelectedImageIndex = 8;
-            treeNode20.Tag = "skillPlannerPage";
-            treeNode20.Text = "Skill Planner";
-            treeNode21.ImageIndex = 2;
-            treeNode21.Name = "trayIconNode";
-            treeNode21.SelectedImageIndex = 2;
-            treeNode21.Tag = "trayIconPage";
-            treeNode21.Text = "System Tray Icon";
-            treeNode22.ImageIndex = 5;
-            treeNode22.Name = "Node11";
-            treeNode22.SelectedImageIndex = 5;
-            treeNode22.Tag = "externalCalendarPage";
-            treeNode22.Text = "External Calendar";
-            treeNode23.ImageIndex = 1;
-            treeNode23.Name = "Node10";
-            treeNode23.SelectedImageIndex = 1;
-            treeNode23.Tag = "schedulerUIPage";
-            treeNode23.Text = "Scheduler";
-            treeNode24.ImageIndex = 12;
-            treeNode24.Name = "Node7";
-            treeNode24.SelectedImageIndex = 12;
-            treeNode24.Tag = "emailNotificationsPage";
-            treeNode24.Text = "Skill Completion Mails";
-            treeNode25.ImageIndex = 9;
-            treeNode25.Name = "Node2";
-            treeNode25.SelectedImageIndex = 9;
-            treeNode25.Tag = "notificationsPage";
-            treeNode25.Text = "Notifications";
-            treeNode26.ImageIndex = 17;
-            treeNode26.Name = "CloudStorageServiceNode";
-            treeNode26.SelectedImageIndex = 17;
-            treeNode26.Tag = "cloudStorageServicePage";
-            treeNode26.Text = "Cloud Storage Service";
+            treeNode1.ImageIndex = 11;
+            treeNode1.Name = "UpdatesNode";
+            treeNode1.SelectedImageIndex = 11;
+            treeNode1.Tag = "updatesPage";
+            treeNode1.Text = "Updates";
+            treeNode2.ImageIndex = 7;
+            treeNode2.Name = "networkNode";
+            treeNode2.SelectedImageIndex = 7;
+            treeNode2.Tag = "networkPage";
+            treeNode2.Text = "Network";
+            treeNode3.ImageIndex = 4;
+            treeNode3.Name = "g15Node";
+            treeNode3.SelectedImageIndex = 4;
+            treeNode3.Tag = "g15Page";
+            treeNode3.Text = "Logitech Keyboards";
+            treeNode4.ImageIndex = 15;
+            treeNode4.Name = "PortableEveClientsNode";
+            treeNode4.SelectedImageIndex = 15;
+            treeNode4.Tag = "portableEveClientsPage";
+            treeNode4.Text = "Portable EVE Clients";
+            treeNode5.ImageIndex = 16;
+            treeNode5.Name = "MarketPriceProvidersNode";
+            treeNode5.SelectedImageIndex = 16;
+            treeNode5.Tag = "marketPriceProvidersPage";
+            treeNode5.Text = "Market Price Providers";
+            treeNode6.ImageIndex = 10;
+            treeNode6.Name = "generalNode";
+            treeNode6.SelectedImageIndex = 10;
+            treeNode6.Tag = "generalPage";
+            treeNode6.Text = "General";
+            treeNode7.ImageIndex = 6;
+            treeNode7.Name = "Node3";
+            treeNode7.SelectedImageIndex = 6;
+            treeNode7.Tag = "mainWindowPage";
+            treeNode7.Text = "Main Window";
+            treeNode8.ImageIndex = 13;
+            treeNode8.Name = "IconsNode";
+            treeNode8.SelectedImageIndex = 13;
+            treeNode8.Tag = "iconsPage";
+            treeNode8.Text = "Icons";
+            treeNode9.ImageIndex = 14;
+            treeNode9.Name = "MassagesNode";
+            treeNode9.SelectedImageIndex = 14;
+            treeNode9.Tag = "messagesPage";
+            treeNode9.Text = "Messages";
+            treeNode10.ImageIndex = 8;
+            treeNode10.Name = "Node4";
+            treeNode10.SelectedImageIndex = 8;
+            treeNode10.Tag = "skillPlannerPage";
+            treeNode10.Text = "Skill Planner";
+            treeNode11.ImageIndex = 2;
+            treeNode11.Name = "trayIconNode";
+            treeNode11.SelectedImageIndex = 2;
+            treeNode11.Tag = "trayIconPage";
+            treeNode11.Text = "System Tray Icon";
+            treeNode12.ImageIndex = 5;
+            treeNode12.Name = "Node11";
+            treeNode12.SelectedImageIndex = 5;
+            treeNode12.Tag = "externalCalendarPage";
+            treeNode12.Text = "External Calendar";
+            treeNode13.ImageIndex = 1;
+            treeNode13.Name = "Node10";
+            treeNode13.SelectedImageIndex = 1;
+            treeNode13.Tag = "schedulerUIPage";
+            treeNode13.Text = "Scheduler";
+            treeNode14.ImageIndex = 12;
+            treeNode14.Name = "Node7";
+            treeNode14.SelectedImageIndex = 12;
+            treeNode14.Tag = "emailNotificationsPage";
+            treeNode14.Text = "Skill Completion Mails";
+            treeNode15.ImageIndex = 9;
+            treeNode15.Name = "Node2";
+            treeNode15.SelectedImageIndex = 9;
+            treeNode15.Tag = "notificationsPage";
+            treeNode15.Text = "Notifications";
+            treeNode16.ImageIndex = 17;
+            treeNode16.Name = "CloudStorageServiceNode";
+            treeNode16.SelectedImageIndex = 17;
+            treeNode16.Tag = "cloudStorageServicePage";
+            treeNode16.Text = "Cloud Storage Service";
             this.treeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode16,
-            treeNode17,
-            treeNode20,
-            treeNode21,
-            treeNode23,
-            treeNode25,
-            treeNode26});
+            treeNode6,
+            treeNode7,
+            treeNode10,
+            treeNode11,
+            treeNode13,
+            treeNode15,
+            treeNode16});
             this.treeView.SelectedImageIndex = 0;
             this.treeView.ShowLines = false;
             this.treeView.ShowPlusMinus = false;
@@ -1129,7 +1080,7 @@ namespace EVEMon.SettingsUI
             this.multiPanel.Location = new System.Drawing.Point(199, 0);
             this.multiPanel.Name = "multiPanel";
             this.multiPanel.Padding = new System.Windows.Forms.Padding(5);
-            this.multiPanel.SelectedPage = this.generalPage;
+            this.multiPanel.SelectedPage = this.skillPlannerPage;
             this.multiPanel.Size = new System.Drawing.Size(445, 436);
             this.multiPanel.TabIndex = 7;
             // 
@@ -1236,6 +1187,16 @@ namespace EVEMon.SettingsUI
             this.overviewPanel.Size = new System.Drawing.Size(393, 85);
             this.overviewPanel.TabIndex = 32;
             // 
+            // cbShowSkillpointsOnOverview
+            // 
+            this.cbShowSkillpointsOnOverview.AutoSize = true;
+            this.cbShowSkillpointsOnOverview.Location = new System.Drawing.Point(161, 20);
+            this.cbShowSkillpointsOnOverview.Name = "cbShowSkillpointsOnOverview";
+            this.cbShowSkillpointsOnOverview.Size = new System.Drawing.Size(107, 17);
+            this.cbShowSkillpointsOnOverview.TabIndex = 35;
+            this.cbShowSkillpointsOnOverview.Text = "Show Skill Points";
+            this.cbShowSkillpointsOnOverview.UseVisualStyleBackColor = true;
+            // 
             // overviewPortraitSizeComboBox
             // 
             this.overviewPortraitSizeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -1335,7 +1296,7 @@ namespace EVEMon.SettingsUI
             // 
             // networkPage
             // 
-            this.networkPage.Controls.Add(this.ApiProxyGroupBox);
+            this.networkPage.Controls.Add(this.esiSettingsGroupBox);
             this.networkPage.Controls.Add(this.ProxyServerGroupBox);
             this.networkPage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.networkPage.Location = new System.Drawing.Point(5, 5);
@@ -1345,59 +1306,65 @@ namespace EVEMon.SettingsUI
             this.networkPage.Text = "networkPage";
             this.networkPage.Visible = false;
             // 
-            // ApiProxyGroupBox
+            // esiSettingsGroupBox
             // 
-            this.ApiProxyGroupBox.Controls.Add(this.lblNetworkPageAPIProvider);
-            this.ApiProxyGroupBox.Controls.Add(this.btnDeleteAPIServer);
-            this.ApiProxyGroupBox.Controls.Add(this.btnAddAPIServer);
-            this.ApiProxyGroupBox.Controls.Add(this.cbAPIServer);
-            this.ApiProxyGroupBox.Controls.Add(this.btnEditAPIServer);
-            this.ApiProxyGroupBox.Location = new System.Drawing.Point(3, 235);
-            this.ApiProxyGroupBox.Name = "ApiProxyGroupBox";
-            this.ApiProxyGroupBox.Size = new System.Drawing.Size(392, 122);
-            this.ApiProxyGroupBox.TabIndex = 7;
-            this.ApiProxyGroupBox.TabStop = false;
-            this.ApiProxyGroupBox.Text = "API Provider";
+            this.esiSettingsGroupBox.Controls.Add(this.lblClientSecret);
+            this.esiSettingsGroupBox.Controls.Add(this.lblClientID);
+            this.esiSettingsGroupBox.Controls.Add(this.esiSettingsLabel);
+            this.esiSettingsGroupBox.Controls.Add(this.clientSecretTextBox);
+            this.esiSettingsGroupBox.Controls.Add(this.clientIDTextBox);
+            this.esiSettingsGroupBox.Location = new System.Drawing.Point(3, 194);
+            this.esiSettingsGroupBox.Name = "esiSettingsGroupBox";
+            this.esiSettingsGroupBox.Size = new System.Drawing.Size(409, 88);
+            this.esiSettingsGroupBox.TabIndex = 1;
+            this.esiSettingsGroupBox.TabStop = false;
+            this.esiSettingsGroupBox.Text = "ESI Client Settings";
             // 
-            // btnDeleteAPIServer
+            // lblClientSecret
             // 
-            this.btnDeleteAPIServer.Location = new System.Drawing.Point(174, 85);
-            this.btnDeleteAPIServer.Name = "btnDeleteAPIServer";
-            this.btnDeleteAPIServer.Size = new System.Drawing.Size(75, 23);
-            this.btnDeleteAPIServer.TabIndex = 4;
-            this.btnDeleteAPIServer.Text = "Delete";
-            this.btnDeleteAPIServer.UseVisualStyleBackColor = true;
-            this.btnDeleteAPIServer.Click += new System.EventHandler(this.btnDeleteAPIServer_Click);
+            this.lblClientSecret.AutoSize = true;
+            this.lblClientSecret.Location = new System.Drawing.Point(9, 62);
+            this.lblClientSecret.Name = "lblClientSecret";
+            this.lblClientSecret.Size = new System.Drawing.Size(67, 13);
+            this.lblClientSecret.TabIndex = 2;
+            this.lblClientSecret.Text = "Client Secret";
             // 
-            // btnAddAPIServer
+            // lblClientID
             // 
-            this.btnAddAPIServer.Location = new System.Drawing.Point(12, 85);
-            this.btnAddAPIServer.Name = "btnAddAPIServer";
-            this.btnAddAPIServer.Size = new System.Drawing.Size(75, 23);
-            this.btnAddAPIServer.TabIndex = 2;
-            this.btnAddAPIServer.Text = "Add";
-            this.btnAddAPIServer.UseVisualStyleBackColor = true;
-            this.btnAddAPIServer.Click += new System.EventHandler(this.btnAddAPIServer_Click);
+            this.lblClientID.AutoSize = true;
+            this.lblClientID.Location = new System.Drawing.Point(29, 39);
+            this.lblClientID.Name = "lblClientID";
+            this.lblClientID.Size = new System.Drawing.Size(47, 13);
+            this.lblClientID.TabIndex = 2;
+            this.lblClientID.Text = "Client ID";
             // 
-            // cbAPIServer
+            // esiSettingsLabel
             // 
-            this.cbAPIServer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbAPIServer.FormattingEnabled = true;
-            this.cbAPIServer.Location = new System.Drawing.Point(12, 58);
-            this.cbAPIServer.Name = "cbAPIServer";
-            this.cbAPIServer.Size = new System.Drawing.Size(233, 21);
-            this.cbAPIServer.TabIndex = 0;
-            this.cbAPIServer.SelectedIndexChanged += new System.EventHandler(this.OnMustEnableOrDisable);
+            this.esiSettingsLabel.AutoSize = true;
+            this.esiSettingsLabel.LinkArea = new System.Windows.Forms.LinkArea(31, 40);
+            this.esiSettingsLabel.Location = new System.Drawing.Point(9, 16);
+            this.esiSettingsLabel.Name = "esiSettingsLabel";
+            this.esiSettingsLabel.Size = new System.Drawing.Size(364, 17);
+            this.esiSettingsLabel.TabIndex = 1;
+            this.esiSettingsLabel.TabStop = true;
+            this.esiSettingsLabel.Text = "Create ESI client application: https://peterhaneve.github.io/evemon-esi\r\n";
+            this.esiSettingsLabel.UseCompatibleTextRendering = true;
+            this.esiSettingsLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.esiSettingsLabel_LinkClicked);
             // 
-            // btnEditAPIServer
+            // clientSecretTextBox
             // 
-            this.btnEditAPIServer.Location = new System.Drawing.Point(93, 85);
-            this.btnEditAPIServer.Name = "btnEditAPIServer";
-            this.btnEditAPIServer.Size = new System.Drawing.Size(75, 23);
-            this.btnEditAPIServer.TabIndex = 3;
-            this.btnEditAPIServer.Text = "Edit";
-            this.btnEditAPIServer.UseVisualStyleBackColor = true;
-            this.btnEditAPIServer.Click += new System.EventHandler(this.btnEditAPIServer_Click);
+            this.clientSecretTextBox.Location = new System.Drawing.Point(82, 59);
+            this.clientSecretTextBox.Name = "clientSecretTextBox";
+            this.clientSecretTextBox.Size = new System.Drawing.Size(315, 20);
+            this.clientSecretTextBox.TabIndex = 7;
+            this.clientSecretTextBox.UseSystemPasswordChar = true;
+            // 
+            // clientIDTextBox
+            // 
+            this.clientIDTextBox.Location = new System.Drawing.Point(82, 36);
+            this.clientIDTextBox.Name = "clientIDTextBox";
+            this.clientIDTextBox.Size = new System.Drawing.Size(315, 20);
+            this.clientIDTextBox.TabIndex = 6;
             // 
             // ProxyServerGroupBox
             // 
@@ -1406,7 +1373,7 @@ namespace EVEMon.SettingsUI
             this.ProxyServerGroupBox.Controls.Add(this.customProxyPanel);
             this.ProxyServerGroupBox.Location = new System.Drawing.Point(3, 31);
             this.ProxyServerGroupBox.Name = "ProxyServerGroupBox";
-            this.ProxyServerGroupBox.Size = new System.Drawing.Size(392, 157);
+            this.ProxyServerGroupBox.Size = new System.Drawing.Size(409, 157);
             this.ProxyServerGroupBox.TabIndex = 0;
             this.ProxyServerGroupBox.TabStop = false;
             this.ProxyServerGroupBox.Text = "Proxy Server Settings";
@@ -1434,13 +1401,13 @@ namespace EVEMon.SettingsUI
             this.customProxyPanel.Controls.Add(this.proxyHttpHostTextBox);
             this.customProxyPanel.Location = new System.Drawing.Point(17, 97);
             this.customProxyPanel.Name = "customProxyPanel";
-            this.customProxyPanel.Size = new System.Drawing.Size(369, 54);
+            this.customProxyPanel.Size = new System.Drawing.Size(386, 54);
             this.customProxyPanel.TabIndex = 6;
             // 
             // proxyPortTextBox
             // 
             this.proxyPortTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.proxyPortTextBox.Location = new System.Drawing.Point(222, 24);
+            this.proxyPortTextBox.Location = new System.Drawing.Point(239, 24);
             this.proxyPortTextBox.MaxLength = 5;
             this.proxyPortTextBox.Name = "proxyPortTextBox";
             this.proxyPortTextBox.Size = new System.Drawing.Size(38, 20);
@@ -1451,7 +1418,7 @@ namespace EVEMon.SettingsUI
             // 
             this.proxyAuthenticationButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.proxyAuthenticationButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.proxyAuthenticationButton.Location = new System.Drawing.Point(266, 22);
+            this.proxyAuthenticationButton.Location = new System.Drawing.Point(283, 22);
             this.proxyAuthenticationButton.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.proxyAuthenticationButton.Name = "proxyAuthenticationButton";
             this.proxyAuthenticationButton.Size = new System.Drawing.Size(97, 23);
@@ -1466,7 +1433,7 @@ namespace EVEMon.SettingsUI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.proxyHttpHostTextBox.Location = new System.Drawing.Point(50, 24);
             this.proxyHttpHostTextBox.Name = "proxyHttpHostTextBox";
-            this.proxyHttpHostTextBox.Size = new System.Drawing.Size(165, 20);
+            this.proxyHttpHostTextBox.Size = new System.Drawing.Size(182, 20);
             this.proxyHttpHostTextBox.TabIndex = 1;
             // 
             // emailNotificationsPage
@@ -1493,14 +1460,6 @@ namespace EVEMon.SettingsUI
             this.mailNotificationCheckBox.UseVisualStyleBackColor = true;
             this.mailNotificationCheckBox.CheckedChanged += new System.EventHandler(this.OnMustEnableOrDisable);
             // 
-            // emailNotificationsControl
-            // 
-            this.emailNotificationsControl.Location = new System.Drawing.Point(7, 74);
-            this.emailNotificationsControl.Name = "emailNotificationsControl";
-            this.emailNotificationsControl.Settings = null;
-            this.emailNotificationsControl.Size = new System.Drawing.Size(355, 337);
-            this.emailNotificationsControl.TabIndex = 20;
-            // 
             // notificationsPage
             // 
             this.notificationsPage.Controls.Add(this.lblNotificationsPage);
@@ -1523,18 +1482,6 @@ namespace EVEMon.SettingsUI
             this.cbPlaySoundOnSkillComplete.TabIndex = 3;
             this.cbPlaySoundOnSkillComplete.Text = "Play sound when skill training completes";
             this.cbPlaySoundOnSkillComplete.UseVisualStyleBackColor = true;
-            // 
-            // notificationsControl
-            // 
-            this.notificationsControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.notificationsControl.AutoScroll = true;
-            this.notificationsControl.BackColor = System.Drawing.SystemColors.Window;
-            this.notificationsControl.Location = new System.Drawing.Point(3, 56);
-            this.notificationsControl.Name = "notificationsControl";
-            this.notificationsControl.Settings = null;
-            this.notificationsControl.Size = new System.Drawing.Size(429, 337);
-            this.notificationsControl.TabIndex = 4;
             // 
             // trayIconPage
             // 
@@ -1678,18 +1625,6 @@ namespace EVEMon.SettingsUI
             this.updatesPage.Text = "updatesPage";
             this.updatesPage.Visible = false;
             // 
-            // updateSettingsControl
-            // 
-            this.updateSettingsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.updateSettingsControl.AutoScroll = true;
-            this.updateSettingsControl.Location = new System.Drawing.Point(11, 85);
-            this.updateSettingsControl.Name = "updateSettingsControl";
-            this.updateSettingsControl.Settings = null;
-            this.updateSettingsControl.Size = new System.Drawing.Size(413, 340);
-            this.updateSettingsControl.TabIndex = 10;
-            // 
             // lblUpdatesPage
             // 
             this.lblUpdatesPage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -1821,15 +1756,6 @@ namespace EVEMon.SettingsUI
             this.externalCalendarPage.TabIndex = 11;
             this.externalCalendarPage.Text = "externalCalendarPage";
             this.externalCalendarPage.Visible = false;
-            // 
-            // externalCalendarControl
-            // 
-            this.externalCalendarControl.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.externalCalendarControl.Enabled = false;
-            this.externalCalendarControl.Location = new System.Drawing.Point(0, 123);
-            this.externalCalendarControl.Name = "externalCalendarControl";
-            this.externalCalendarControl.Size = new System.Drawing.Size(435, 303);
-            this.externalCalendarControl.TabIndex = 12;
             // 
             // externalCalendarCheckbox
             // 
@@ -2155,15 +2081,6 @@ namespace EVEMon.SettingsUI
             this.PECIGroupBox.TabStop = false;
             this.PECIGroupBox.Text = "Portable EVE Client Installations";
             // 
-            // portableEveClientsControl
-            // 
-            this.portableEveClientsControl.AutoScroll = true;
-            this.portableEveClientsControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.portableEveClientsControl.Location = new System.Drawing.Point(3, 16);
-            this.portableEveClientsControl.Name = "portableEveClientsControl";
-            this.portableEveClientsControl.Size = new System.Drawing.Size(415, 264);
-            this.portableEveClientsControl.TabIndex = 0;
-            // 
             // marketPriceProvidersPage
             // 
             this.marketPriceProvidersPage.Controls.Add(this.gbMarketPriceProviders);
@@ -2219,7 +2136,7 @@ namespace EVEMon.SettingsUI
             // cloudStorageServicePage
             // 
             this.cloudStorageServicePage.Controls.Add(this.providerAuthenticationGroupBox);
-            this.cloudStorageServicePage.Controls.Add(this.groupBox1);
+            this.cloudStorageServicePage.Controls.Add(this.cloudStorageGroupBox);
             this.cloudStorageServicePage.Controls.Add(this.linkLabel1);
             this.cloudStorageServicePage.Controls.Add(this.settingsFileStorageGroupBox);
             this.cloudStorageServicePage.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -2239,26 +2156,17 @@ namespace EVEMon.SettingsUI
             this.providerAuthenticationGroupBox.TabStop = false;
             this.providerAuthenticationGroupBox.Text = "Cloud Storage Provider Authentication";
             // 
-            // cloudStorageServiceControl
+            // cloudStorageGroupBox
             // 
-            this.cloudStorageServiceControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cloudStorageServiceControl.Font = new System.Drawing.Font("Tahoma", 8.25F);
-            this.cloudStorageServiceControl.Location = new System.Drawing.Point(3, 16);
-            this.cloudStorageServiceControl.Name = "cloudStorageServiceControl";
-            this.cloudStorageServiceControl.Size = new System.Drawing.Size(415, 109);
-            this.cloudStorageServiceControl.TabIndex = 0;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.cloudStorageProviderLogoPictureBox);
-            this.groupBox1.Controls.Add(this.cloudStorageProvidersComboBox);
-            this.groupBox1.Controls.Add(this.lblSelectedProvider);
-            this.groupBox1.Location = new System.Drawing.Point(6, 81);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(232, 67);
-            this.groupBox1.TabIndex = 23;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Cloud Storage Provider";
+            this.cloudStorageGroupBox.Controls.Add(this.cloudStorageProviderLogoPictureBox);
+            this.cloudStorageGroupBox.Controls.Add(this.cloudStorageProvidersComboBox);
+            this.cloudStorageGroupBox.Controls.Add(this.lblSelectedProvider);
+            this.cloudStorageGroupBox.Location = new System.Drawing.Point(6, 81);
+            this.cloudStorageGroupBox.Name = "cloudStorageGroupBox";
+            this.cloudStorageGroupBox.Size = new System.Drawing.Size(232, 67);
+            this.cloudStorageGroupBox.TabIndex = 23;
+            this.cloudStorageGroupBox.TabStop = false;
+            this.cloudStorageGroupBox.Text = "Cloud Storage Provider";
             // 
             // cloudStorageProviderLogoPictureBox
             // 
@@ -2308,6 +2216,65 @@ namespace EVEMon.SettingsUI
             this.settingsFileStorageGroupBox.TabStop = false;
             this.settingsFileStorageGroupBox.Text = "Settings File Storage";
             // 
+            // emailNotificationsControl
+            // 
+            this.emailNotificationsControl.Location = new System.Drawing.Point(7, 74);
+            this.emailNotificationsControl.Name = "emailNotificationsControl";
+            this.emailNotificationsControl.Settings = null;
+            this.emailNotificationsControl.Size = new System.Drawing.Size(355, 337);
+            this.emailNotificationsControl.TabIndex = 20;
+            // 
+            // notificationsControl
+            // 
+            this.notificationsControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.notificationsControl.AutoScroll = true;
+            this.notificationsControl.BackColor = System.Drawing.SystemColors.Window;
+            this.notificationsControl.Location = new System.Drawing.Point(3, 56);
+            this.notificationsControl.Name = "notificationsControl";
+            this.notificationsControl.Settings = null;
+            this.notificationsControl.Size = new System.Drawing.Size(429, 337);
+            this.notificationsControl.TabIndex = 4;
+            // 
+            // updateSettingsControl
+            // 
+            this.updateSettingsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.updateSettingsControl.AutoScroll = true;
+            this.updateSettingsControl.Location = new System.Drawing.Point(11, 85);
+            this.updateSettingsControl.Name = "updateSettingsControl";
+            this.updateSettingsControl.Settings = null;
+            this.updateSettingsControl.Size = new System.Drawing.Size(413, 340);
+            this.updateSettingsControl.TabIndex = 10;
+            // 
+            // externalCalendarControl
+            // 
+            this.externalCalendarControl.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.externalCalendarControl.Enabled = false;
+            this.externalCalendarControl.Location = new System.Drawing.Point(0, 123);
+            this.externalCalendarControl.Name = "externalCalendarControl";
+            this.externalCalendarControl.Size = new System.Drawing.Size(435, 303);
+            this.externalCalendarControl.TabIndex = 12;
+            // 
+            // portableEveClientsControl
+            // 
+            this.portableEveClientsControl.AutoScroll = true;
+            this.portableEveClientsControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.portableEveClientsControl.Location = new System.Drawing.Point(3, 16);
+            this.portableEveClientsControl.Name = "portableEveClientsControl";
+            this.portableEveClientsControl.Size = new System.Drawing.Size(415, 264);
+            this.portableEveClientsControl.TabIndex = 0;
+            // 
+            // cloudStorageServiceControl
+            // 
+            this.cloudStorageServiceControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cloudStorageServiceControl.Font = new System.Drawing.Font("Tahoma", 8.25F);
+            this.cloudStorageServiceControl.Location = new System.Drawing.Point(3, 16);
+            this.cloudStorageServiceControl.Name = "cloudStorageServiceControl";
+            this.cloudStorageServiceControl.Size = new System.Drawing.Size(415, 109);
+            this.cloudStorageServiceControl.TabIndex = 0;
+            // 
             // settingsFileStorageControl
             // 
             this.settingsFileStorageControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -2316,16 +2283,6 @@ namespace EVEMon.SettingsUI
             this.settingsFileStorageControl.Name = "settingsFileStorageControl";
             this.settingsFileStorageControl.Size = new System.Drawing.Size(416, 108);
             this.settingsFileStorageControl.TabIndex = 0;
-            // 
-            // cbShowSkillpointsOnOverview
-            // 
-            this.cbShowSkillpointsOnOverview.AutoSize = true;
-            this.cbShowSkillpointsOnOverview.Location = new System.Drawing.Point(161, 20);
-            this.cbShowSkillpointsOnOverview.Name = "cbShowSkillpointsOnOverview";
-            this.cbShowSkillpointsOnOverview.Size = new System.Drawing.Size(107, 17);
-            this.cbShowSkillpointsOnOverview.TabIndex = 35;
-            this.cbShowSkillpointsOnOverview.Text = "Show Skill Points";
-            this.cbShowSkillpointsOnOverview.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
@@ -2370,7 +2327,8 @@ namespace EVEMon.SettingsUI
             this.skillPlannerPage.ResumeLayout(false);
             this.skillPlannerPage.PerformLayout();
             this.networkPage.ResumeLayout(false);
-            this.ApiProxyGroupBox.ResumeLayout(false);
+            this.esiSettingsGroupBox.ResumeLayout(false);
+            this.esiSettingsGroupBox.PerformLayout();
             this.ProxyServerGroupBox.ResumeLayout(false);
             this.ProxyServerGroupBox.PerformLayout();
             this.customProxyPanel.ResumeLayout(false);
@@ -2414,8 +2372,8 @@ namespace EVEMon.SettingsUI
             this.gbMarketPriceProviders.PerformLayout();
             this.cloudStorageServicePage.ResumeLayout(false);
             this.providerAuthenticationGroupBox.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.cloudStorageGroupBox.ResumeLayout(false);
+            this.cloudStorageGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cloudStorageProviderLogoPictureBox)).EndInit();
             this.settingsFileStorageGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -2458,12 +2416,7 @@ namespace EVEMon.SettingsUI
         private System.Windows.Forms.CheckBox externalCalendarCheckbox;
         private System.Windows.Forms.CheckBox cbShowAllPublicSkills;
         private System.Windows.Forms.CheckBox cbShowNonPublicSkills;
-        private System.Windows.Forms.ComboBox cbAPIServer;
-        private System.Windows.Forms.Button btnAddAPIServer;
-        private System.Windows.Forms.Button btnEditAPIServer;
-        private System.Windows.Forms.Button btnDeleteAPIServer;
         private System.Windows.Forms.CheckBox cbCheckTime;
-        private System.Windows.Forms.GroupBox ApiProxyGroupBox;
         private System.Windows.Forms.CheckBox cbShowOverViewTab;
         private System.Windows.Forms.ComboBox compatibilityCombo;
         private EVEMon.SettingsUI.NotificationsControl notificationsControl;
@@ -2543,7 +2496,6 @@ namespace EVEMon.SettingsUI
         private System.Windows.Forms.Label lblGeneralPage;
         private System.Windows.Forms.Label lblEnvironment;
         private System.Windows.Forms.Label lblSkillPlannerPage;
-        private System.Windows.Forms.Label lblNetworkPageAPIProvider;
         private System.Windows.Forms.Label lblNetworkPageProxy;
         private System.Windows.Forms.Label lblProxyHostIPAddress;
         private System.Windows.Forms.Label lblProxyPort;
@@ -2580,7 +2532,7 @@ namespace EVEMon.SettingsUI
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.GroupBox settingsFileStorageGroupBox;
         private SettingsFileStorageControl settingsFileStorageControl;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox cloudStorageGroupBox;
         private System.Windows.Forms.ComboBox cloudStorageProvidersComboBox;
         private System.Windows.Forms.Label lblSelectedProvider;
         private System.Windows.Forms.GroupBox providerAuthenticationGroupBox;
@@ -2591,5 +2543,11 @@ namespace EVEMon.SettingsUI
         private System.Windows.Forms.Label lblSkillQueueWarningThresholdDays;
         private System.Windows.Forms.Label lblSkillQueuWarningThreshold;
         private System.Windows.Forms.CheckBox cbShowSkillpointsOnOverview;
+        private System.Windows.Forms.GroupBox esiSettingsGroupBox;
+        private System.Windows.Forms.TextBox clientIDTextBox;
+        private System.Windows.Forms.LinkLabel esiSettingsLabel;
+        private System.Windows.Forms.Label lblClientSecret;
+        private System.Windows.Forms.Label lblClientID;
+        private System.Windows.Forms.TextBox clientSecretTextBox;
     }
 }

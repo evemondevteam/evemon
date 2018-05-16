@@ -44,9 +44,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.cancelButton = new System.Windows.Forms.Button();
             this.deleteButton = new System.Windows.Forms.Button();
-            this.deleteAPIKeyCheckBox = new System.Windows.Forms.CheckBox();
             this.noCharactersLabel = new System.Windows.Forms.Label();
-            this.apiKeyslistView = new System.Windows.Forms.ListView();
+            this.esiKeysListView = new System.Windows.Forms.ListView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -67,7 +66,7 @@
             this.characterToRemoveLabel.ForeColor = System.Drawing.SystemColors.ControlText;
             this.characterToRemoveLabel.Location = new System.Drawing.Point(51, 22);
             this.characterToRemoveLabel.Name = "characterToRemoveLabel";
-            this.characterToRemoveLabel.Size = new System.Drawing.Size(259, 13);
+            this.characterToRemoveLabel.Size = new System.Drawing.Size(214, 13);
             this.characterToRemoveLabel.TabIndex = 1;
             this.characterToRemoveLabel.Text = "You are about to delete the character \"{0}\".";
             this.characterToRemoveLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -86,7 +85,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(412, 142);
+            this.cancelButton.Location = new System.Drawing.Point(327, 142);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 3;
@@ -98,7 +97,7 @@
             // 
             this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.deleteButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.deleteButton.Location = new System.Drawing.Point(331, 142);
+            this.deleteButton.Location = new System.Drawing.Point(246, 142);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(75, 23);
             this.deleteButton.TabIndex = 4;
@@ -106,29 +105,19 @@
             this.deleteButton.UseVisualStyleBackColor = true;
             this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
-            // deleteAPIKeyCheckBox
-            // 
-            this.deleteAPIKeyCheckBox.AutoSize = true;
-            this.deleteAPIKeyCheckBox.Location = new System.Drawing.Point(54, 88);
-            this.deleteAPIKeyCheckBox.Name = "deleteAPIKeyCheckBox";
-            this.deleteAPIKeyCheckBox.Size = new System.Drawing.Size(154, 17);
-            this.deleteAPIKeyCheckBox.TabIndex = 5;
-            this.deleteAPIKeyCheckBox.Text = "Delete the API key{0} also.";
-            this.deleteAPIKeyCheckBox.UseVisualStyleBackColor = true;
-            // 
             // noCharactersLabel
             // 
             this.noCharactersLabel.AutoSize = true;
             this.noCharactersLabel.Location = new System.Drawing.Point(51, 66);
             this.noCharactersLabel.Name = "noCharactersLabel";
-            this.noCharactersLabel.Size = new System.Drawing.Size(245, 13);
+            this.noCharactersLabel.Size = new System.Drawing.Size(181, 13);
             this.noCharactersLabel.TabIndex = 6;
-            this.noCharactersLabel.Text = "There will be no characters left on the API key{0} :";
+            this.noCharactersLabel.Text = "The ESI key{0} will also be removed:";
             // 
-            // apiKeyslistView
+            // esiKeysListView
             // 
-            this.apiKeyslistView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.apiKeyslistView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            this.esiKeysListView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.esiKeysListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
             listViewItem3,
@@ -139,12 +128,12 @@
             listViewItem8,
             listViewItem9,
             listViewItem10});
-            this.apiKeyslistView.Location = new System.Drawing.Point(302, 66);
-            this.apiKeyslistView.Name = "apiKeyslistView";
-            this.apiKeyslistView.Size = new System.Drawing.Size(192, 94);
-            this.apiKeyslistView.TabIndex = 7;
-            this.apiKeyslistView.UseCompatibleStateImageBehavior = false;
-            this.apiKeyslistView.View = System.Windows.Forms.View.List;
+            this.esiKeysListView.Location = new System.Drawing.Point(238, 66);
+            this.esiKeysListView.Name = "esiKeysListView";
+            this.esiKeysListView.Size = new System.Drawing.Size(192, 94);
+            this.esiKeysListView.TabIndex = 7;
+            this.esiKeysListView.UseCompatibleStateImageBehavior = false;
+            this.esiKeysListView.View = System.Windows.Forms.View.List;
             // 
             // CharacterDeletionWindow
             // 
@@ -152,15 +141,14 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(499, 177);
+            this.ClientSize = new System.Drawing.Size(414, 177);
             this.Controls.Add(this.noCharactersLabel);
-            this.Controls.Add(this.deleteAPIKeyCheckBox);
             this.Controls.Add(this.deleteButton);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.characterToRemoveLabel);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.apiKeyslistView);
+            this.Controls.Add(this.esiKeysListView);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -179,8 +167,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button deleteButton;
-        private System.Windows.Forms.CheckBox deleteAPIKeyCheckBox;
         private System.Windows.Forms.Label noCharactersLabel;
-        private System.Windows.Forms.ListView apiKeyslistView;
+        private System.Windows.Forms.ListView esiKeysListView;
     }
 }

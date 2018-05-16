@@ -9,13 +9,13 @@ namespace EVEMon.Common.Models.Collections
 {
     public sealed class CharacterIdentityIgnoreList : ReadonlyCollection<CharacterIdentity>
     {
-        private readonly APIKey m_owner;
+        private readonly ESIKey m_owner;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="apiKey"></param>
-        internal CharacterIdentityIgnoreList(APIKey apiKey)
+        internal CharacterIdentityIgnoreList(ESIKey apiKey)
         {
             m_owner = apiKey;
         }
@@ -73,7 +73,7 @@ namespace EVEMon.Common.Models.Collections
             Items.Add(id);
 
             // If the identity was belonging to this API key, remove the character (won't be serialized anymore !)
-            if (id.APIKeys.Contains(m_owner))
+            if (id.ESIKeys.Contains(m_owner))
                 EveMonClient.Characters.Remove(character);
         }
 

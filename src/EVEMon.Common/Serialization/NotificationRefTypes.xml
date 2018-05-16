@@ -2,167 +2,157 @@
 <eveapi version="2">
   <currentTime></currentTime>
   <result>
-    <rowset name="refTypes" key="refTypeID" columns="refTypeID,refTypeName,subjectLayout,textLayout">
-      <row refTypeID="1" refTypeName="Old Notifications" subjectLayout="" textLayout=""/>
-      <row refTypeID="2" refTypeName="Member Biomassed" subjectLayout="" textLayout=""/>
-      <row refTypeID="3" refTypeName="Medal Awarded" subjectLayout="You have been awarded the {medalID}" textLayout="The {medalID} decoration has been awarded to you by {corpID} for {reason}. This decoration has the following description:\n\n\n\n{medalDescription}\n\n\n\nIf you wish to show off this decoration publicly or trash it, you can do so in the decorations tab of your character sheet."/>
-      <row refTypeID="4" refTypeName="Alliance Maintenance Bill" subjectLayout="" textLayout=""/>
-      <row refTypeID="5" refTypeName="Alliance War Declared" subjectLayout="" textLayout=""/>
-      <row refTypeID="6" refTypeName="Alliance War Surrender" subjectLayout="" textLayout=""/>
-      <row refTypeID="7" refTypeName="Alliance War Retracted" subjectLayout="" textLayout=""/>
-      <row refTypeID="8" refTypeName="Alliance War Invalidated" subjectLayout="" textLayout=""/>
-      <row refTypeID="9" refTypeName="Pilot Billed" subjectLayout="" textLayout=""/>
-      <row refTypeID="10" refTypeName="Organization Billed" subjectLayout="" textLayout=""/>
-      <row refTypeID="11" refTypeName="Insufficient Funds To Pay Bill" subjectLayout="" textLayout=""/>
-      <row refTypeID="12" refTypeName="Bill Paid By Pilot	" subjectLayout="" textLayout=""/>
-      <row refTypeID="13" refTypeName="Bill Paid By Organization" subjectLayout="" textLayout=""/>
-      <row refTypeID="14" refTypeName="Capsuleer Bounty Payment" subjectLayout="" textLayout=""/>
-      <row refTypeID="15" refTypeName="Unknown" subjectLayout="" textLayout=""/>
-      <row refTypeID="16" refTypeName="New Application To Join Corporation" subjectLayout="New application from {charID}" textLayout="{applicationText}"/>
-      <row refTypeID="17" refTypeName="Your Corporate Application Rejected" subjectLayout="Rejected application to join {corpID}" textLayout="Dear {charID},\nyour application to join {corpID} has been processed and rejected.\n\nRegards,\n{corpID}"/>
-      <row refTypeID="18" refTypeName="Your Corporate Application Accepted" subjectLayout="Invited to join {corpID}" textLayout="Dear {charID},\n\nYour application to {corpID} has been reviewed and an invitation to join the corporation has been sent to you. You may now choose to Accept the invitation which will move you to the corporation or alternatively you may Withdraw the application.\n\nThe invitation can be found in the Corporation window under the Recruitment \u201cMy Applications\u201d tab.\n\nRegards,\n{corpID}"/>
-      <row refTypeID="19" refTypeName="Corporation Tax Change" subjectLayout="Tax Rate Changed To {newTaxRate}%" textLayout="This is an automated message: The tax rate for {corpID} members has been changed from {oldTaxRate}% to {newTaxRate}%."/>
-      <row refTypeID="20" refTypeName="Corporation News" subjectLayout="" textLayout=""/>
-      <row refTypeID="21" refTypeName="Pilot Left Corporation" subjectLayout="{charID} has left {corpID}" textLayout="{charID} is no longer a member of {corpID}."/>
-      <row refTypeID="22" refTypeName="New Corporation CEO" subjectLayout="{newCeoID} is the new CEO of {corpID}" textLayout="{oldCeoID} has resigned from the position of CEO with {corpID}. As their last move they appointed {newCeoID} as CEO."/>
-      <row refTypeID="23" refTypeName="Corporate Dividend Payout" subjectLayout="" textLayout=""/>
-      <row refTypeID="24" refTypeName="Unknown" subjectLayout="" textLayout=""/>
-      <row refTypeID="25" refTypeName="Corporate Vote Notification" subjectLayout="" textLayout=""/>
-      <row refTypeID="26" refTypeName="CEO Roles Revoked During Vote" subjectLayout="" textLayout=""/>
-      <row refTypeID="27" refTypeName="Corporation War Declared" subjectLayout="" textLayout=""/>
-      <row refTypeID="28" refTypeName="Corporation War Fighting" subjectLayout="" textLayout=""/>
-      <row refTypeID="29" refTypeName="Corporation War Surrender" subjectLayout="" textLayout=""/>
-      <row refTypeID="30" refTypeName="Corporation War Retracted" subjectLayout="" textLayout=""/>
-      <row refTypeID="31" refTypeName="Corporation War Invalidated" subjectLayout="" textLayout=""/>
-      <row refTypeID="32" refTypeName="Container Password" subjectLayout="" textLayout=""/>
-      <row refTypeID="33" refTypeName="Customs Notification" subjectLayout="" textLayout=""/>
-      <row refTypeID="34" refTypeName="Rookie Ship Replacement" subjectLayout="Pend Insurance Inc." textLayout="We from the friendly insurance company Pend Insurance regret your temporary lack of spacecraft. According to the agreement between Pend Insurance and SCC, we hereby grant you a brand new {shipTypeID}, fully fitted. Also included is a gratuity gift of {isHouseWarmingGift}."/>
-      <row refTypeID="35" refTypeName="Insurance Payment" subjectLayout="Insurance" textLayout="RefID: {itemID} Your friendly insurance company has transferred {payout} ISK into your account for the recent loss of your ship.  This payout is the default payout for an uninsured ship. If you are interested in better insurance then please visit a station with an Insurance Service for further details."/>
-      <row refTypeID="36" refTypeName="Insurance Invalidated" subjectLayout="" textLayout=""/>
-      <row refTypeID="37" refTypeName="Alliance Sovereignty Claim Failed" subjectLayout="" textLayout=""/>
-      <row refTypeID="38" refTypeName="Corporate Sovereignty Claim Failed" subjectLayout="" textLayout=""/>
-      <row refTypeID="39" refTypeName="Alliance Sovereignty Bill Due" subjectLayout="" textLayout=""/>
-      <row refTypeID="40" refTypeName="Corporate Alliance Bill Due" subjectLayout="" textLayout=""/>
-      <row refTypeID="41" refTypeName="Alliance Sovereignty Claim Lost" subjectLayout="" textLayout=""/>
-      <row refTypeID="42" refTypeName="Corporate Sovereignty Claim Lost" subjectLayout="" textLayout=""/>
-      <row refTypeID="43" refTypeName="Alliance Sovereignty Claim Acquired" subjectLayout="" textLayout=""/>
-      <row refTypeID="44" refTypeName="Corporate Sovereignty Claim Acquired" subjectLayout="" textLayout=""/>
-      <row refTypeID="45" refTypeName="Structure Anchoring" subjectLayout="" textLayout=""/>
-      <row refTypeID="46" refTypeName="Sovereignty Structures Vulnerable" subjectLayout="" textLayout=""/>
-      <row refTypeID="47" refTypeName="Sovereignty Structures Invulnerable" subjectLayout="" textLayout=""/>
-      <row refTypeID="48" refTypeName="Sovereignty Blockade Unit Active" subjectLayout="" textLayout=""/>
-      <row refTypeID="49" refTypeName="Structure Lost" subjectLayout="" textLayout=""/>
-      <row refTypeID="50" refTypeName="Office Lease Expiration" subjectLayout="" textLayout=""/>
-      <row refTypeID="51" refTypeName="Clone Contract Revoked 1" subjectLayout="" textLayout=""/>
-      <row refTypeID="52" refTypeName="Clone Moved" subjectLayout="" textLayout=""/>
-      <row refTypeID="53" refTypeName="Clone Contract Revoked 2" subjectLayout="" textLayout=""/>
-      <row refTypeID="54" refTypeName="Insurance Expired" subjectLayout="Insurance Contract Expired" textLayout="Dear valued customer,\n\n\nThe insurance contract between yourself and SCC for the insurance of the ship {shipName} issued at {startDate} has expired. Please purchase a new insurance as quickly as possible to protect your investment.\n\n\nBest,\n\nThe Secure Commerce Commission,\n\nReference ID: {itemID}"/>
-      <row refTypeID="55" refTypeName="Insurance Issued" subjectLayout="Insurance Contract Issued" textLayout="Dear valued customer,\n\n\n\nCongratulations on the insurance on your ship. A very wise choice indeed.\n\nThis letter is to confirm that we have issued an insurance contract for your ship, {shipName} ({typeID}) at a level of {level}%.\n\nThis contract will expire at {endDate}, after {numWeeks} weeks.\n\n\n\nBest,\n\nThe Secure Commerce Commission,\n\nReference ID: {itemID}"/>
-      <row refTypeID="56" refTypeName="Jump Clone Deleted" subjectLayout="Jump clone destruction" textLayout="Dear {ownerID},\nA jump clone you had installed has been destroyed.\n\nLocation: {locationID}\n\nLocation Owner: {locationOwnerID}\n\nResponsible party for the destruction: {destroyerID}\n\nLost implants: {typeIDs}"/>
-      <row refTypeID="57" refTypeName="Jump Clone Destruction" subjectLayout="Jump clone destruction" textLayout="Dear {ownerID},\nA jump clone you had installed has been destroyed.\n\nLocation: {locationID}\n\nLocation Owner: {locationOwnerID}\n\nResponsible party for the destruction: {destroyerID}\n\nLost implants: {typeIDs}"/>
-      <row refTypeID="58" refTypeName="Corporation Has Joined Faction" subjectLayout="" textLayout=""/>
-      <row refTypeID="59" refTypeName="Corporation Has Left Faction" subjectLayout="" textLayout=""/>
-      <row refTypeID="60" refTypeName="Corporation Expelled From Faction" subjectLayout="" textLayout=""/>
-      <row refTypeID="61" refTypeName="Pilot Expelled From Faction" subjectLayout="" textLayout=""/>
-      <row refTypeID="62" refTypeName="Corporation Faction Standing Warning" subjectLayout="" textLayout=""/>
-      <row refTypeID="63" refTypeName="Pilot Faction Standing Warning" subjectLayout="" textLayout=""/>
-      <row refTypeID="64" refTypeName="Pilot Loses Faction Rank" subjectLayout="" textLayout=""/>
-      <row refTypeID="65" refTypeName="Pilot Gains Faction Rank" subjectLayout="" textLayout=""/>
-      <row refTypeID="66" refTypeName="Agent Moved Notice" subjectLayout="" textLayout=""/>
-      <row refTypeID="67" refTypeName="Transaction Reversal" subjectLayout="" textLayout=""/>
-      <row refTypeID="68" refTypeName="Reimbursement" subjectLayout="" textLayout=""/>
-      <row refTypeID="69" refTypeName="Pilot Located" subjectLayout="" textLayout=""/>
-      <row refTypeID="70" refTypeName="Research Mission Available" subjectLayout="" textLayout=""/>
-      <row refTypeID="71" refTypeName="Mission Offer Expiration" subjectLayout="" textLayout=""/>
-      <row refTypeID="72" refTypeName="Mission Failure" subjectLayout="" textLayout=""/>
-      <row refTypeID="73" refTypeName="Special Mission Available" subjectLayout="" textLayout=""/>
-      <row refTypeID="74" refTypeName="Tutorial Program" subjectLayout="" textLayout=""/>
-      <row refTypeID="75" refTypeName="Tower Under Attack Alert" subjectLayout="" textLayout=""/>
-      <row refTypeID="76" refTypeName="Tower Resource Alert" subjectLayout="" textLayout=""/>
-      <row refTypeID="77" refTypeName="Station Under Attack" subjectLayout="" textLayout=""/>
-      <row refTypeID="78" refTypeName="Station Changed" subjectLayout="" textLayout=""/>
-      <row refTypeID="79" refTypeName="Station Conquered" subjectLayout="" textLayout=""/>
-      <row refTypeID="80" refTypeName="Station Aggression" subjectLayout="" textLayout=""/>
-      <row refTypeID="81" refTypeName="Corporation Joining Faction" subjectLayout="" textLayout=""/>
-      <row refTypeID="82" refTypeName="Corporation Leaving Faction" subjectLayout="" textLayout=""/>
-      <row refTypeID="83" refTypeName="Corporation Join Faction Withdrawn" subjectLayout="" textLayout=""/>
-      <row refTypeID="84" refTypeName="Corporation Leave Faction Withdrawn" subjectLayout="" textLayout=""/>
-      <row refTypeID="85" refTypeName="Corporate Liquidation Settlement" subjectLayout="" textLayout=""/>
-      <row refTypeID="86" refTypeName="Sovereignty TCU Damage" subjectLayout="" textLayout=""/>
-      <row refTypeID="87" refTypeName="Sovereignty SBU Damage" subjectLayout="" textLayout=""/>
-      <row refTypeID="88" refTypeName="Sovereignty IHUB Damage" subjectLayout="" textLayout=""/>
-      <row refTypeID="89" refTypeName="Added As Contact" subjectLayout="You have been added as a contact" textLayout="{senderName} has added you as a contact with {level}\n\n{message}"/>
-      <row refTypeID="90" refTypeName="Contact Level Modified" subjectLayout="Your contact level has been modified" textLayout="{senderName} has changed your contact level to {level}\n\n{message}"/>
-      <row refTypeID="91" refTypeName="Incursion Completed" subjectLayout="" textLayout=""/>
-      <row refTypeID="92" refTypeName="Kicked From Corporation" subjectLayout="Kicked from {corpID}" textLayout="{corpID} hereby informs you that your services are no longer needed.\n\nThank you for your time at our corporation and best of luck to you in the future."/>
-      <row refTypeID="93" refTypeName="Orbital Structure Attacked" subjectLayout="" textLayout=""/>
-      <row refTypeID="94" refTypeName="Orbital Structure Reinforced" subjectLayout="" textLayout=""/>
-      <row refTypeID="95" refTypeName="Structure Ownership Transferred" subjectLayout="" textLayout=""/>
-      <row refTypeID="96" refTypeName="Alliance Faction Standing Warning" subjectLayout="" textLayout=""/>
-      <row refTypeID="97" refTypeName="Alliance Expelled From Faction" subjectLayout="" textLayout=""/>
-      <row refTypeID="98" refTypeName="Corporation Joined Alliance At War" subjectLayout="" textLayout=""/>
-      <row refTypeID="99" refTypeName="Defender Ally Joins War" subjectLayout="" textLayout=""/>
-      <row refTypeID="100" refTypeName="Aggressor Ally Joins War" subjectLayout="" textLayout=""/>
-      <row refTypeID="101" refTypeName="Corporation Joins War As Ally" subjectLayout="" textLayout=""/>
-      <row refTypeID="102" refTypeName="War Ally Offer Received" subjectLayout="" textLayout=""/>
-      <row refTypeID="103" refTypeName="Surrender Offer Received" subjectLayout="" textLayout=""/>
-      <row refTypeID="104" refTypeName="Surrender Declined" subjectLayout="" textLayout=""/>
-      <row refTypeID="105" refTypeName="Faction Kill Event LP" subjectLayout="" textLayout=""/>
-      <row refTypeID="106" refTypeName="Faction Strategic Event LP" subjectLayout="" textLayout=""/>
-      <row refTypeID="107" refTypeName="Strategic Event LP Disqualification" subjectLayout="" textLayout=""/>
-      <row refTypeID="108" refTypeName="Kill Event LP Disqualification" subjectLayout="" textLayout=""/>
-      <row refTypeID="109" refTypeName="War Ally Agreement Cancelled" subjectLayout="" textLayout=""/>
-      <row refTypeID="110" refTypeName="War Ally Offer Declined" subjectLayout="" textLayout=""/>
-      <row refTypeID="111" refTypeName="Bounty From You Claimed" subjectLayout="" textLayout=""/>
-      <row refTypeID="112" refTypeName="Bounty Placed On You" subjectLayout="" textLayout=""/>
-      <row refTypeID="113" refTypeName="Bounty Placed On Corporation" subjectLayout="" textLayout=""/>
-      <row refTypeID="114" refTypeName="Bounty Placed On Alliance" subjectLayout="" textLayout=""/>
-      <row refTypeID="115" refTypeName="Kill Right Available" subjectLayout="" textLayout=""/>
-      <row refTypeID="116" refTypeName="Kill Right Available To All" subjectLayout="" textLayout=""/>
-      <row refTypeID="117" refTypeName="Kill Right Earned" subjectLayout="" textLayout=""/>
-      <row refTypeID="118" refTypeName="Kill Right Used" subjectLayout="" textLayout=""/>
-      <row refTypeID="119" refTypeName="Kill Right Unavailable" subjectLayout="" textLayout=""/>
-      <row refTypeID="120" refTypeName="Kill Right Unavailable To All" subjectLayout="" textLayout=""/>
-      <row refTypeID="121" refTypeName="War Declaration" subjectLayout="" textLayout=""/>
-      <row refTypeID="122" refTypeName="Surrender Offered" subjectLayout="" textLayout=""/>
-      <row refTypeID="123" refTypeName="Surrender Accepted" subjectLayout="" textLayout=""/>
-      <row refTypeID="124" refTypeName="War Made Mutual" subjectLayout="" textLayout=""/>
-      <row refTypeID="125" refTypeName="War Retracted" subjectLayout="" textLayout=""/>
-      <row refTypeID="126" refTypeName="You Offered War Ally" subjectLayout="" textLayout=""/>
-      <row refTypeID="127" refTypeName="You Accepted War Ally" subjectLayout="" textLayout=""/>
-      <row refTypeID="128" refTypeName="Mercenary Invitation Accepted" subjectLayout="{charID} joins {corpID}" textLayout="Your membership invitation to {charID} has been accepted.\n\n{applicationText}"/>
-      <row refTypeID="129" refTypeName="Mercenary Invitation Rejected" subjectLayout="{charID} rejects invitation" textLayout="Your membership invitation to {charID} has been rejected."/>
-      <row refTypeID="130" refTypeName="Mercenary Application Withdrawn" subjectLayout="{charID} withdraws application" textLayout="{charID} has withdrawn his membership application.\n\n\n\n\n{applicationText}"/>
-      <row refTypeID="131" refTypeName="Mercenary Application Accepted" subjectLayout="" textLayout=""/>
-      <row refTypeID="132" refTypeName="Corporation District Attacked" subjectLayout="" textLayout=""/>
-      <row refTypeID="133" refTypeName="Friendly Fire Standings Loss" subjectLayout="" textLayout=""/>
-      <row refTypeID="134" refTypeName="ESS Pool Taken" subjectLayout="" textLayout=""/>
-      <row refTypeID="135" refTypeName="ESS Pool Shared" subjectLayout="" textLayout=""/>
-      <row refTypeID="136" refTypeName="Unknown" subjectLayout="" textLayout=""/>
-      <row refTypeID="137" refTypeName="Unknown" subjectLayout="" textLayout=""/>
-      <row refTypeID="138" refTypeName="Clone Activation" subjectLayout="Clone activated" textLayout="Your previous clone was catastrophically terminated. Your consciousness will be transferred to a new clone at {cloneStationID}.\n\nTransfer completed. We wish you good fortune."/>
-      <row refTypeID="139" refTypeName="You have been invited to join a Corporation" subjectLayout="Invited to join {corpID}" textLayout="Dear {charID},\n\nMy name is {invokingCharID} and I would like you to join my corporation {corpID}. You may choose to Accept the invitation which will move you to the corporation or alternatively you may Decline the application.\n\nThe invitation can be found in the Corporation window under the Recruitment \u201cMy Applications\u201d tab.\n\nRegards,\n{invokingCharID}\n{corpID}"/>
-      <row refTypeID="140" refTypeName="Kill report - Victim" subjectLayout="" textLayout=""/>
-      <row refTypeID="141" refTypeName="Kill report - Final blow" subjectLayout="" textLayout=""/>
-      <row refTypeID="142" refTypeName="Your Corporate Application Rejected" subjectLayout="Rejected application to join {corpID}" textLayout="Dear {charID},\nyour application to join {corpID} has been processed and rejected.\n\n{customMessage}\n\nRegards,\n{corpID}"/>
-      <row refTypeID="143" refTypeName="Corp Friendly-fire Enable-timer started" subjectLayout="" textLayout=""/>
-      <row refTypeID="144" refTypeName="Corp Friendly-fire Disable-timer started" subjectLayout="" textLayout=""/>
-      <row refTypeID="145" refTypeName="Corp Friendly-fire Enable-timer completed" subjectLayout="" textLayout=""/>
-      <row refTypeID="146" refTypeName="Corp Friendly-fire Disable-timer completed" subjectLayout="" textLayout=""/>
-      <row refTypeID="147" refTypeName="Sovereignty Structure Capture Started" subjectLayout="" textLayout=""/>
-      <row refTypeID="148" refTypeName="Sovereignty Service Enabled" subjectLayout="" textLayout=""/>
-      <row refTypeID="149" refTypeName="Sovereignty Service Disabled" subjectLayout="" textLayout=""/>
-      <row refTypeID="150" refTypeName="Sovereignty Service Half Captured" subjectLayout="" textLayout=""/>
-      <row refTypeID="151" refTypeName="Unknown" subjectLayout="" textLayout=""/>
-      <row refTypeID="152" refTypeName="IHub Bill Expiring" subjectLayout="" textLayout=""/>
-      <row refTypeID="160" refTypeName="Sovereignty Structures Reinforced" subjectLayout="" textLayout=""/>
-      <row refTypeID="161" refTypeName="Command Nodes Decloaking" subjectLayout="" textLayout=""/>
-      <row refTypeID="162" refTypeName="Sovereignty Structure Destroyed" subjectLayout="" textLayout=""/>
-      <row refTypeID="163" refTypeName="Station Entered Freeport" subjectLayout="" textLayout=""/>
-      <row refTypeID="164" refTypeName="IHub Destroyed - Bill" subjectLayout="" textLayout=""/>
-      <row refTypeID="165" refTypeName="Alliance Capital Changed" subjectLayout="" textLayout=""/>
-      <row refTypeID="1030" refTypeName="Game Time Received" subjectLayout="Plex Donation" textLayout="{senderCharID} has donated 30 days of game time to you."/>
-      <row refTypeID="1031" refTypeName="Game Time Sent" subjectLayout="Plex Donation" textLayout="You have donated 30 days of game time to {receiverCharID}."/>
+    <rowset name="refTypes" key="refTypeID" columns="refTypeID,refTypeCode,refTypeName,subjectLayout,textLayout">
+      <row refTypeID="1" refTypeCode="OldLscMessages" refTypeName="Old Notifications" subjectLayout="" textLayout=""/>
+      <row refTypeID="2" refTypeCode="CharTerminationMsg" refTypeName="Member Biomassed" subjectLayout="" textLayout=""/>
+      <row refTypeID="3" refTypeCode="CharMedalMsg" refTypeName="Medal Awarded" subjectLayout="You have been awarded the {medalID}" textLayout="The {medalID} decoration has been awarded to you by {corpID} for {reason}. This decoration has the following description:\n\n\n\n{medalDescription}\n\n\n\nIf you wish to show off this decoration publicly or trash it, you can do so in the decorations tab of your character sheet."/>
+      <row refTypeID="4" refTypeCode="AllMaintenanceBillMsg" refTypeName="Alliance Maintenance Bill" subjectLayout="" textLayout=""/>
+      <row refTypeID="5" refTypeCode="AllWarDeclaredMsg" refTypeName="Alliance War Declared" subjectLayout="{declaredByID} Declares War Against {againstID}" textLayout="{declaredByID} has declared war on {againstID}. Within {delayHours} hours fighting can legally occur between those involved. If war is due to a corporation at war joining an alliance, then the war starts immediately instead."/>
+      <row refTypeID="6" refTypeCode="AllWarSurrenderMsg" refTypeName="Alliance War Surrender" subjectLayout="" textLayout=""/>
+      <row refTypeID="7" refTypeCode="AllWarRetractedMsg" refTypeName="Alliance War Retracted" subjectLayout="" textLayout=""/>
+      <row refTypeID="8" refTypeCode="AllWarInvalidatedMsg" refTypeName="Alliance War Invalidated" subjectLayout="CONCORD Invalidates War Declared By {declaredByID} Against {againstID}" textLayout="CONCORD has declared this war invalid as it breaches one or more articles in the Yulai Convention. The war will be declared as being over after approximately {delayHours} hours."/>
+      <row refTypeID="10" refTypeCode="CorpAllBillMsg" refTypeName="Organization Billed" subjectLayout="" textLayout=""/>
+      <row refTypeID="11" refTypeCode="BillOutOfMoneyMsg" refTypeName="Insufficient Funds To Pay Bill" subjectLayout="" textLayout=""/>
+      <row refTypeID="13" refTypeCode="BillPaidCorpAllMsg" refTypeName="Bill Paid By Organization" subjectLayout="" textLayout=""/>
+      <row refTypeID="14" refTypeCode="BountyClaimMsg" refTypeName="Capsuleer Bounty Payment" subjectLayout="" textLayout=""/>
+      <row refTypeID="15" refTypeCode="CloneActivationMsg" refTypeName="Unknown" subjectLayout="" textLayout=""/>
+      <row refTypeID="16" refTypeCode="CorpAppNewMsg" refTypeName="New Application To Join Corporation" subjectLayout="New application from {charID}" textLayout="{applicationText}"/>
+      <row refTypeID="17" refTypeCode="CorpAppRejectMsg" refTypeName="Your Corporate Application Rejected" subjectLayout="Rejected application to join {corpID}" textLayout="Dear {charID},\nyour application to join {corpID} has been processed and rejected.\n\nRegards,\n{corpID}"/>
+      <row refTypeID="18" refTypeCode="CorpAppAcceptMsg" refTypeName="Your Corporate Application Accepted" subjectLayout="Invited to join {corpID}" textLayout="Dear {charID},\n\nYour application to {corpID} has been reviewed and an invitation to join the corporation has been sent to you. You may now choose to Accept the invitation which will move you to the corporation or alternatively you may Withdraw the application.\n\nThe invitation can be found in the Corporation window under the Recruitment \u201cMy Applications\u201d tab.\n\nRegards,\n{corpID}"/>
+      <row refTypeID="19" refTypeCode="CorpTaxChangeMsg" refTypeName="Corporation Tax Change" subjectLayout="Tax Rate Changed To {newTaxRate}%" textLayout="This is an automated message: The tax rate for {corpID} members has been changed from {oldTaxRate}% to {newTaxRate}%."/>
+      <row refTypeID="20" refTypeCode="CorpNewsMsg" refTypeName="Corporation News" subjectLayout="" textLayout=""/>
+      <row refTypeID="21" refTypeCode="CharLeftCorpMsg" refTypeName="Pilot Left Corporation" subjectLayout="{charID} has left {corpID}" textLayout="{charID} is no longer a member of {corpID}."/>
+      <row refTypeID="22" refTypeCode="CorpNewCEOMsg" refTypeName="New Corporation CEO" subjectLayout="{newCeoID} is the new CEO of {corpID}" textLayout="{oldCeoID} has resigned from the position of CEO with {corpID}. As their last move they appointed {newCeoID} as CEO."/>
+      <row refTypeID="23" refTypeCode="CorpDividendMsg" refTypeName="Corporate Dividend Payout" subjectLayout="" textLayout=""/>
+      <row refTypeID="25" refTypeCode="CorpVoteMsg" refTypeName="Corporate Vote Notification" subjectLayout="" textLayout=""/>
+      <row refTypeID="26" refTypeCode="CorpVoteCEORevokedMsg" refTypeName="CEO Roles Revoked During Vote" subjectLayout="" textLayout=""/>
+      <row refTypeID="27" refTypeCode="CorpWarDeclaredMsg" refTypeName="Corporation War Declared" subjectLayout="{declaredByID} Declares War Against {againstID}" textLayout="{declaredByID} has declared war on {againstID}. Within {delayHours} hours fighting can legally occur between those involved."/>
+      <row refTypeID="28" refTypeCode="CorpWarFightingLegalMsg" refTypeName="Corporation War Fighting" subjectLayout="" textLayout=""/>
+      <row refTypeID="29" refTypeCode="CorpWarSurrenderMsg" refTypeName="Corporation War Surrender" subjectLayout="" textLayout=""/>
+      <row refTypeID="30" refTypeCode="CorpWarRetractedMsg" refTypeName="Corporation War Retracted" subjectLayout="" textLayout=""/>
+      <row refTypeID="31" refTypeCode="CorpWarInvalidatedMsg" refTypeName="Corporation War Invalidated" subjectLayout="CONCORD Invalidates War Declared By {declaredByID} Against {againstID}" textLayout="CONCORD has declared this war invalid as it breaches one or more articles in the Yulai Convention. The war will be declared as being over after approximately {delayHours} hours."/>
+      <row refTypeID="32" refTypeCode="ContainerPasswordMsg" refTypeName="Container Password" subjectLayout="" textLayout=""/>
+      <row refTypeID="33" refTypeCode="CustomsMsg" refTypeName="Customs Notification" subjectLayout="" textLayout=""/>
+      <row refTypeID="34" refTypeCode="InsuranceFirstShipMsg" refTypeName="Rookie Ship Replacement" subjectLayout="Pend Insurance Inc." textLayout="We from the friendly insurance company Pend Insurance regret your temporary lack of spacecraft. According to the agreement between Pend Insurance and SCC, we hereby grant you a brand new {shipTypeID}, fully fitted. Also included is a gratuity gift of {isHouseWarmingGift}."/>
+      <row refTypeID="35" refTypeCode="InsurancePayoutMsg" refTypeName="Insurance Payment" subjectLayout="Insurance" textLayout="RefID: {itemID} Your friendly insurance company has transferred {payout} ISK into your account for the recent loss of your ship.  This payout is the default payout for an uninsured ship. If you are interested in better insurance then please visit a station with an Insurance Service for further details."/>
+      <row refTypeID="36" refTypeCode="InsuranceInvalidatedMsg" refTypeName="Insurance Invalidated" subjectLayout="" textLayout=""/>
+      <row refTypeID="38" refTypeCode="SovCorpClaimFailMsg" refTypeName="Corporate Sovereignty Claim Failed" subjectLayout="" textLayout=""/>
+      <row refTypeID="40" refTypeCode="SovCorpBillLateMsg" refTypeName="Corporate Alliance Bill Due" subjectLayout="" textLayout=""/>
+      <row refTypeID="41" refTypeCode="SovAllClaimLostMsg" refTypeName="Alliance Sovereignty Claim Lost" subjectLayout="" textLayout=""/>
+      <row refTypeID="43" refTypeCode="SovAllClaimAquiredMsg" refTypeName="Alliance Sovereignty Claim Acquired" subjectLayout="" textLayout=""/>
+      <row refTypeID="45" refTypeCode="AllAnchoringMsg" refTypeName="Structure Anchoring" subjectLayout="" textLayout=""/>
+      <row refTypeID="46" refTypeCode="AllStructVulnerableMsg" refTypeName="Sovereignty Structures Vulnerable" subjectLayout="" textLayout=""/>
+      <row refTypeID="47" refTypeCode="AllStrucInvulnerableMsg" refTypeName="Sovereignty Structures Invulnerable" subjectLayout="" textLayout=""/>
+      <row refTypeID="48" refTypeCode="SovDisruptorMsg" refTypeName="Sovereignty Blockade Unit Active" subjectLayout="" textLayout=""/>
+      <row refTypeID="49" refTypeCode="CorpStructLostMsg" refTypeName="Structure Lost" subjectLayout="" textLayout=""/>
+      <row refTypeID="50" refTypeCode="CorpOfficeExpirationMsg" refTypeName="Office Lease Expiration" subjectLayout="" textLayout=""/>
+      <row refTypeID="51" refTypeCode="CloneRevokedMsg1" refTypeName="Clone Contract Revoked 1" subjectLayout="" textLayout=""/>
+      <row refTypeID="52" refTypeCode="CloneMovedMsg" refTypeName="Clone Moved" subjectLayout="" textLayout=""/>
+      <row refTypeID="53" refTypeCode="CloneRevokedMsg2" refTypeName="Clone Contract Revoked 2" subjectLayout="" textLayout=""/>
+      <row refTypeID="54" refTypeCode="InsuranceExpirationMsg" refTypeName="Insurance Expired" subjectLayout="Insurance Contract Expired" textLayout="Dear valued customer,\n\n\nThe insurance contract between yourself and SCC for the insurance of the ship {shipName} issued at {startDate} has expired. Please purchase a new insurance as quickly as possible to protect your investment.\n\n\nBest,\n\nThe Secure Commerce Commission,\n\nReference ID: {itemID}"/>
+      <row refTypeID="55" refTypeCode="InsuranceIssuedMsg" refTypeName="Insurance Issued" subjectLayout="Insurance Contract Issued" textLayout="Dear valued customer,\n\n\n\nCongratulations on the insurance on your ship. A very wise choice indeed.\n\nThis letter is to confirm that we have issued an insurance contract for your ship, {shipName} ({typeID}) at a level of {level}%.\n\nThis contract will expire at {endDate}, after {numWeeks} weeks.\n\n\n\nBest,\n\nThe Secure Commerce Commission,\n\nReference ID: {itemID}"/>
+      <row refTypeID="56" refTypeCode="JumpCloneDeletedMsg1" refTypeName="Jump Clone Deleted" subjectLayout="Jump clone destruction" textLayout="Dear {ownerID},\nA jump clone you had installed has been destroyed.\n\nLocation: {locationID}\n\nLocation Owner: {locationOwnerID}\n\nResponsible party for the destruction: {destroyerID}\n\nLost implants: {typeIDs}"/>
+      <row refTypeID="57" refTypeCode="JumpCloneDeletedMsg2" refTypeName="Jump Clone Destruction" subjectLayout="Jump clone destruction" textLayout="Dear {ownerID},\nA jump clone you had installed has been destroyed.\n\nLocation: {locationID}\n\nLocation Owner: {locationOwnerID}\n\nResponsible party for the destruction: {destroyerID}\n\nLost implants: {typeIDs}"/>
+      <row refTypeID="58" refTypeCode="FWCorpJoinMsg" refTypeName="Corporation Has Joined Faction" subjectLayout="" textLayout=""/>
+      <row refTypeID="59" refTypeCode="FWCorpLeaveMsg" refTypeName="Corporation Has Left Faction" subjectLayout="" textLayout=""/>
+      <row refTypeID="60" refTypeCode="FWCorpKickMsg" refTypeName="Corporation Expelled From Faction" subjectLayout="" textLayout=""/>
+      <row refTypeID="61" refTypeCode="FWCharKickMsg" refTypeName="Pilot Expelled From Faction" subjectLayout="" textLayout=""/>
+      <row refTypeID="62" refTypeCode="FWCorpWarningMsg" refTypeName="Corporation Faction Standing Warning" subjectLayout="" textLayout=""/>
+      <row refTypeID="63" refTypeCode="FWCharWarningMsg" refTypeName="Pilot Faction Standing Warning" subjectLayout="" textLayout=""/>
+      <row refTypeID="64" refTypeCode="FWCharRankLossMsg" refTypeName="Pilot Loses Faction Rank" subjectLayout="" textLayout=""/>
+      <row refTypeID="65" refTypeCode="FWCharRankGainMsg" refTypeName="Pilot Gains Faction Rank" subjectLayout="" textLayout=""/>
+      <row refTypeID="67" refTypeCode="TransactionReversalMsg" refTypeName="Transaction Reversal" subjectLayout="" textLayout=""/>
+      <row refTypeID="68" refTypeCode="ReimbursementMsg" refTypeName="Reimbursement" subjectLayout="" textLayout=""/>
+      <row refTypeID="69" refTypeCode="LocateCharMsg" refTypeName="Pilot Located" subjectLayout="" textLayout=""/>
+      <row refTypeID="70" refTypeCode="ResearchMissionAvailableMsg" refTypeName="Research Mission Available" subjectLayout="" textLayout=""/>
+      <row refTypeID="71" refTypeCode="MissionOfferExpirationMsg" refTypeName="Mission Offer Expiration" subjectLayout="" textLayout=""/>
+      <row refTypeID="72" refTypeCode="MissionTimeoutMsg" refTypeName="Mission Failure" subjectLayout="" textLayout=""/>
+      <row refTypeID="73" refTypeCode="StoryLineMissionAvailableMsg" refTypeName="Special Mission Available" subjectLayout="" textLayout=""/>
+      <row refTypeID="74" refTypeCode="TutorialMsg" refTypeName="Tutorial Program" subjectLayout="" textLayout=""/>
+      <row refTypeID="75" refTypeCode="TowerAlertMsg" refTypeName="Tower Under Attack Alert" subjectLayout="" textLayout=""/>
+      <row refTypeID="76" refTypeCode="TowerResourceAlertMsg" refTypeName="Tower Resource Alert" subjectLayout="" textLayout=""/>
+      <row refTypeID="77" refTypeCode="StationAggressionMsg1" refTypeName="Station Under Attack" subjectLayout="" textLayout=""/>
+      <row refTypeID="78" refTypeCode="StationStateChangeMsg" refTypeName="Station Changed" subjectLayout="" textLayout=""/>
+      <row refTypeID="79" refTypeCode="StationConquerMsg" refTypeName="Station Conquered" subjectLayout="" textLayout=""/>
+      <row refTypeID="80" refTypeCode="StationAggressionMsg2" refTypeName="Station Aggression" subjectLayout="" textLayout=""/>
+      <row refTypeID="81" refTypeCode="FacWarCorpJoinRequestMsg" refTypeName="Corporation Joining Faction" subjectLayout="" textLayout=""/>
+      <row refTypeID="82" refTypeCode="FacWarCorpLeaveRequestMsg" refTypeName="Corporation Leaving Faction" subjectLayout="" textLayout=""/>
+      <row refTypeID="83" refTypeCode="FacWarCorpJoinWithdrawMsg" refTypeName="Corporation Join Faction Withdrawn" subjectLayout="" textLayout=""/>
+      <row refTypeID="84" refTypeCode="FacWarCorpLeaveWithdrawMsg" refTypeName="Corporation Leave Faction Withdrawn" subjectLayout="" textLayout=""/>
+      <row refTypeID="85" refTypeCode="CorpLiquidationMsg" refTypeName="Corporate Liquidation Settlement" subjectLayout="" textLayout=""/>
+      <row refTypeID="86" refTypeCode="SovereigntyTCUDamageMsg" refTypeName="Sovereignty TCU Damage" subjectLayout="" textLayout=""/>
+      <row refTypeID="87" refTypeCode="SovereigntySBUDamageMsg" refTypeName="Sovereignty SBU Damage" subjectLayout="" textLayout=""/>
+      <row refTypeID="88" refTypeCode="SovereigntyIHDamageMsg" refTypeName="Sovereignty IHUB Damage" subjectLayout="" textLayout=""/>
+      <row refTypeID="89" refTypeCode="ContactAdd" refTypeName="Added As Contact" subjectLayout="You have been added as a contact" textLayout="{senderName} has added you as a contact with {level}\n\n{message}"/>
+      <row refTypeID="90" refTypeCode="ContactEdit" refTypeName="Contact Level Modified" subjectLayout="Your contact level has been modified" textLayout="{senderName} has changed your contact level to {level}\n\n{message}"/>
+      <row refTypeID="91" refTypeCode="IncursionCompletedMsg" refTypeName="Incursion Completed" subjectLayout="" textLayout=""/>
+      <row refTypeID="92" refTypeCode="CorpKicked" refTypeName="Kicked From Corporation" subjectLayout="Kicked from {corpID}" textLayout="{corpID} hereby informs you that your services are no longer needed.\n\nThank you for your time at our corporation and best of luck to you in the future."/>
+      <row refTypeID="93" refTypeCode="OrbitalAttacked" refTypeName="Orbital Structure Attacked" subjectLayout="" textLayout=""/>
+      <row refTypeID="94" refTypeCode="OrbitalReinforced" refTypeName="Orbital Structure Reinforced" subjectLayout="" textLayout=""/>
+      <row refTypeID="95" refTypeCode="OwnershipTransferred" refTypeName="Structure Ownership Transferred" subjectLayout="" textLayout=""/>
+      <row refTypeID="96" refTypeCode="FWAllianceWarningMsg" refTypeName="Alliance Faction Standing Warning" subjectLayout="" textLayout=""/>
+      <row refTypeID="97" refTypeCode="FWAllianceKickMsg" refTypeName="Alliance Expelled From Faction" subjectLayout="" textLayout=""/>
+      <row refTypeID="98" refTypeCode="AllWarCorpJoinedAllianceMsg" refTypeName="Corporation Joined Alliance At War" subjectLayout="" textLayout=""/>
+      <row refTypeID="99" refTypeCode="AllyJoinedWarDefenderMsg" refTypeName="Defender Ally Joins War" subjectLayout="" textLayout=""/>
+      <row refTypeID="100" refTypeCode="AllyJoinedWarAggressorMsg" refTypeName="Aggressor Ally Joins War" subjectLayout="" textLayout=""/>
+      <row refTypeID="101" refTypeCode="AllyJoinedWarAllyMsg" refTypeName="Corporation Joins War As Ally" subjectLayout="" textLayout=""/>
+      <row refTypeID="102" refTypeCode="MercOfferedNegotiationMsg" refTypeName="War Ally Offer Received" subjectLayout="" textLayout=""/>
+      <row refTypeID="103" refTypeCode="WarSurrenderOfferMsg" refTypeName="Surrender Offer Received" subjectLayout="" textLayout=""/>
+      <row refTypeID="104" refTypeCode="WarSurrenderDeclinedMsg" refTypeName="Surrender Declined" subjectLayout="" textLayout=""/>
+      <row refTypeID="105" refTypeCode="FacWarLPPayoutKill" refTypeName="Faction Kill Event LP" subjectLayout="" textLayout=""/>
+      <row refTypeID="106" refTypeCode="FacWarLPPayoutEvent" refTypeName="Faction Strategic Event LP" subjectLayout="" textLayout=""/>
+      <row refTypeID="107" refTypeCode="FacWarLPDisqualifiedEvent" refTypeName="Strategic Event LP Disqualification" subjectLayout="" textLayout=""/>
+      <row refTypeID="108" refTypeCode="FacWarLPDisqualifiedKill" refTypeName="Kill Event LP Disqualification" subjectLayout="" textLayout=""/>
+      <row refTypeID="109" refTypeCode="AllyContractCancelled" refTypeName="War Ally Agreement Cancelled" subjectLayout="" textLayout=""/>
+      <row refTypeID="110" refTypeCode="WarAllyOfferDeclinedMsg" refTypeName="War Ally Offer Declined" subjectLayout="" textLayout=""/>
+      <row refTypeID="111" refTypeCode="BountyYourBountyClaimed" refTypeName="Bounty From You Claimed" subjectLayout="" textLayout=""/>
+      <row refTypeID="112" refTypeCode="BountyPlacedChar" refTypeName="Bounty Placed On You" subjectLayout="" textLayout=""/>
+      <row refTypeID="113" refTypeCode="BountyPlacedCorp" refTypeName="Bounty Placed On Corporation" subjectLayout="" textLayout=""/>
+      <row refTypeID="114" refTypeCode="BountyPlacedAlliance" refTypeName="Bounty Placed On Alliance" subjectLayout="" textLayout=""/>
+      <row refTypeID="115" refTypeCode="KillRightAvailable" refTypeName="Kill Right Available" subjectLayout="" textLayout=""/>
+      <row refTypeID="116" refTypeCode="KillRightAvailableOpen" refTypeName="Kill Right Available To All" subjectLayout="" textLayout=""/>
+      <row refTypeID="117" refTypeCode="KillRightEarned" refTypeName="Kill Right Earned" subjectLayout="" textLayout=""/>
+      <row refTypeID="118" refTypeCode="KillRightUsed" refTypeName="Kill Right Used" subjectLayout="" textLayout=""/>
+      <row refTypeID="119" refTypeCode="KillRightUnavailable" refTypeName="Kill Right Unavailable" subjectLayout="" textLayout=""/>
+      <row refTypeID="120" refTypeCode="KillRightUnavailableOpen" refTypeName="Kill Right Unavailable To All" subjectLayout="" textLayout=""/>
+      <row refTypeID="121" refTypeCode="DeclareWar" refTypeName="War Declaration" subjectLayout="" textLayout=""/>
+      <row refTypeID="122" refTypeCode="OfferedSurrender" refTypeName="Surrender Offered" subjectLayout="" textLayout=""/>
+      <row refTypeID="123" refTypeCode="AcceptedSurrender" refTypeName="Surrender Accepted" subjectLayout="" textLayout=""/>
+      <row refTypeID="124" refTypeCode="MadeWarMutual" refTypeName="War Made Mutual" subjectLayout="" textLayout=""/>
+      <row refTypeID="125" refTypeCode="RetractsWar" refTypeName="War Retracted" subjectLayout="" textLayout=""/>
+      <row refTypeID="126" refTypeCode="OfferedToAlly" refTypeName="You Offered War Ally" subjectLayout="" textLayout=""/>
+      <row refTypeID="127" refTypeCode="AcceptedAlly" refTypeName="You Accepted War Ally" subjectLayout="" textLayout=""/>
+      <row refTypeID="128" refTypeCode="CharAppAcceptMsg" refTypeName="Mercenary Invitation Accepted" subjectLayout="{charID} joins {corpID}" textLayout="Your membership invitation to {charID} has been accepted.\n\n{applicationText}"/>
+      <row refTypeID="129" refTypeCode="CharAppRejectMsg" refTypeName="Mercenary Invitation Rejected" subjectLayout="{charID} rejects invitation" textLayout="Your membership invitation to {charID} has been rejected."/>
+      <row refTypeID="130" refTypeCode="CharAppWithdrawMsg" refTypeName="Mercenary Application Withdrawn" subjectLayout="{charID} withdraws application" textLayout="{charID} has withdrawn his membership application.\n\n\n\n\n{applicationText}"/>
+      <row refTypeID="131" refTypeCode="DustAppAcceptedMsg" refTypeName="Mercenary Application Accepted" subjectLayout="" textLayout=""/>
+      <row refTypeID="132" refTypeCode="DistrictAttacked" refTypeName="Corporation District Attacked" subjectLayout="" textLayout=""/>
+      <row refTypeID="133" refTypeCode="BattlePunishFriendlyFire" refTypeName="Friendly Fire Standings Loss" subjectLayout="" textLayout=""/>
+      <row refTypeID="134" refTypeCode="BountyESSTaken" refTypeName="ESS Pool Taken" subjectLayout="" textLayout=""/>
+      <row refTypeID="135" refTypeCode="BountyESSShared" refTypeName="ESS Pool Shared" subjectLayout="" textLayout=""/>
+      <row refTypeID="136" refTypeCode="IndustryTeamAuctionWon" refTypeName="Unknown" subjectLayout="" textLayout=""/>
+      <row refTypeID="137" refTypeCode="IndustryTeamAuctionLost" refTypeName="Unknown" subjectLayout="" textLayout=""/>
+      <row refTypeID="138" refTypeCode="CloneActivationMsg2" refTypeName="Clone Activation" subjectLayout="Clone activated" textLayout="Your previous clone was catastrophically terminated. Your consciousness will be transferred to a new clone at {cloneStationID}.\n\nTransfer completed. We wish you good fortune."/>
+      <row refTypeID="139" refTypeCode="CorpAppInvitedMsg" refTypeName="You have been invited to join a Corporation" subjectLayout="Invited to join {corpID}" textLayout="Dear {charID},\n\nMy name is {invokingCharID} and I would like you to join my corporation {corpID}. You may choose to Accept the invitation which will move you to the corporation or alternatively you may Decline the application.\n\nThe invitation can be found in the Corporation window under the Recruitment \u201cMy Applications\u201d tab.\n\nRegards,\n{invokingCharID}\n{corpID}"/>
+      <row refTypeID="140" refTypeCode="KillReportVictim" refTypeName="Kill report - Victim" subjectLayout="Loss report available" textLayout="Loss report for {victimID} ({victimShipTypeID}) is available."/>
+      <row refTypeID="141" refTypeCode="KillReportFinalBlow" refTypeName="Kill report - Final blow" subjectLayout="Kill report available" textLayout="Kill report for {victimID} ({victimShipTypeID}) is available."/>
+      <row refTypeID="142" refTypeCode="CorpAppRejectCustomMsg" refTypeName="Your Corporate Application Rejected" subjectLayout="Rejected application to join {corpID}" textLayout="Dear {charID},\nyour application to join {corpID} has been processed and rejected.\n\n{customMessage}\n\nRegards,\n{corpID}"/>
+      <row refTypeID="143" refTypeCode="CorpFriendlyFireEnableTimerStarted" refTypeName="Corp Friendly-fire Enable-timer started" subjectLayout="" textLayout=""/>
+      <row refTypeID="144" refTypeCode="CorpFriendlyFireDisableTimerStarted" refTypeName="Corp Friendly-fire Disable-timer started" subjectLayout="" textLayout=""/>
+      <row refTypeID="145" refTypeCode="CorpFriendlyFireEnableTimerCompleted" refTypeName="Corp Friendly-fire Enable-timer completed" subjectLayout="" textLayout=""/>
+      <row refTypeID="146" refTypeCode="CorpFriendlyFireDisableTimerCompleted" refTypeName="Corp Friendly-fire Disable-timer completed" subjectLayout="" textLayout=""/>
+      <row refTypeID="147" refTypeCode="EntosisCaptureStarted" refTypeName="Sovereignty Structure Capture Started" subjectLayout="{structureTypeID} in {solarSystemID} is being captured" textLayout="A capsuleer has started to influence this structure with an Entosis Link.\n\nNo further Entosis alerts for this structure will be sent until 60 minutes has passed or the structure has been secured by your alliance."/>
+      <row refTypeID="148" refTypeCode="StationServiceEnabled" refTypeName="Sovereignty Service Enabled" subjectLayout="{structureTypeID} in {solarSystemID} has been enabled" textLayout="This station service has been enabled by your alliance and is now operating normally."/>
+      <row refTypeID="149" refTypeCode="StationServiceDisabled" refTypeName="Sovereignty Service Disabled" subjectLayout="{structureTypeID} in {solarSystemID} has been disabled" textLayout="This station service has been disabled by hostile forces and must be reactivated with an Entosis Link before normal operation can resume."/>
+      <row refTypeID="152" refTypeCode="InfrastructureHubBillAboutToExpire" refTypeName="IHub Bill Expiring" subjectLayout="" textLayout=""/>
+      <row refTypeID="160" refTypeCode="SovStructureReinforced" refTypeName="Sovereignty Structures Reinforced" subjectLayout="{campaignEventType} in {solarSystemID} has entered reinforced mode" textLayout="This structure has been reinforced by hostile forces and command nodes will begin decloaking at {decloakTime}."/>
+      <row refTypeID="161" refTypeCode="SovCommandNodeEventStarted" refTypeName="Command Nodes Decloaking" subjectLayout="Command nodes for the {campaignEventType} in {solarSystemID} have begun to decloak" textLayout="Command nodes for this structure can now be found throughout its constellation and capsuleers can use the Entosis Link to capture them."/>
+      <row refTypeID="162" refTypeCode="SovStructureDestroyed" refTypeName="Sovereignty Structure Destroyed" subjectLayout="{campaignEventType} in {solarSystemID} has self-destructed" textLayout="This structure has been captured by hostile forces and has automatically self-destructed."/>
+      <row refTypeID="163" refTypeCode="SovStationEnteredFreeport" refTypeName="Station Entered Freeport" subjectLayout="Station in {solarSystemID} has entered freeport mode" textLayout="This structure has been captured by hostile forces and has entered Freeport Mode. Command nodes will begin decloaking at {decloakTime}."/>
+      <row refTypeID="164" refTypeCode="IHubDestroyedByBillFailure" refTypeName="IHub Destroyed - Bill" subjectLayout="" textLayout=""/>
+      <row refTypeID="165" refTypeCode="AllianceCapitalChanged" refTypeName="Alliance Capital Changed" subjectLayout="" textLayout=""/>
+      <row refTypeID="1030" refTypeCode="GameTimeReceived" refTypeName="Game Time Received" subjectLayout="Plex Donation" textLayout="{senderCharID} has donated 30 days of game time to you."/>
+      <row refTypeID="1031" refTypeCode="GameTimeSent" refTypeName="Game Time Sent" subjectLayout="Plex Donation" textLayout="You have donated 30 days of game time to {receiverCharID}."/>
     </rowset>
   </result>
   <cachedUntil></cachedUntil>

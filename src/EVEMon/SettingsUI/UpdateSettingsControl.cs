@@ -66,35 +66,18 @@ namespace EVEMon.SettingsUI
         {
             get
             {
-                List<Enum> apiMethods = APIMethods.Methods.Where(x => x.HasHeader()).ToList();
+                List<Enum> apiMethods = ESIMethods.Methods.Where(x => x.HasHeader()).ToList();
 
                 // Group the methods by usage
-                List<Enum> methods =
-                    apiMethods.Where(method => method is CCPAPIGenericMethods && !CCPAPIGenericMethods.PlanetaryColonies.Equals(method))
-                        .ToList();
+                List<Enum> methods = apiMethods.Where(method => method is ESIAPIGenericMethods).ToList();
 
-                methods.AddRange(apiMethods.OfType<CCPAPICharacterMethods>().Where(
+                methods.AddRange(apiMethods.OfType<ESIAPICharacterMethods>().Where(
                     method => (long)method == ((long)method & (long)CCPAPIMethodsEnum.BasicCharacterFeatures)).Cast<Enum>());
 
-                methods.AddRange(apiMethods.OfType<CCPAPICharacterMethods>().Where(
+                methods.AddRange(apiMethods.OfType<ESIAPICharacterMethods>().Where(
                     method => (long)method == ((long)method & (long)CCPAPIMethodsEnum.AdvancedCharacterFeatures)).Cast<Enum>().
                                      OrderBy(method => method.GetHeader()));
-
-                // Add the planetary colonies method above the research points (a special case as CCP likes to brake patterns)
-                if (apiMethods.Any(method => method is CCPAPIGenericMethods && CCPAPIGenericMethods.PlanetaryColonies.Equals(method)))
-                {
-                    methods.Insert(
-                        methods.FindIndex(
-                            method => method is CCPAPICharacterMethods && CCPAPICharacterMethods.ResearchPoints.Equals(method)),
-                        apiMethods.First(
-                            method => method is CCPAPIGenericMethods && CCPAPIGenericMethods.PlanetaryColonies.Equals(method)));
-                }
-
-                // Uncomment upon implementing an exclicit corporation monitor feature
-                //methods.AddRange(apiMethods.OfType<APICorporationMethods>().Where(
-                //    method => (int)method == ((int)method & (int)APIMethodsEnum.AdvancedCorporationFeatures)).Cast<Enum>().OrderBy(
-                //        method => method.GetHeader()));
-
+                
                 return methods;
             }
         }
@@ -113,20 +96,17 @@ namespace EVEMon.SettingsUI
             if (combo.SelectedIndex < 0 || combo.SelectedIndex >= periods.Count)
                 return;
 
-            if (method.Equals(CCPAPICharacterMethods.Medals))
-                m_settings.Periods[CCPAPICorporationMethods.CorporationMedals.ToString()] = periods[combo.SelectedIndex];
+            if (method.Equals(ESIAPICharacterMethods.Medals))
+                m_settings.Periods[ESIAPICorporationMethods.CorporationMedals.ToString()] = periods[combo.SelectedIndex];
       
-            if (method.Equals(CCPAPICharacterMethods.MarketOrders))
-                m_settings.Periods[CCPAPICorporationMethods.CorporationMarketOrders.ToString()] = periods[combo.SelectedIndex];
+            if (method.Equals(ESIAPICharacterMethods.MarketOrders))
+                m_settings.Periods[ESIAPICorporationMethods.CorporationMarketOrders.ToString()] = periods[combo.SelectedIndex];
 
-            if (method.Equals(CCPAPICharacterMethods.Contracts))
-                m_settings.Periods[CCPAPICorporationMethods.CorporationContracts.ToString()] = periods[combo.SelectedIndex];
+            if (method.Equals(ESIAPICharacterMethods.Contracts))
+                m_settings.Periods[ESIAPICorporationMethods.CorporationContracts.ToString()] = periods[combo.SelectedIndex];
 
-            if (method.Equals(CCPAPICharacterMethods.IndustryJobs))
-                m_settings.Periods[CCPAPICorporationMethods.CorporationIndustryJobs.ToString()] = periods[combo.SelectedIndex];
-
-            if (method.Equals(CCPAPIGenericMethods.CharacterList))
-                m_settings.Periods[CCPAPIGenericMethods.APIKeyInfo.ToString()] = periods[combo.SelectedIndex];
+            if (method.Equals(ESIAPICharacterMethods.IndustryJobs))
+                m_settings.Periods[ESIAPICorporationMethods.CorporationIndustryJobs.ToString()] = periods[combo.SelectedIndex];
 
             m_settings.Periods[method.ToString()] = periods[combo.SelectedIndex];
         }
@@ -236,37 +216,16 @@ namespace EVEMon.SettingsUI
         {
             Bitmap icon = Resources.KeyGrey16;
             string iconToolTip = "This is a basic feature query.";
-            if (method is CCPAPICharacterMethods)
+            if (method is ESIAPICharacterMethods)
             {
-                CCPAPICharacterMethods apiMethod = (CCPAPICharacterMethods)method;
+                ESIAPICharacterMethods apiMethod = (ESIAPICharacterMethods)method;
                 if ((long)apiMethod == ((long)apiMethod & (long)CCPAPIMethodsEnum.AdvancedCharacterFeatures))
                 {
                     icon = Resources.KeyGold16;
                     iconToolTip = "This is an advanced feature query.";
                 }
             }
-
-            if (method is CCPAPIGenericMethods)
-            {
-                CCPAPIGenericMethods apiGenericMethod = (CCPAPIGenericMethods)method;
-                if (CCPAPIGenericMethods.PlanetaryColonies.Equals(apiGenericMethod))
-                {
-                    icon = Resources.KeyGold16;
-                    iconToolTip = "This is an advanced feature query.";
-                }
-            }
-
-            // Uncomment upon implementing an exclicit corporation monitor feature
-            //if (method is APICorporationMethods)
-            //{
-            //    APICorporationMethods apiMethod = (APICorporationMethods)method;
-            //    if ((int)apiMethod == ((int)apiMethod & (int)APIMethodsEnum.AdvancedCorporationFeatures))
-            //    {
-            //        icon = CommonProperties.Resources.KeyGold16;
-            //        iconToolTip = "This is an advanced feature query.";
-            //    }
-            //}
-
+            
             PictureBox tempPicture = null;
             try
             {

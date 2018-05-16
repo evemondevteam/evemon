@@ -1,5 +1,4 @@
-using System;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models
 {
@@ -9,10 +8,10 @@ namespace EVEMon.Common.Models
         /// Initializes a new instance of the <see cref="EveMailBody"/> class.
         /// </summary>
         /// <param name="src">The SRC.</param>
-        internal EveMailBody(SerializableMailBodiesListItem src)
+        internal EveMailBody(long id, EsiAPIMailBody src)
         {
-            MessageID = src.MessageID;
-            BodyText = src.MessageText ?? String.Empty;
+            MessageID = id;
+            BodyText = src.Body;
         }
 
         /// <summary>

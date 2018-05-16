@@ -1,10 +1,12 @@
-using System;
+using EVEMon.Common.Constants;
 using EVEMon.Common.Data;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Enumerations.CCPAPI;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Serialization.Eve;
 using EVEMon.Common.Serialization.Settings;
+using EVEMon.Common.Service;
+using System;
 
 namespace EVEMon.Common.Models
 {
@@ -92,12 +94,11 @@ namespace EVEMon.Common.Models
             get
             {
                 if (State == JobState.Paused)
-                    return new DateTime(EndDate.Subtract(PauseDate).Ticks).ToRemainingTimeDigitalDescription(DateTimeKind.Utc);
-
+                    return new DateTime(EndDate.Subtract(PauseDate).Ticks).
+                        ToRemainingTimeDigitalDescription(DateTimeKind.Utc);
                 if (State == JobState.Active && EndDate > DateTime.UtcNow)
                     return EndDate.ToRemainingTimeDigitalDescription(DateTimeKind.Utc);
-
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -219,8 +220,8 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="src"></param>
         /// <returns></returns>
-        private bool IsModified(SerializableJobListItem src) => src.EndDate != EndDate
-                                                                || src.PauseDate != PauseDate;
+        private bool IsModified(SerializableJobListItem src) => src.EndDate != EndDate ||
+            src.PauseDate != PauseDate;
 
         #endregion
 
@@ -248,45 +249,39 @@ namespace EVEMon.Common.Models
         /// <returns>True if import sucessful otherwise, false.</returns>
         internal bool TryImport(SerializableJobListItem src)
         {
-            // Note that, before a match is found, all jobs have been marked for deletion : m_markedForDeletion == true
-
-            // Checks whether ID is the same
-            if (!MatchesWith(src))
-                return false;
-
-            // Prevent deletion
-            MarkedForDeletion = false;
-
-            // Update infos (if ID is the same it may have been modified)
-            if (IsModified(src))
+            bool matches = MatchesWith(src);
+            // Note that, before a match is found, all jobs have been marked for deletion:
+            // m_markedForDeletion == true
+            if (matches)
             {
+                MarkedForDeletion = false;
+                // Update information (if ID is the same it may have been modified)
+                if (IsModified(src))
+                {
+                    // Job is from a serialized object, so populate the missing info
+                    if (InstalledItem == null)
+                        PopulateJobInfo(src);
+                    else
+                    {
+                        EndDate = src.EndDate;
+                        PauseDate = src.PauseDate;
+                    }
+                    State = (PauseDate == DateTime.MinValue) ? JobState.Active : JobState.
+                        Paused;
+                    ActiveJobState = GetActiveJobState();
+                    LastStateChange = DateTime.UtcNow;
+                }
                 // Job is from a serialized object, so populate the missing info
                 if (InstalledItem == null)
                     PopulateJobInfo(src);
-                else
+                var state = GetState(src);
+                if (state != State)
                 {
-                    EndDate = src.EndDate;
-                    PauseDate = src.PauseDate;
+                    State = state;
+                    LastStateChange = DateTime.UtcNow;
                 }
-
-                State = PauseDate == DateTime.MinValue ? JobState.Active : JobState.Paused;
-                ActiveJobState = GetActiveJobState();
-                LastStateChange = DateTime.UtcNow;
             }
-
-            // Job is from a serialized object, so populate the missing info
-            if (InstalledItem == null)
-                PopulateJobInfo(src);
-
-            // Update state
-            JobState state = GetState(src);
-            if (State == JobState.Paused || state == State)
-                return true;
-
-            State = state;
-            LastStateChange = DateTime.UtcNow;
-
-            return true;
+            return matches;
         }
 
         /// <summary>
@@ -299,7 +294,6 @@ namespace EVEMon.Common.Models
             InstallerID = src.InstallerID;
             InstalledItem = StaticBlueprints.GetBlueprintByID(src.BlueprintTypeID);
             Runs = src.Runs;
-            SolarSystem = StaticGeography.GetSolarSystemByID(src.SolarSystemID);
             Cost = src.Cost;
             Probability = src.Probability;
             SuccessfulRuns = src.SuccessfulRuns;
@@ -310,15 +304,14 @@ namespace EVEMon.Common.Models
             EndDate = src.EndDate;
             PauseDate = src.PauseDate;
             IssuedFor = src.IssuedFor;
-            m_installedItemLocationID = src.StationID;
+            m_installedItemLocationID = src.FacilityID;
+            UpdateLocation();
 
             UpdateInstallation();
-
             if (Enum.IsDefined(typeof(BlueprintActivity), src.ActivityID))
                 Activity = (BlueprintActivity)Enum.ToObject(typeof(BlueprintActivity), src.ActivityID);
 
             OutputItem = GetOutputItem(src.ProductTypeID);
-
             //if (Enum.IsDefined(typeof(BlueprintType), src.InstalledItemCopy))
             //    BlueprintType = (BlueprintType)Enum.ToObject(typeof(BlueprintType), src.InstalledItemCopy);
         }
@@ -358,27 +351,16 @@ namespace EVEMon.Common.Models
         /// <returns>Name of the installation.</returns>
         private string GetInstallation(long id)
         {
-            Station station = null;
-            ConquerableStation outpost = null;
+            return EveIDToStation.GetIDToStation(id)?.Name ?? EveMonConstants.UnknownText;
 
-            // If 'id' is a 32bit number it may be a conquerable outpost station or station,
-            // so we look it up in our datafile
-            if (id <= Int32.MaxValue)
-            {
-                station = Station.GetByID((int)id);
-                outpost = station as ConquerableStation;
-            }
-
-            // In case the 'id' doesn't correspond to a station, it's a starbase structure
-            // and installation will be assigned manually based on activity
-            // otherwise assigns the station name
-            return station == null
+            // Starbase assembly structures can no longer be used
+            /*return station == null
                 ? Activity == BlueprintActivity.Manufacturing
                     ? "POS - Assembly Array"
                     : "POS - Laboratory"
                 : outpost != null
                     ? outpost.FullName
-                    : station.Name;
+                    : station.Name;*/
         }
 
         /// <summary>
@@ -394,10 +376,10 @@ namespace EVEMon.Common.Models
             switch ((CCPJobCompletedStatus)src.Status)
             {
                 // Active States
-                case CCPJobCompletedStatus.Installed:
+                case CCPJobCompletedStatus.Active:
                     return JobState.Active;
-                // Canceled States
-                case CCPJobCompletedStatus.Canceled:
+                // Cancelled States
+                case CCPJobCompletedStatus.Cancelled:
                     return JobState.Canceled;
                 // Failed States
                 case CCPJobCompletedStatus.Reverted:
@@ -439,6 +421,21 @@ namespace EVEMon.Common.Models
         public void UpdateInstallation()
         {
             Installation = GetInstallation(m_installedItemLocationID);
+        }
+
+        /// <summary>
+        /// Updates the location.
+        /// </summary>
+        /// <returns></returns>
+        public void UpdateLocation()
+        {
+            // If location not already determined
+            if (m_installedItemLocationID != 0L && SolarSystem == null)
+            {
+                Station station = EveIDToStation.GetIDToStation(m_installedItemLocationID);
+                if (station != null)
+                    SolarSystem = station.SolarSystem;
+            }
         }
 
         #endregion

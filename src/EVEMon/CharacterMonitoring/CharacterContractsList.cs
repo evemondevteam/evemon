@@ -343,25 +343,28 @@ namespace EVEMon.CharacterMonitoring
             int scrollBarPosition = lvContracts.GetVerticalScrollBarPosition();
 
             // Store the selected item (if any) to restore it after the update
-            int selectedItem = lvContracts.SelectedItems.Count > 0
-                ? lvContracts.SelectedItems[0].Tag.GetHashCode()
-                : 0;
+            int selectedItem = lvContracts.SelectedItems.Count > 0 ? lvContracts.
+                SelectedItems[0].Tag.GetHashCode() : 0;
 
             lvContracts.BeginUpdate();
             try
             {
-                IEnumerable<Contract> contracts = m_list
-                    .Where(x => x.ContractType != ContractType.None && x.StartStation != null && x.EndStation != null)
-                    .Where(x => IsTextMatching(x, m_textFilter));
-
-                if (Character != null && Settings.UI.MainWindow.Contracts.HideInactiveContracts)
-                    contracts = contracts.Where(x => x.IsAvailable || x.NeedsAttention);
-
-                if (m_showIssuedFor != IssuedFor.All)
-                    contracts = contracts.Where(x => x.IssuedFor == m_showIssuedFor);
+                bool filterInactive = Character != null && Settings.UI.MainWindow.Contracts.
+                    HideInactiveContracts, filterIssued = m_showIssuedFor != IssuedFor.All;
+                var contracts = new LinkedList<Contract>();
+                foreach (var con in m_list)
+                    // Filter on valid contracts matching text
+                    if (con.ContractType != ContractType.None && con.StartStation != null &&
+                        con.EndStation != null && IsTextMatching(con, m_textFilter))
+                    {
+                        con.UpdateContractItems();
+                        // Filter on issued type and availability
+                        if ((!filterIssued || con.IssuedFor == m_showIssuedFor) &&
+                            (!filterInactive || con.IsAvailable || con.NeedsAttention))
+                        contracts.AddLast(con);
+                    }
 
                 UpdateSort();
-
                 UpdateContentByGroup(contracts);
 
                 // Restore the selected item (if any)
@@ -627,9 +630,6 @@ namespace EVEMon.CharacterMonitoring
         {
             bool numberFormat = Settings.UI.MainWindow.Contracts.NumberAbsFormat;
 
-            ConquerableStation startOutpost = contract.StartStation as ConquerableStation;
-            ConquerableStation endOutpost = contract.EndStation as ConquerableStation;
-
             switch (column)
             {
                 case ContractColumn.Status:
@@ -683,9 +683,7 @@ namespace EVEMon.CharacterMonitoring
                         : contract.Volume.ToNumericString(2);
                     break;
                 case ContractColumn.StartLocation:
-                    item.Text = startOutpost != null
-                        ? startOutpost.FullLocation
-                        : contract.StartStation.FullLocation;
+                    item.Text = contract.StartStation.FullLocation;
                     break;
                 case ContractColumn.StartRegion:
                     item.Text = contract.StartStation.SolarSystem.Constellation.Region.Name;
@@ -695,14 +693,10 @@ namespace EVEMon.CharacterMonitoring
                     item.ForeColor = contract.StartStation.SolarSystem.SecurityLevelColor;
                     break;
                 case ContractColumn.StartStation:
-                    item.Text = startOutpost != null
-                        ? startOutpost.FullName
-                        : contract.StartStation.Name;
+                    item.Text = contract.StartStation.Name;
                     break;
                 case ContractColumn.EndLocation:
-                    item.Text = endOutpost != null
-                        ? endOutpost.FullLocation
-                        : contract.EndStation.FullLocation;
+                    item.Text = contract.EndStation.FullLocation;
                     break;
                 case ContractColumn.EndRegion:
                     item.Text = contract.EndStation.SolarSystem.Constellation.Region.Name;
@@ -712,9 +706,7 @@ namespace EVEMon.CharacterMonitoring
                     item.ForeColor = contract.EndStation.SolarSystem.SecurityLevelColor;
                     break;
                 case ContractColumn.EndStation:
-                    item.Text = endOutpost != null
-                        ? endOutpost.FullName
-                        : contract.EndStation.Name;
+                    item.Text = contract.EndStation.Name;
                     break;
                 case ContractColumn.Issued:
                     item.Text = contract.Issued.ToLocalTime().ToShortDateString();
@@ -821,13 +813,15 @@ namespace EVEMon.CharacterMonitoring
         /// </summary>
         private void ShowContractDetails()
         {
-            Contract contract = (Contract)lvContracts.SelectedItems[0].Tag;
-
-            // Quit if for any reason the contract's item list is empty
-            if (contract.ContractType != ContractType.Courier && !contract.ContractItems.Any())
-                return;
-
-            WindowsFactory.ShowByTag<ContractDetailsWindow, Contract>(contract);
+            var items = lvContracts.SelectedItems;
+            if (items.Count > 0)
+            {
+                // Fixes a bug where double clicks as the list was updating would crash
+                var contract = items[0].Tag as Contract;
+                if (contract != null && contract.ContractType == ContractType.Courier ||
+                    contract.ContractItems.Any())
+                    WindowsFactory.ShowByTag<ContractDetailsWindow, Contract>(contract);
+            }
         }
 
         #endregion
@@ -1079,7 +1073,7 @@ namespace EVEMon.CharacterMonitoring
         }
 
         /// <summary>
-        /// /// When the contracts items get downloaded, update the list.
+        /// When the character contract items are downloaded, update the list.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EVEMon.Common.CustomEventArgs.CharacterChangedEventArgs"/> instance containing the event data.</param>
@@ -1090,7 +1084,7 @@ namespace EVEMon.CharacterMonitoring
 
             UpdateContent();
         }
-
+        
         /// <summary>
         /// When the EveIDToName list updates, update the list.
         /// </summary>
@@ -1141,7 +1135,5 @@ namespace EVEMon.CharacterMonitoring
 
         #endregion
 
-
-        // TODO: Implement expandable panel for additional info regarding number of contracts left
     }
 }

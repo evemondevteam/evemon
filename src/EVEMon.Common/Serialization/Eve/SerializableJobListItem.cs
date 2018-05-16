@@ -13,6 +13,7 @@ namespace EVEMon.Common.Serialization.Eve
         [XmlAttribute("installerID")]
         public long InstallerID { get; set; }
 
+        // Never referenced by EVEMon!
         [XmlAttribute("installerName")]
         public string InstallerName { get; set; }
 

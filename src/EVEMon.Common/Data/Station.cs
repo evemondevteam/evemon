@@ -19,7 +19,7 @@ namespace EVEMon.Common.Data
         /// </summary>
         /// <param name="src">The source.</param>
         /// <exception cref="System.ArgumentNullException">src</exception>
-        protected Station(SerializableOutpost src)
+        public Station(SerializableOutpost src)
         {
             src.ThrowIfNull(nameof(src));
 
@@ -61,31 +61,11 @@ namespace EVEMon.Common.Data
                 Items.Add(new Agent(this, agent));
             }
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Station"/> class for the Citadel until a proper system is done to resolve them.
-        /// </summary>
-        /// <param name="src">The citadel ID.</param>
-        /// <exception cref="System.ArgumentNullException">src</exception>
-        /// <remarks>Should be redone when we have a system for citadels</remarks>
-        public Station(long src)
-        {
-            src.ThrowIfNull(nameof(src));
-
-            ID = src;
-            Name = "Citadel";
-            CorporationID = 0;
-            CorporationName = "";
-            CorporationID = 0;
-            CorporationName = "unknown";
-            SolarSystem = new SolarSystem();
-            FullLocation = "unknown";
-        }
-
+        
         #endregion
 
 
-        #region Public Poperties
+        #region Public Properties
             
         /// <summary>
         /// Gets this object's id.
@@ -159,27 +139,8 @@ namespace EVEMon.Common.Data
         /// <param name="name">The name.</param>
         /// <returns></returns>
         private static string GetFullLocation(SolarSystem solarSystem, string name)
-            => solarSystem == null
-                ? String.Empty
-                : $"{solarSystem.FullLocation} > {name}";
-
-        /// <summary>
-        /// Gets the station by the provided ID.
-        /// </summary>
-        /// <param name="id">The station's id.</param>
-        /// <returns></returns>
-        // Check if it's a conquerable outpost station, if not look in our data
-        public static Station GetByID(long id) => ConquerableStation.GetStationByID(id) ?? StaticGeography.GetStationByID(id) ?? new Station(id);
-
-        /// <summary>
-        /// Gets the station by the provided name.
-        /// </summary>
-        /// <param name="name">The station's name.</param>
-        /// <returns>The station or null</returns>
-        // Check if it's a conquerable outpost station, if not look in our data
-        internal static Station GetByName(string name)
-            => ConquerableStation.GetStationByName(name) ?? StaticGeography.GetStationByName(name);
-
+            => (solarSystem == null) ? string.Empty : $"{solarSystem.FullLocation} > {name}";
+        
         #endregion
 
 

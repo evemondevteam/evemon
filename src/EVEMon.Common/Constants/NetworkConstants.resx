@@ -117,20 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="APICharacterList" xml:space="preserve">
-    <value>/account/Characters.xml.aspx</value>
+  <data name="ESICharacterSkills" xml:space="preserve">
+    <value>/v4/characters/{0:D}/skills/</value>
+    <comment>120</comment>
   </data>
-  <data name="APICharacterSheet" xml:space="preserve">
-    <value>/char/CharacterSheet.xml.aspx</value>
+  <data name="ESIServerStatus" xml:space="preserve">
+    <value>/v1/status/</value>
+    <comment>30</comment>
   </data>
-  <data name="APIServerStatus" xml:space="preserve">
-    <value>/server/ServerStatus.xml.aspx</value>
-  </data>
-  <data name="APISkillQueue" xml:space="preserve">
-    <value>/char/SkillQueue.xml.aspx</value>
-  </data>
-  <data name="APIBase" xml:space="preserve">
-    <value>https://api.eveonline.com</value>
+  <data name="ESISkillQueue" xml:space="preserve">
+    <value>/v2/characters/{0:D}/skillqueue/</value>
+    <comment>120</comment>
   </data>
   <data name="EVEMonUpdates" xml:space="preserve">
     <value>/updates/patch.xml</value>
@@ -139,70 +136,65 @@
     <value>/character/{0}_{1}.jpg</value>
     <comment>New web address for portraits as part of Incursion 1.1.0</comment>
   </data>
-  <data name="APICredentialsBase" xml:space="preserve">
-    <value>/support/api-key/</value>
-  </data>
   <data name="EVEMonMainPage" xml:space="preserve">
     <value>https://evemondevteam.github.io/evemon/</value>
   </data>
   <data name="EVEMonForums" xml:space="preserve">
     <value>https://forums.eveonline.com/default.aspx?g=posts&amp;m=6728966</value>
   </data>
-  <data name="APIAccountBalance" xml:space="preserve">
-    <value>/char/AccountBalance.xml.aspx</value>
+  <data name="ESIAccountBalance" xml:space="preserve">
+    <value>/v1/characters/{0:D}/wallet/</value>
+    <comment>120</comment>
   </data>
   <data name="MyEVELevelImage" xml:space="preserve">
     <value>/bitmaps/character/level</value>
   </data>
-  <data name="APIMarketOrders" xml:space="preserve">
-    <value>/char/MarketOrders.xml.aspx</value>
-  </data>
-  <data name="APIConquerableStationList" xml:space="preserve">
-    <value>/eve/ConquerableStationList.xml.aspx</value>
+  <data name="ESIMarketOrders" xml:space="preserve">
+    <value>/v2/characters/{0:D}/orders/</value>
+    <comment>1200</comment>
   </data>
   <data name="EVEMonUserVoice" xml:space="preserve">
     <value>https://evemon.uservoice.com/</value>
   </data>
-  <data name="APISkillInTraining" xml:space="preserve">
-    <value>/char/SkillInTraining.xml.aspx</value>
-    <comment>Used to check whether a character is training a skill or not.</comment>
+  <data name="ESIIndustryJobs" xml:space="preserve">
+    <value>/v1/characters/{0:D}/industry/jobs/</value>
+    <comment>300</comment>
   </data>
-  <data name="APIIndustryJobs" xml:space="preserve">
-    <value>/char/IndustryJobs.xml.aspx</value>
-  </data>
-  <data name="APITestBase" xml:space="preserve">
+  <data name="ESITestBase" xml:space="preserve">
     <value>https://api.testeveonline.com</value>
     <comment>Test API Service announced as part of Tyrannis 1.2; Url changed as of Retribution 1.0</comment>
   </data>
-  <data name="APIResearchPoints" xml:space="preserve">
-    <value>/char/Research.xml.aspx</value>
+  <data name="ESIResearchPoints" xml:space="preserve">
+    <value>/v1/characters/{0:D}/agents_research/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APIAccountStatus" xml:space="preserve">
-    <value>/account/AccountStatus.xml.aspx</value>
+  <data name="ESIAccountStatus" xml:space="preserve">
+    <value>/v1/characters/{0:D}/accountStatus/</value>
+    <comment>RIP</comment>
   </data>
-  <data name="APIMailBodies" xml:space="preserve">
-    <value>/char/MailBodies.xml.aspx</value>
+  <data name="ESIMailBodies" xml:space="preserve">
+    <value>/v1/characters/{0:D}/mail/{1:D}/</value>
+    <comment>30</comment>
   </data>
-  <data name="APIMailingLists" xml:space="preserve">
-    <value>/char/MailingLists.xml.aspx</value>
+  <data name="ESIMailingLists" xml:space="preserve">
+    <value>/v1/characters/{0:D}/mail/lists/</value>
+    <comment>120</comment>
   </data>
-  <data name="APIMailMessages" xml:space="preserve">
-    <value>/char/MailMessages.xml.aspx</value>
+  <data name="ESIMailMessages" xml:space="preserve">
+    <value>/v1/characters/{0:D}/mail/</value>
+    <comment>30</comment>
   </data>
-  <data name="APINotifications" xml:space="preserve">
-    <value>/char/Notifications.xml.aspx</value>
+  <data name="ESINotifications" xml:space="preserve">
+    <value>/v2/characters/{0:D}/notifications/</value>
+    <comment>600</comment>
   </data>
-  <data name="APINotificationTexts" xml:space="preserve">
-    <value>/char/NotificationTexts.xml.aspx</value>
+  <data name="ESICharacterSheet" xml:space="preserve">
+    <value>/v4/characters/{0:D}/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICharacterName" xml:space="preserve">
-    <value>/eve/CharacterName.xml.aspx</value>
-  </data>
-  <data name="APICharacterInfo" xml:space="preserve">
-    <value>/eve/CharacterInfo.xml.aspx</value>
-  </data>
-  <data name="APIStandings" xml:space="preserve">
-    <value>/char/Standings.xml.aspx</value>
+  <data name="ESIStandings" xml:space="preserve">
+    <value>/v1/characters/{0:D}/standings/</value>
+    <comment>3600</comment>
   </data>
   <data name="CCPIconsFromImageServer" xml:space="preserve">
     <value>/{0}/{1}_{2}.png</value>
@@ -232,217 +224,191 @@
   <data name="EVEGateCorporationProfile" xml:space="preserve">
     <value>/Corporation/{0}</value>
   </data>
-  <data name="APIAPIKeyInfo" xml:space="preserve">
-    <value>/account/APIKeyInfo.xml.aspx</value>
-  </data>
-  <data name="APICredentialsPredefined" xml:space="preserve">
-    <value>/createpredefined?accessmask={0}</value>
-    <comment>Used to create api key with predefined access mask</comment>
-  </data>
-  <data name="PostDataBase" xml:space="preserve">
-    <value>keyID={0}&amp;vCode={1}</value>
-  </data>
-  <data name="PostDataIDsOnly" xml:space="preserve">
-    <value>ids={0}</value>
-  </data>
-  <data name="PostDataWithCharID" xml:space="preserve">
-    <value>keyID={0}&amp;vCode={1}&amp;characterID={2}</value>
-  </data>
-  <data name="PostDataWithCharIDAndIDS" xml:space="preserve">
-    <value>keyID={0}&amp;vCode={1}&amp;characterID={2}&amp;ids={3}</value>
-  </data>
   <data name="CCPAccountManage" xml:space="preserve">
     <value>https://secure.eveonline.com/AccountManMenu.aspx</value>
   </data>
-  <data name="APICredentialsUpdate" xml:space="preserve">
-    <value>/update/?keyID={0}</value>
-    <comment>Used to update the api credentials</comment>
+  <data name="ESICorporationIndustryJobs" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/industry/jobs/</value>
+    <comment>300</comment>
   </data>
-  <data name="APICorporationIndustryJobs" xml:space="preserve">
-    <value>/corp/IndustryJobs.xml.aspx</value>
+  <data name="ESICorporationMarketOrders" xml:space="preserve">
+    <value>/v2/corporations/{0:D}/orders/</value>
+    <comment>1200</comment>
   </data>
-  <data name="APICorporationMarketOrders" xml:space="preserve">
-    <value>/corp/MarketOrders.xml.aspx</value>
+  <data name="ESIContractBids" xml:space="preserve">
+    <value>/v1/characters/{0:D}/contracts/{1:D}/bids/</value>
+    <comment>300</comment>
   </data>
-  <data name="PostDataCharacterIDOnly" xml:space="preserve">
-    <value>characterID={0}</value>
+  <data name="ESIContractItems" xml:space="preserve">
+    <value>/v1/characters/{0:D}/contracts/{1:D}/items/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APIContractBids" xml:space="preserve">
-    <value>/char/ContractBids.xml.aspx</value>
+  <data name="ESIContracts" xml:space="preserve">
+    <value>/v1/characters/{0:D}/contracts/</value>
+    <comment>300</comment>
   </data>
-  <data name="APIContractItems" xml:space="preserve">
-    <value>/char/ContractItems.xml.aspx</value>
+  <data name="ESICorporationContractBids" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/contracts/{1:D}/bids/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APIContracts" xml:space="preserve">
-    <value>/char/Contracts.xml.aspx</value>
+  <data name="ESICorporationContractItems" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/contracts/{1:D}/items/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationContractBids" xml:space="preserve">
-    <value>/corp/ContractBids.xml.aspx</value>
+  <data name="ESICorporationContracts" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/contracts/</value>
+    <comment>300</comment>
   </data>
-  <data name="APICorporationContractItems" xml:space="preserve">
-    <value>/corp/ContractItems.xml.aspx</value>
+  <data name="ESIAllianceList" xml:space="preserve">
+    <value>/v1/alliances/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationContracts" xml:space="preserve">
-    <value>/corp/Contracts.xml.aspx</value>
+  <data name="ESIAssetList" xml:space="preserve">
+    <value>/v3/characters/{0:D}/assets/</value>
+    <comment>3600</comment>
   </data>
-  <data name="PostDataWithCharIDAndContractID" xml:space="preserve">
-    <value>keyID={0}&amp;vCode={1}&amp;characterID={2}&amp;contractID={3}</value>
+  <data name="ESICalendarEventAttendees" xml:space="preserve">
+    <value>/v1/characters/{0:D}/calendar/{1:D}/attendees/</value>
+    <comment>600</comment>
   </data>
-  <data name="APIAllianceList" xml:space="preserve">
-    <value>/eve/AllianceList.xml.aspx</value>
+  <data name="ESIContactList" xml:space="preserve">
+    <value>/v1/characters/{0:D}/contacts/</value>
+    <comment>300</comment>
   </data>
-  <data name="APIAssetList" xml:space="preserve">
-    <value>/char/AssetList.xml.aspx</value>
+  <data name="ESIContactNotifications" xml:space="preserve">
+    <value>/v1/characters/{0:D}/notifications/contacts/</value>
+    <comment>600</comment>
   </data>
-  <data name="APICalendarEventAttendees" xml:space="preserve">
-    <value>/char/CalendarEventAttendees.xml.aspx</value>
+  <data name="ESICorporationAccountBalance" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/wallets/</value>
+    <comment>300</comment>
   </data>
-  <data name="APICallList" xml:space="preserve">
-    <value>/api/CallList.xml.aspx</value>
+  <data name="ESICorporationAssetList" xml:space="preserve">
+    <value>/v3/corporations/{0:D}/assets/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICharacterID" xml:space="preserve">
-    <value>/eve/CharacterID.xml.aspx</value>
+  <data name="ESICorporationContactList" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/contacts/</value>
+    <comment>300</comment>
   </data>
-  <data name="APIContactList" xml:space="preserve">
-    <value>/char/ContactList.xml.aspx</value>
+  <data name="ESICorporationContainerLog" xml:space="preserve">
+    <value>/v2/corporations/{0:D}/containers/logs/</value>
+    <comment>600</comment>
   </data>
-  <data name="APIContactNotifications" xml:space="preserve">
-    <value>/char/ContactNotifications.xml.aspx</value>
+  <data name="ESICorporationFactionalWarfareStats" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/fw/stats/</value>
+    <comment>downtime</comment>
   </data>
-  <data name="APICorporationAccountBalance" xml:space="preserve">
-    <value>/corp/AccountBalance.xml.aspx</value>
+  <data name="ESICorporationKillLog" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/killmails/recent/</value>
+    <comment>300</comment>
   </data>
-  <data name="APICorporationAssetList" xml:space="preserve">
-    <value>/corp/AssetList.xml.aspx</value>
+  <data name="ESICorporationMedals" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/medals/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationContactList" xml:space="preserve">
-    <value>/corp/ContactList.xml.aspx</value>
+  <data name="ESICorporationMemberMedals" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/medals/issued/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationContainerLog" xml:space="preserve">
-    <value>/corp/ContainerLog.xml.aspx</value>
+  <data name="ESICorporationMemberTracking" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/membertracking/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationFactionalWarfareStats" xml:space="preserve">
-    <value>/corp/FacWarStats.xml.aspx</value>
+  <data name="ESICorporationOutpostList" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/outposts/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationKillLog" xml:space="preserve">
-    <value>/corp/Killlog.xml.aspx</value>
+  <data name="ESICorporationOutpostServiceDetail" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/outposts/{1:D}/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationLocations" xml:space="preserve">
-    <value>/corp/Locations.xml.aspx</value>
+  <data name="ESICorporationShareholders" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/shareholders/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationMedals" xml:space="preserve">
-    <value>/corp/Medals.xml.aspx</value>
+  <data name="ESICorporationSheet" xml:space="preserve">
+    <value>/v4/corporations/{0:D}/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationMemberMedals" xml:space="preserve">
-    <value>/corp/MemberMedals.xml.aspx</value>
+  <data name="ESICorporationStandings" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/standings/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationMemberSecurity" xml:space="preserve">
-    <value>/corp/MemberSecurity.xml.aspx</value>
+  <data name="ESICorporationStarbaseDetails" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/starbases/{1:D}/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationMemberSecurityLog" xml:space="preserve">
-    <value>/corp/MemberSecurityLog.xml.aspx</value>
+  <data name="ESICorporationStarbaseList" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/starbases/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationMemberTrackingExtended" xml:space="preserve">
-    <value>/corp/MemberTracking.xml.aspx</value>
+  <data name="ESICorporationTitles" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/titles/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationMemberTrackingLimited" xml:space="preserve">
-    <value>/corp/MemberTracking.xml.aspx</value>
+  <data name="ESICorporationWalletJournal" xml:space="preserve">
+    <value>/v2/corporations/{0:D}/wallets/{1:D}/journal/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationOutpostList" xml:space="preserve">
-    <value>/corp/OutpostList.xml.aspx</value>
+  <data name="ESICorporationWalletTransactions" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/wallets/{1:D}/transactions/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationOutpostServiceDetail" xml:space="preserve">
-    <value>/corp/OutpostServiceDetail.xml.aspx</value>
+  <data name="ESIEVEFactionalWarfareStats" xml:space="preserve">
+    <value>/v1/fw/stats/</value>
+    <comment>downtime</comment>
   </data>
-  <data name="APICorporationShareholders" xml:space="preserve">
-    <value>/corp/Shareholders.xml.aspx</value>
+  <data name="ESIEVEFactionalWarfareTopStats" xml:space="preserve">
+    <value>/v1/fw/leaderboards/</value>
+    <comment>downtime</comment>
   </data>
-  <data name="APICorporationSheet" xml:space="preserve">
-    <value>/corp/CorporationSheet.xml.aspx</value>
+  <data name="ESIFactionalWarfareStats" xml:space="preserve">
+    <value>/v1/characters/{0:D}/fw/stats/</value>
+    <comment>downtime</comment>
   </data>
-  <data name="APICorporationStandings" xml:space="preserve">
-    <value>/corp/Standings.xml.aspx</value>
+  <data name="ESIKillLog" xml:space="preserve">
+    <value>/v1/characters/{0:D}/killmails/recent/</value>
+    <comment>120</comment>
   </data>
-  <data name="APICorporationStarbaseDetails" xml:space="preserve">
-    <value>/corp/StarbaseDetail.xml.aspx</value>
+  <data name="ESILocation" xml:space="preserve">
+    <value>/v1/characters/{0:D}/location/</value>
+    <comment>5</comment>
   </data>
-  <data name="APICorporationStarbaseList" xml:space="preserve">
-    <value>/corp/StarbaseList.xml.aspx</value>
+  <data name="ESIMedals" xml:space="preserve">
+    <value>/v1/characters/{0:D}/medals/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APICorporationTitles" xml:space="preserve">
-    <value>/corp/Titles.xml.aspx</value>
+  <data name="ESITypeName" xml:space="preserve">
+    <value>/v2/universe/names/</value>
   </data>
-  <data name="APICorporationWalletJournal" xml:space="preserve">
-    <value>/corp/WalletJournal.xml.aspx</value>
+  <data name="ESIUpcomingCalendarEvents" xml:space="preserve">
+    <value>/v1/characters/{0:D}/calendar/</value>
+    <comment>5</comment>
   </data>
-  <data name="APICorporationWalletTransactions" xml:space="preserve">
-    <value>/corp/WalletTransactions.xml.aspx</value>
+  <data name="ESIWalletJournal" xml:space="preserve">
+    <value>/v4/characters/{0:D}/wallet/journal/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APIErrorList" xml:space="preserve">
-    <value>/eve/ErrorList.xml.aspx</value>
+  <data name="ESIWalletTransactions" xml:space="preserve">
+    <value>/v1/characters/{0:D}/wallet/transactions/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APIEVEFactionalWarfareStats" xml:space="preserve">
-    <value>/eve/FacWarStats.xml.aspx</value>
+  <data name="ESIFactionalWarfareSystems" xml:space="preserve">
+    <value>/v1/fw/systems/</value>
+    <comment>1800</comment>
   </data>
-  <data name="APIEVEFactionalWarfareTopStats" xml:space="preserve">
-    <value>/eve/FacWarTopStats.xml.aspx</value>
+  <data name="ESIJumps" xml:space="preserve">
+    <value>/v1/universe/system_jumps/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APIFactionalWarfareStats" xml:space="preserve">
-    <value>/char/FacWarStats.xml.aspx</value>
+  <data name="ESIKills" xml:space="preserve">
+    <value>/v2/universe/system_kills/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APIKillLog" xml:space="preserve">
-    <value>/char/Killlog.xml.aspx</value>
-  </data>
-  <data name="APILocations" xml:space="preserve">
-    <value>/char/Locations.xml.aspx</value>
-  </data>
-  <data name="APIMedals" xml:space="preserve">
-    <value>/char/Medals.xml.aspx</value>
-  </data>
-  <data name="APIRefTypes" xml:space="preserve">
-    <value>/eve/RefTypes.xml.aspx</value>
-  </data>
-  <data name="APISkillTree" xml:space="preserve">
-    <value>/eve/SkillTree.xml.aspx</value>
-  </data>
-  <data name="APITypeName" xml:space="preserve">
-    <value>/eve/TypeName.xml.aspx</value>
-  </data>
-  <data name="APIUpcomingCalendarEvents" xml:space="preserve">
-    <value>/char/UpcomingCalendarEvents.xml.aspx</value>
-  </data>
-  <data name="APIWalletJournal" xml:space="preserve">
-    <value>/char/WalletJournal.xml.aspx</value>
-  </data>
-  <data name="APIWalletTransactions" xml:space="preserve">
-    <value>/char/WalletTransactions.xml.aspx</value>
-  </data>
-  <data name="PostDataNamesOnly" xml:space="preserve">
-    <value>names={0}</value>
-  </data>
-  <data name="PostDataWithExtendedParameter" xml:space="preserve">
-    <value>keyID={0}&amp;vCode={1}&amp;extended=1</value>
-  </data>
-  <data name="PostDataWithItemID" xml:space="preserve">
-    <value>keyID={0}&amp;vCode={1}&amp;itemID={2}</value>
-  </data>
-  <data name="APIFactionalWarfareSystems" xml:space="preserve">
-    <value>/map/FacWarSystems.xml.aspx</value>
-  </data>
-  <data name="APIJumps" xml:space="preserve">
-    <value>/map/Jumps.xml.aspx</value>
-  </data>
-  <data name="APIKills" xml:space="preserve">
-    <value>/map/Kills.xml.aspx</value>
-  </data>
-  <data name="APISovereignty" xml:space="preserve">
-    <value>/map/Sovereignty.xml.aspx</value>
-  </data>
-  <data name="PostDataCorporationIDOnly" xml:space="preserve">
-    <value>corporationID={0}</value>
-  </data>
-  <data name="PostDataWithCharIDAndRowCount" xml:space="preserve">
-    <value>keyID={0}&amp;vCode={1}&amp;characterID={2}&amp;rowCount={3}</value>
+  <data name="ESISovereignty" xml:space="preserve">
+    <value>/v1/sovereignty/structures/</value>
+    <comment>120</comment>
   </data>
   <data name="BitBucketWikiBase" xml:space="preserve">
     <value>https://bitbucket.org/EVEMonDevTeam/evemon/wiki</value>
@@ -453,41 +419,25 @@
   <data name="EVEImageServerBase" xml:space="preserve">
     <value>https://image.eveonline.com</value>
   </data>
-  <data name="APICharacterAffiliation" xml:space="preserve">
-    <value>/eve/CharacterAffiliation.xml.aspx</value>
+  <data name="ESICharacterFatigue" xml:space="preserve">
+    <value>/v1/characters/{0:D}/fatigue/</value>
+    <comment>300</comment>
   </data>
-  <data name="APIOwnerID" xml:space="preserve">
-    <value>/eve/OwnerID.xml.aspx</value>
+  <data name="ESIPlanetaryColonies" xml:space="preserve">
+    <value>/v1/characters/{0:D}/planets/</value>
+    <comment>600</comment>
   </data>
-  <data name="APIPlanetaryColonies" xml:space="preserve">
-    <value>/char/PlanetaryColonies.xml.aspx</value>
+  <data name="ESIPlanetaryLayout" xml:space="preserve">
+    <value>/v3/characters/{0:D}/planets/{1:D}/</value>
+    <comment>600</comment>
   </data>
-  <data name="APIPlanetaryLinks" xml:space="preserve">
-    <value>/char/PlanetaryLinks.xml.aspx</value>
+  <data name="ESIBlueprints" xml:space="preserve">
+    <value>/v2/characters/{0:D}/blueprints/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APIPlanetaryPins" xml:space="preserve">
-    <value>/char/PlanetaryPins.xml.aspx</value>
-  </data>
-  <data name="APIPlanetaryRoutes" xml:space="preserve">
-    <value>/char/PlanetaryRoutes.xml.aspx</value>
-  </data>
-  <data name="PostDataWithCharIDAndPlanetID" xml:space="preserve">
-    <value>keyID={0}&amp;vCode={1}&amp;characterID={2}&amp;planetID={3}</value>
-  </data>
-  <data name="APICorporationCustomsOffices" xml:space="preserve">
-    <value>/corp/CustomsOffices.xml.aspx</value>
-  </data>
-  <data name="APICorporationIndustryJobsHistory" xml:space="preserve">
-    <value>/corp/IndustryJobsHistory.xml.aspx</value>
-  </data>
-  <data name="APIIndustryJobsHistory" xml:space="preserve">
-    <value>/char/IndustryJobsHistory.xml.aspx</value>
-  </data>
-  <data name="APIBlueprints" xml:space="preserve">
-    <value>/char/Blueprints.xml.aspx</value>
-  </data>
-  <data name="APICorporationBlueprints" xml:space="preserve">
-    <value>/corp/Blueprints.xml.aspx</value>
+  <data name="ESICorporationBlueprints" xml:space="preserve">
+    <value>/v2/corporations/{0:D}/blueprints/</value>
+    <comment>3600</comment>
   </data>
   <data name="EVEImageServerCDN" xml:space="preserve">
     <value>https://imageserver.eveonline.com</value>
@@ -543,31 +493,119 @@
   <data name="EveFlags" xml:space="preserve">
     <value>/eve/Flags.xml</value>
   </data>
-  <data name="BitBucketBase" xml:space="preserve">
-    <value>https://bitbucket.org/EVEMonDevTeam/evemon</value>
-  </data>
   <data name="GitHubBase" xml:space="preserve">
     <value>https://github.com/evemondevteam/evemon</value>
   </data>
   <data name="EVEMonManual" xml:space="preserve">
     <value>https://evemon.readthedocs.org/</value>
   </data>
-  <data name="APIBookmarks" xml:space="preserve">
-    <value>/char/Bookmarks.xml.aspx</value>
+  <data name="ESIBookmarks" xml:space="preserve">
+    <value>/v2/characters/{0:D}/bookmarks/</value>
+    <comment>3600</comment>
   </data>
-  <data name="APIChatChannels" xml:space="preserve">
-    <value>/char/ChatChannels.xml.aspx</value>
+  <data name="ESIChatChannels" xml:space="preserve">
+    <value>/v1/characters/{0:D}/chat_channels/</value>
+    <comment>300</comment>
   </data>
-  <data name="APIClones" xml:space="preserve">
-    <value>/char/Clones.xml.aspx</value>
+  <data name="ESIClones" xml:space="preserve">
+    <value>/v3/characters/{0:D}/clones/</value>
+    <comment>120</comment>
   </data>
-  <data name="APISkills" xml:space="preserve">
-    <value>/char/Skills.xml.aspx</value>
+  <data name="ESISkills" xml:space="preserve">
+    <value>/v4/characters/{0:D}/skills/</value>
+    <comment>120</comment>
   </data>
-  <data name="APICorporationBookmarks" xml:space="preserve">
-    <value>/corp/Bookmarks.xml.aspx</value>
+  <data name="ESICorporationBookmarks" xml:space="preserve">
+    <value>/v1/corporations/{0:D}/bookmarks/</value>
+    <comment>3600</comment>
   </data>
   <data name="GlobalNTPPool" xml:space="preserve">
-    <value>pool.ntp.org</value>
+    <value>0.pool.ntp.org</value>
+  </data>
+  <data name="ESIBase" xml:space="preserve">
+    <value>https://esi.evetech.net</value>
+  </data>
+  <data name="ESICharacterName" xml:space="preserve">
+    <value>/v2/universe/names/</value>
+  </data>
+  <data name="ESICitadelInfo" xml:space="preserve">
+    <value>/v1/universe/structures/{0}/</value>
+    <comment>3600</comment>
+  </data>
+  <data name="ESIStationInfo" xml:space="preserve">
+    <value>/v2/universe/stations/{0}/</value>
+    <comment>300</comment>
+  </data>
+  <data name="SSOBase" xml:space="preserve">
+    <value>https://login.eveonline.com/oauth/</value>
+  </data>
+  <data name="SSOCharID" xml:space="preserve">
+    <value>verify</value>
+  </data>
+  <data name="SSOLogin" xml:space="preserve">
+    <value>authorize/?response_type=code&amp;redirect_uri={0}&amp;client_id={3}&amp;scope={2}&amp;state={1}</value>
+  </data>
+  <data name="SSORedirect" xml:space="preserve">
+    <value>http://localhost:{0:D}/callback</value>
+  </data>
+  <data name="SSOToken" xml:space="preserve">
+    <value>token</value>
+  </data>
+  <data name="PostDataWithAuthToken" xml:space="preserve">
+    <value>grant_type=authorization_code&amp;code={0}</value>
+  </data>
+  <data name="CCPApplicationRegistration" xml:space="preserve">
+    <value>https://peterhaneve.github.io/evemon-esi</value>
+  </data>
+  <data name="SSOScopes" xml:space="preserve">
+    <value>esi-wallet.read_character_wallet.v1 esi-calendar.read_calendar_events.v1 esi-location.read_location.v1 esi-location.read_ship_type.v1 esi-mail.read_mail.v1 esi-skills.read_skills.v1 esi-skills.read_skillqueue.v1 esi-clones.read_clones.v1 esi-characters.read_contacts.v1 esi-universe.read_structures.v1 esi-killmails.read_killmails.v1 esi-assets.read_assets.v1 esi-planets.manage_planets.v1 esi-markets.structure_markets.v1 esi-corporations.read_structures.v1 esi-characters.read_loyalty.v1 esi-characters.read_medals.v1 esi-characters.read_standings.v1 esi-characters.read_agents_research.v1 esi-industry.read_character_jobs.v1 esi-markets.read_character_orders.v1 esi-characters.read_blueprints.v1 esi-characters.read_corporation_roles.v1 esi-contracts.read_character_contracts.v1 esi-clones.read_implants.v1 esi-characters.read_fatigue.v1 esi-killmails.read_corporation_killmails.v1 esi-wallet.read_corporation_wallets.v1 esi-characters.read_notifications.v1 esi-corporations.read_divisions.v1 esi-corporations.read_contacts.v1 esi-assets.read_corporation_assets.v1 esi-corporations.read_blueprints.v1 esi-contracts.read_corporation_contracts.v1 esi-corporations.read_standings.v1 esi-industry.read_corporation_jobs.v1 esi-markets.read_corporation_orders.v1 esi-corporations.read_medals.v1 esi-alliances.read_contacts.v1 esi-characters.read_fw_stats.v1 esi-corporations.read_fw_stats.v1 esi-corporations.read_outposts.v1</value>
+  </data>
+  <data name="PostDataWithRefreshToken" xml:space="preserve">
+    <value>grant_type=refresh_token&amp;refresh_token={0}</value>
+  </data>
+  <data name="ESIUpcomingCalendarEventDetails" xml:space="preserve">
+    <value>/v3/characters/{0:D}/calendar/{1:D}/</value>
+    <comment>5</comment>
+  </data>
+  <data name="ESIFactionWars" xml:space="preserve">
+    <value>/v1/fw/wars/</value>
+    <comment>downtime</comment>
+  </data>
+  <data name="ESICharacterAffliation" xml:space="preserve">
+    <value>/v1/characters/affiliation/</value>
+  </data>
+  <data name="ESIAttributes" xml:space="preserve">
+    <value>/v1/characters/{0:D}/attributes/</value>
+    <comment>3600</comment>
+  </data>
+  <data name="ESIImplants" xml:space="preserve">
+    <value>/v1/characters/{0:D}/implants/</value>
+    <comment>300</comment>
+  </data>
+  <data name="ESIJumpFatigue" xml:space="preserve">
+    <value>/v1/characters/{0:D}/fatigue/</value>
+    <comment>300</comment>
+  </data>
+  <data name="ESIShip" xml:space="preserve">
+    <value>/v1/characters/{0:D}/ship/</value>
+    <comment>5</comment>
+  </data>
+  <data name="ESIEmploymentHistory" xml:space="preserve">
+    <value>/v1/characters/{0:D}/corporationhistory/</value>
+    <comment>3600</comment>
+  </data>
+  <data name="BitBucketBase" xml:space="preserve">
+    <value>https://bitbucket.org/EVEMonDevTeam/evemon</value>
+  </data>
+  <data name="ESIPlanetInfo" xml:space="preserve">
+    <value>/v1/universe/planets/{0:D}/</value>
+    <comment>downtime</comment>
+  </data>
+  <data name="HammertimeCitadel" xml:space="preserve">
+    <value>https://stop.hammerti.me.uk/api/citadel/{0:D}</value>
+  </data>
+  <data name="ESIKillMail" xml:space="preserve">
+    <value>/v1/killmails/{0}/{1}/</value>
+    <comment>2 weeks</comment>
   </data>
 </root>

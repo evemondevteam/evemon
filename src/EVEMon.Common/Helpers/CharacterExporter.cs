@@ -157,14 +157,14 @@ namespace EVEMon.Common.Helpers
                 builder.AppendLine($"{skill.Name}={skill.Level}");
             }
 
-            APIKey apiKey = character.Identity.FindAPIKeyWithAccess(CCPAPICharacterMethods.CharacterSheet);
+            ESIKey apiKey = character.Identity.FindAPIKeyWithAccess(ESIAPICharacterMethods.CharacterSheet);
 
             if (apiKey == null)
                 return builder.ToString();
 
             builder
                 .AppendLine($"KeyID={apiKey.ID}")
-                .AppendLine($"VCode={apiKey.VerificationCode}")
+                .AppendLine($"VCode={apiKey.AccessToken}")
                 .Append($"CharID={character.CharacterID}");
 
             return builder.ToString();

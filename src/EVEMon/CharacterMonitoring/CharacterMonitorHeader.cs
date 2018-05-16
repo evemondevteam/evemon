@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using EVEMon.ApiCredentialsManagement;
+﻿using EVEMon.ApiCredentialsManagement;
 using EVEMon.Common;
 using EVEMon.Common.Constants;
 using EVEMon.Common.Controls;
@@ -17,10 +10,16 @@ using EVEMon.Common.Factories;
 using EVEMon.Common.Interfaces;
 using EVEMon.Common.Models;
 using EVEMon.Common.Net;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 using static EVEMon.Common.Models.AccountStatus;
 
-namespace EVEMon.CharacterMonitoring
-{
+namespace EVEMon.CharacterMonitoring {
     /// <summary>
     /// Implements the header component of the main character monitor user interface.
     /// </summary>
@@ -47,7 +46,6 @@ namespace EVEMon.CharacterMonitoring
             // Fonts
             Font = FontFactory.GetFont("Tahoma");
             CharacterNameLabel.Font = FontFactory.GetFont("Tahoma", 11.25F, FontStyle.Bold);
-            Clients.Winforms.ViewBinders.DockableViewBinder.registerForLegacyUIUpdate(DockedInfoLabel);
         }
 
         #endregion
@@ -264,8 +262,6 @@ namespace EVEMon.CharacterMonitoring
             SuspendLayout();
             try
             {
-                APIKey apiKey = ccpCharacter.Identity.FindAPIKeyWithAccess(CCPAPICharacterMethods.AccountStatus);
-
                 AccountActivityLabel.Text = m_character.CharacterStatus.ToString();
 
                 switch (m_character.CharacterStatus.CurrentStatus)
@@ -281,9 +277,8 @@ namespace EVEMon.CharacterMonitoring
                         break;
                 }
 
-                PaidUntilLabel.Text = apiKey == null || apiKey.AccountExpires == DateTime.MinValue
-                                          ? String.Empty
-                                          : apiKey.AccountExpires.ToLocalTime().ToString(CultureConstants.DefaultCulture);
+                // When account status is re-implemented, this will need to be shown again
+                PaidUntilLabel.Text = string.Empty;
             }
             finally
             {
@@ -321,7 +316,7 @@ namespace EVEMon.CharacterMonitoring
             if (ccpCharacter == null)
                 return;
 
-            IQueryMonitor marketMonitor = ccpCharacter.QueryMonitors[CCPAPICharacterMethods.MarketOrders];
+            IQueryMonitor marketMonitor = ccpCharacter.QueryMonitors[ESIAPICharacterMethods.MarketOrders];
             if (!Settings.UI.SafeForWork && !ccpCharacter.HasSufficientBalance && marketMonitor != null && marketMonitor.Enabled)
             {
                 BalanceLabel.ForeColor = Color.Orange;
@@ -406,7 +401,7 @@ namespace EVEMon.CharacterMonitoring
             if (ccpCharacter == null)
                 return;
 
-            if (!ccpCharacter.Identity.APIKeys.Any() || ccpCharacter.QueryMonitors.Any(x => !x.CanForceUpdate))
+            if (!ccpCharacter.Identity.ESIKeys.Any() || ccpCharacter.QueryMonitors.Any(x => !x.CanForceUpdate))
             {
                 ToolTip.SetToolTip(UpdateThrobber, String.Empty);
                 return;
@@ -476,10 +471,7 @@ namespace EVEMon.CharacterMonitoring
             // Skip character's corporation monitors if they are bound with the character's personal monitor
             foreach (IQueryMonitor monitor in ccpCharacter.QueryMonitors.OrderedByUpdateTime.Where(
                 monitor => monitor.Method.HasHeader() && monitor.HasAccess).Where(
-                    monitor =>
-                    (!m_character.Identity.CanQueryCharacterInfo || monitor.Method.GetType() != typeof(CCPAPICorporationMethods)) &&
-                    (m_character.Identity.CanQueryCharacterInfo || !m_character.Identity.CanQueryCorporationInfo ||
-                     monitor.Method.GetType() != typeof(CCPAPICharacterMethods))))
+                monitor => (monitor.Method.GetType() != typeof(ESIAPICorporationMethods))))
             {
                 output.AppendLine(GetStatusForMonitor(monitor));
             }
@@ -747,7 +739,7 @@ namespace EVEMon.CharacterMonitoring
             // There has been an error in the past (Authorization, Server Error, etc.)
             // or updating now will return the same data because the cache has not expired
             // or character has no associated API key
-            if (UpdateThrobber.State == ThrobberState.Strobing || !ccpCharacter.Identity.APIKeys.Any() ||
+            if (UpdateThrobber.State == ThrobberState.Strobing || !ccpCharacter.Identity.ESIKeys.Any() ||
                 ccpCharacter.QueryMonitors.Any(x => !x.CanForceUpdate))
             {
                 ThrobberContextMenu.Show(MousePosition);
@@ -800,7 +792,7 @@ namespace EVEMon.CharacterMonitoring
             CCPCharacter ccpCharacter = m_character as CCPCharacter;
 
             // Exit for non-CCP characters or no associated API key
-            if (ccpCharacter == null || !ccpCharacter.Identity.APIKeys.Any() || !ccpCharacter.QueryMonitors.Any())
+            if (ccpCharacter == null || !ccpCharacter.Identity.ESIKeys.Any() || !ccpCharacter.QueryMonitors.Any())
             {
                 QueryEverythingMenuItem.Enabled = false;
                 return;
@@ -817,8 +809,7 @@ namespace EVEMon.CharacterMonitoring
             // Skip character's corporation monitors if they are bound with the character's personal monitor
             foreach (ToolStripMenuItem menuItem in ccpCharacter.QueryMonitors
                 .Where(monitor => monitor.Method.HasHeader() && monitor.HasAccess)
-                .Where(monitor => !m_character.Identity.CanQueryCharacterInfo ||
-                                  monitor.Method.GetType() != typeof(CCPAPICorporationMethods))
+                .Where(monitor => monitor.Method.GetType() != typeof(ESIAPICorporationMethods))
                 .Select(CreateNewMonitorToolStripMenuItem))
             {
                 ThrobberContextMenu.Items.Add(menuItem);
@@ -916,7 +907,12 @@ namespace EVEMon.CharacterMonitoring
         private void ChangeAPIKeyInfoMenuItem_Click(object sender, EventArgs e)
         {
             // This menu should be enabled only for CCP characters
-            WindowsFactory.ShowByTag<ApiKeyUpdateOrAdditionWindow, IEnumerable<APIKey>>(m_character.Identity.APIKeys);
+            // Open the ESI keys management dialog since multiple keys can affect one character
+            //WindowsFactory.ShowByTag<EsiKeyUpdateOrAdditionWindow, IEnumerable<ESIKey>>(m_character.Identity.ESIKeys);
+            using (EsiKeysManagementWindow window = new EsiKeysManagementWindow())
+            {
+                window.ShowDialog(this);
+            }
         }
 
         #endregion

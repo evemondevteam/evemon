@@ -175,7 +175,7 @@ namespace EVEMon.CharacterMonitoring
         #endregion
 
 
-        # region Inherited Events
+        #region Inherited Events
 
         /// <summary>
         /// On load subscribe the events.
@@ -195,9 +195,7 @@ namespace EVEMon.CharacterMonitoring
 
             EveMonClient.TimerTick += EveMonClient_TimerTick;
             EveMonClient.CharacterPlanetaryColoniesUpdated += EveMonClient_CharacterPlanetaryColoniesUpdated;
-            EveMonClient.CharacterPlanetaryPinsUpdated += EveMonClient_CharacterPlanetaryPinsUpdated;
-            EveMonClient.CharacterPlanetaryRoutesUpdated += EveMonClient_CharacterPlanetaryRoutesUpdated;
-            EveMonClient.CharacterPlanetaryLinksUpdated += EveMonClient_CharacterPlanetaryLinksUpdated;
+            EveMonClient.CharacterPlanetaryLayoutUpdated += EveMonClient_CharacterPlanetaryLayoutUpdated;
             EveMonClient.CharacterPlaneteryPinsCompleted += EveMonClient_CharacterPlaneteryPinsCompleted;
             Disposed += OnDisposed;
         }
@@ -213,9 +211,7 @@ namespace EVEMon.CharacterMonitoring
 
             EveMonClient.TimerTick -= EveMonClient_TimerTick;
             EveMonClient.CharacterPlanetaryColoniesUpdated -= EveMonClient_CharacterPlanetaryColoniesUpdated;
-            EveMonClient.CharacterPlanetaryPinsUpdated -= EveMonClient_CharacterPlanetaryPinsUpdated;
-            EveMonClient.CharacterPlanetaryRoutesUpdated -= EveMonClient_CharacterPlanetaryRoutesUpdated;
-            EveMonClient.CharacterPlanetaryLinksUpdated -= EveMonClient_CharacterPlanetaryLinksUpdated;
+            EveMonClient.CharacterPlanetaryLayoutUpdated -= EveMonClient_CharacterPlanetaryLayoutUpdated;
             EveMonClient.CharacterPlaneteryPinsCompleted -= EveMonClient_CharacterPlaneteryPinsCompleted;
             Disposed -= OnDisposed;
         }
@@ -248,7 +244,7 @@ namespace EVEMon.CharacterMonitoring
             UpdateListVisibility();
         }
 
-        # endregion
+        #endregion
 
 
         #region Update Methods
@@ -609,11 +605,10 @@ namespace EVEMon.CharacterMonitoring
             switch (column)
             {
                 case PlanetaryColumn.State:
-                    item.Text = pin.State != PlanetaryPinState.None
-                        ? pin.State.GetDescription()
-                        : String.Empty;
-                        item.ForeColor = GetStateColor(pin);
-                break;
+                    item.Text = pin.State != PlanetaryPinState.None ? pin.State.GetDescription() :
+                        string.Empty;
+                    item.ForeColor = GetStateColor(pin);
+                    break;
                 case PlanetaryColumn.TTC:
                     item.Text = pin.TTC;
                     break;
@@ -624,10 +619,10 @@ namespace EVEMon.CharacterMonitoring
                     item.Text = pin.ContentTypeName;
                     break;
                 case PlanetaryColumn.InstallTime:
-                    item.Text = pin.InstallTime == DateTime.MinValue ? String.Empty : $"{pin.InstallTime.ToLocalTime()}";
+                    item.Text = pin.InstallTime == DateTime.MinValue ? string.Empty : $"{pin.InstallTime.ToLocalTime()}";
                     break;
                 case PlanetaryColumn.EndTime:
-                    item.Text = pin.ExpiryTime == DateTime.MinValue ? String.Empty : $"{pin.ExpiryTime.ToLocalTime()}";
+                    item.Text = pin.ExpiryTime == DateTime.MinValue ? string.Empty : $"{pin.ExpiryTime.ToLocalTime()}";
                     break;
                 case PlanetaryColumn.PlanetName:
                     item.Text = pin.Colony.PlanetName;
@@ -658,10 +653,10 @@ namespace EVEMon.CharacterMonitoring
                     item.Text = pin.ContentVolume.ToNumericString(2);
                     break;
                 case PlanetaryColumn.LinkedTo:
-                    item.Text = String.Join(", ", pin.LinkedTo.Select(x=> x.TypeName).Distinct());
+                    item.Text = string.Join(", ", pin.LinkedTo.Select(x=> x.TypeName).Distinct());
                     break;
                 case PlanetaryColumn.RoutedTo:
-                    item.Text = String.Join(", ", pin.RoutedTo.Select(x => x.TypeName).Distinct());
+                    item.Text = string.Join(", ", pin.RoutedTo.Select(x => x.TypeName).Distinct());
                     break;
                 case PlanetaryColumn.GroupName:
                     item.Text = pin.GroupName;
@@ -992,7 +987,7 @@ namespace EVEMon.CharacterMonitoring
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void EveMonClient_CharacterPlanetaryPinsUpdated(object sender, CharacterChangedEventArgs e)
+        private void EveMonClient_CharacterPlanetaryLayoutUpdated(object sender, CharacterChangedEventArgs e)
         {
             if (Character == null || e.Character != Character)
                 return;
@@ -1000,33 +995,7 @@ namespace EVEMon.CharacterMonitoring
             PlanetaryPins = Character.PlanetaryColonies.SelectMany(x => x.Pins);
             UpdateColumns();
         }
-
-        /// <summary>
-        /// When the planetary routes change update the list.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void EveMonClient_CharacterPlanetaryRoutesUpdated(object sender, CharacterChangedEventArgs e)
-        {
-            if (Character == null || e.Character != Character)
-                return;
-
-            UpdateColumns();
-        }
-
-        /// <summary>
-        /// When the planetary links change update the list.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void EveMonClient_CharacterPlanetaryLinksUpdated(object sender, CharacterChangedEventArgs e)
-        {
-            if (Character == null || e.Character != Character)
-                return;
-
-            UpdateColumns();
-        }
-
+        
         /// <summary>
         /// Handles the PlanetaryPinsCompleted event of the EveMonClient control.
         /// </summary>

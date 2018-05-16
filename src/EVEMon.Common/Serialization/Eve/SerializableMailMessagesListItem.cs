@@ -8,13 +8,13 @@ namespace EVEMon.Common.Serialization.Eve
 {
     public sealed class SerializableMailMessagesListItem
     {
-        private readonly Collection<string> m_toCharacterIDs;
-        private readonly Collection<string> m_toListID;
+        private readonly Collection<long> m_toCharacterIDs;
+        private readonly Collection<long> m_toListID;
 
         public SerializableMailMessagesListItem()
         {
-            m_toCharacterIDs = new Collection<string>();
-            m_toListID = new Collection<string>();
+            m_toCharacterIDs = new Collection<long>();
+            m_toListID = new Collection<long>();
         }
 
         [XmlAttribute("messageID")]
@@ -41,31 +41,40 @@ namespace EVEMon.Common.Serialization.Eve
         public string TitleXml
         {
             get { return Title; }
-            set { Title = value?.HtmlDecode() ?? String.Empty; }
+            set { Title = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlAttribute("toCorpOrAllianceID")]
-        public string ToCorpOrAllianceID { get; set; }
-
+        public long ToCorpOrAllianceID { get; set; }
+        
         [XmlAttribute("toCharacterIDs")]
         public string ToCharacterIDsXml
         {
-            get { return String.Join(",", m_toCharacterIDs); }
+            get { return string.Join(",", m_toCharacterIDs); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
-                    m_toCharacterIDs.AddRange(value.Split(','));
+                if (!string.IsNullOrEmpty(value))
+                {
+                    // Parse one by one into IDs
+                    long id;
+                    foreach (string idStr in value.Split(','))
+                        if (long.TryParse(idStr, out id))
+                            m_toCharacterIDs.Add(id);
+                }
             }
         }
 
         [XmlAttribute("toListID")]
         public string ToListIDXml
         {
-            get { return String.Join(",", m_toListID); }
+            get { return string.Join(",", m_toListID); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
-                    m_toListID.AddRange(value.Split(','));
+                // Parse one by one into IDs
+                long id;
+                foreach (string idStr in value.Split(','))
+                    if (long.TryParse(idStr, out id))
+                        m_toListID.Add(id);
             }
         }
 
@@ -76,9 +85,9 @@ namespace EVEMon.Common.Serialization.Eve
         public DateTime SentDate { get; set; }
 
         [XmlIgnore]
-        public Collection<string> ToCharacterIDs => m_toCharacterIDs;
+        public Collection<long> ToCharacterIDs => m_toCharacterIDs;
 
         [XmlIgnore]
-        public Collection<string> ToListID => m_toListID;
+        public Collection<long> ToListID => m_toListID;
     }
 }

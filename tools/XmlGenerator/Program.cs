@@ -32,7 +32,7 @@ namespace EVEMon.XmlGenerator
             Properties.GenerateDatafile();
             Skills.GenerateDatafile();
 
-            //Masteries.GenerateDatafile(); AJA - Think Masteries aren't a thing any more...
+            //Masteries.GenerateDatafile();
 
             Geography.GenerateDatafile();
 			//Blueprints.GenerateDatafile();

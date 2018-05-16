@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using EVEMon.Common.Constants;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Models;
 using EVEMon.Common.Serialization.Eve;
@@ -83,20 +82,15 @@ namespace EVEMon.Common.Helpers
                 // Append info only for player entities
                 if (!String.IsNullOrEmpty(attacker.Name))
                 {
-                    sb
-                        .AppendLine(FormattableString.Invariant($"Security: {attacker.SecurityStatus:N1}"))
+                    sb.AppendLine(FormattableString.Invariant($"Security: {attacker.SecurityStatus:N1}"))
                         .AppendLine($"Corp: {attacker.CorporationName}")
-                        .AppendLine(
-                            $"Alliance: {(attacker.AllianceName == EveMonConstants.UnknownText ? "None" : attacker.AllianceName)}")
-                        .AppendLine(
-                            $"Faction: {(attacker.FactionName == EveMonConstants.UnknownText ? "None" : attacker.FactionName)}")
+                        .AppendLine($"Alliance: {(attacker.AllianceName.IsEmptyOrUnknown() ? "None" : attacker.AllianceName)}")
+                        .AppendLine($"Faction: {(attacker.FactionName.IsEmptyOrUnknown() ? "None" : attacker.FactionName)}")
                         .AppendLine($"Ship: {attacker.ShipTypeName}")
                         .AppendLine($"Weapon: {attacker.WeaponTypeName}");
                 }
 
-                sb
-                    .AppendLine(FormattableString.Invariant($"Damage Done: {attacker.DamageDone:N}"))
-                    .AppendLine();
+                sb.AppendLine(FormattableString.Invariant($"Damage Done: {attacker.DamageDone:N}")).AppendLine();
             }
 
             if (killLog.Items.Any(x => x.QtyDestroyed != 0))

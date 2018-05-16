@@ -8,6 +8,7 @@ namespace EVEMon.Common.Enumerations
         None,
         Character,
         Corporation,
+        Alliance,
         All
     }
 }

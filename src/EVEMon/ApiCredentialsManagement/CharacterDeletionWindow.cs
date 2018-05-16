@@ -14,7 +14,7 @@ namespace EVEMon.ApiCredentialsManagement
     public partial class CharacterDeletionWindow : EVEMonForm
     {
         private readonly Character m_character;
-        private List<APIKey> m_apiKeys;
+        private List<ESIKey> m_esiKeys;
 
         /// <summary>
         /// Constructor.
@@ -46,35 +46,32 @@ namespace EVEMon.ApiCredentialsManagement
             if (DesignMode)
                 return;
 
-            apiKeyslistView.Items.Clear();
+            esiKeysListView.Items.Clear();
 
             // Replaces end of text with character's name
-            characterToRemoveLabel.Text = String.Format(CultureConstants.DefaultCulture,
-                                                        characterToRemoveLabel.Text, m_character.Name);
+            characterToRemoveLabel.Text = string.Format(CultureConstants.DefaultCulture,
+                characterToRemoveLabel.Text, m_character.Name);
 
             // Find the API keys bind only to this character
-            m_apiKeys = EveMonClient.APIKeys.Select(
-                apiKey => new { apiKey, identities = apiKey.CharacterIdentities }).Where(
-                    apiKey => apiKey.identities.Count() == 1 && apiKey.identities.Contains(m_character.Identity)).Select(
-                        apiKey => apiKey.apiKey).ToList();
+            m_esiKeys = EveMonClient.ESIKeys.Select(apiKey => new
+            {
+                apiKey, identities = apiKey.CharacterIdentities
+            }).Where(apiKey => apiKey.identities.Count() == 1 && apiKey.identities.
+                Contains(m_character.Identity)).Select(apiKey => apiKey.apiKey).ToList();
 
-            apiKeyslistView.Items.AddRange(m_apiKeys.Select(
-                apiKey => new ListViewItem(apiKey.ID.ToString(CultureConstants.DefaultCulture))).ToArray());
+            esiKeysListView.Items.AddRange(m_esiKeys.Select(key => new ListViewItem(
+                key.ID.ToString(CultureConstants.DefaultCulture))).ToArray());
 
             // Checks whether there will be no characters left after this deletion and hide/display the relevant labels
-            bool noCharactersLeft = m_apiKeys.Any() && m_character is CCPCharacter;
-            deleteAPIKeyCheckBox.Text = String.Format(CultureConstants.DefaultCulture, deleteAPIKeyCheckBox.Text,
-                                                      m_apiKeys.Count > 1 ? "s" : String.Empty);
-            noCharactersLabel.Text = String.Format(CultureConstants.DefaultCulture, noCharactersLabel.Text,
-                                                   m_apiKeys.Count > 1 ? "s" : String.Empty);
+            bool noCharactersLeft = m_esiKeys.Any() && m_character is CCPCharacter;
+            noCharactersLabel.Text = string.Format(CultureConstants.DefaultCulture,
+                noCharactersLabel.Text, m_esiKeys.Count > 1 ? "s" : string.Empty);
 
-            deleteAPIKeyCheckBox.Visible = noCharactersLeft;
             noCharactersLabel.Visible = noCharactersLeft;
 
-            // Resize window if there is no API key to remove
+            // Resize window if there is no ESI key to remove
             if (!noCharactersLeft)
-                Size = new Size(Size.Width, Size.Height - apiKeyslistView.Height / 2);
-
+                Size = new Size(Size.Width, Size.Height - esiKeysListView.Height / 2);
         }
 
         /// <summary>
@@ -84,16 +81,10 @@ namespace EVEMon.ApiCredentialsManagement
         /// <param name="e"></param>
         private void deleteButton_Click(object sender, EventArgs e)
         {
-            // Either delete this character only or the whole API key
-            if (deleteAPIKeyCheckBox.Checked)
-            {
-                // Note: Keep this order of removal
-                m_apiKeys.ForEach(apiKey => EveMonClient.APIKeys.Remove(apiKey));
-                EveMonClient.Characters.Remove(m_character);
-            }
-            else
-                EveMonClient.Characters.Remove(m_character);
-
+            // Always clear the ESI keys since keys are locked to a character
+            // Note: Keep this order of removal
+            m_esiKeys.ForEach(apiKey => EveMonClient.ESIKeys.Remove(apiKey));
+            EveMonClient.Characters.Remove(m_character);
             Close();
         }
 

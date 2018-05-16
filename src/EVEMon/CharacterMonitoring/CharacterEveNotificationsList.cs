@@ -310,17 +310,15 @@ namespace EVEMon.CharacterMonitoring
             int scrollBarPosition = lvNotifications.GetVerticalScrollBarPosition();
 
             // Store the selected item (if any) to restore it after the update
-            int selectedItem = lvNotifications.SelectedItems.Count > 0
-                ? lvNotifications.SelectedItems[0].Tag.GetHashCode()
-                : 0;
+            int selectedItem = lvNotifications.SelectedItems.Count > 0 ? lvNotifications.
+                SelectedItems[0].Tag.GetHashCode() : 0;
 
             lvNotifications.BeginUpdate();
             splitContainerNotifications.Visible = false;
             try
             {
-                IEnumerable<EveNotification> eveNotifications = m_list
-                    .Where(x => x.SentDate != DateTime.MinValue)
-                    .Where(x => IsTextMatching(x, m_textFilter));
+                IEnumerable<EveNotification> eveNotifications = m_list .Where(x => x.SentDate
+                    != DateTime.MinValue).Where(x => IsTextMatching(x, m_textFilter));
 
                 UpdateSort();
 
@@ -609,14 +607,7 @@ namespace EVEMon.CharacterMonitoring
                 eveNotificationReadingPane.HidePane();
                 return;
             }
-
-            // If we haven't done it yet, download the notification text
-            if (selectedObject.EVENotificationText.NotificationID == 0)
-            {
-                selectedObject.GetNotificationText();
-                return;
-            }
-
+            
             eveNotificationReadingPane.SelectedObject = selectedObject;
         }
 

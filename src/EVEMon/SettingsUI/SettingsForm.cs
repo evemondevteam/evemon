@@ -1,3 +1,18 @@
+using EVEMon.Common;
+using EVEMon.Common.CloudStorageServices;
+using EVEMon.Common.Constants;
+using EVEMon.Common.Controls;
+using EVEMon.Common.Controls.MultiPanel;
+using EVEMon.Common.Enumerations.UISettings;
+using EVEMon.Common.Extensions;
+using EVEMon.Common.Factories;
+using EVEMon.Common.Helpers;
+using EVEMon.Common.MarketPricer;
+using EVEMon.Common.Models.Comparers;
+using EVEMon.Common.Resources.Skill_Select;
+using EVEMon.Common.Serialization.Settings;
+using EVEMon.Common.SettingsObjects;
+using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -9,24 +24,6 @@ using System.Net;
 using System.Resources;
 using System.Security;
 using System.Windows.Forms;
-using EVEMon.Common;
-using EVEMon.Common.CloudStorageServices;
-using EVEMon.Common.Collections;
-using EVEMon.Common.Collections.Global;
-using EVEMon.Common.Constants;
-using EVEMon.Common.Controls;
-using EVEMon.Common.Controls.MultiPanel;
-using EVEMon.Common.Enumerations.UISettings;
-using EVEMon.Common.Extensions;
-using EVEMon.Common.Factories;
-using EVEMon.Common.Helpers;
-using EVEMon.Common.MarketPricer;
-using EVEMon.Common.Models;
-using EVEMon.Common.Models.Comparers;
-using EVEMon.Common.Resources.Skill_Select;
-using EVEMon.Common.Serialization.Settings;
-using EVEMon.Common.SettingsObjects;
-using Microsoft.Win32;
 
 namespace EVEMon.SettingsUI
 {
@@ -37,6 +34,7 @@ namespace EVEMon.SettingsUI
         private readonly SerializableSettings m_settings;
         private SerializableSettings m_oldSettings;
         private bool m_isLoading;
+        private TreeNode m_preSelect;
 
 
         #region Constructor
@@ -56,6 +54,27 @@ namespace EVEMon.SettingsUI
 
             m_settings = Settings.Export();
             m_oldSettings = Settings.Export();
+            m_preSelect = null;
+        }
+
+        /// <summary>
+        /// Constructor to jump to a specific page on load.
+        /// </summary>
+        /// <param name="parentIndex">The index of the section to select.</param>
+        /// <param name="childIndex">The index of the page in that section to select.</param>
+        public SettingsForm(int parentIndex, int childIndex) : this()
+        {
+            var allNodes = treeView.Nodes;
+            if (parentIndex < allNodes.Count && parentIndex >= 0)
+            {
+                // Ensure all indexes are in bounds
+                var parent = allNodes[parentIndex];
+                var nodes = parent.Nodes;
+                if (nodes == null || nodes.Count < 1)
+                    m_preSelect = parent;
+                else if (childIndex >= 0 && childIndex < nodes.Count)
+                    m_preSelect = nodes[childIndex];
+            }
         }
 
         #endregion
@@ -104,20 +123,23 @@ namespace EVEMon.SettingsUI
                 treeView.Nodes["generalNode"].Nodes["g15Node"].Remove();
 
             // Fill the overview portraits sizes
-            overviewPortraitSizeComboBox.Items
-                .AddRange(Enum.GetValues(typeof(PortraitSizes))
-                    .Cast<PortraitSizes>()
-                    .Select(
-                        portraitSize =>
-                        {
-                            string size = FormattableString.Invariant($"{portraitSize.GetDefaultValue()}");
-                            return $"{size} by {size}";
-                        })
-                    .ToArray<object>());
+            overviewPortraitSizeComboBox.Items.AddRange(Enum.GetValues(typeof(PortraitSizes)).
+                Cast<PortraitSizes>().Select(portraitSize =>
+                {
+                    string size = FormattableString.Invariant($"{portraitSize.GetDefaultValue()}");
+                    return $"{size} by {size}";
+                }).ToArray<object>());
 
-            // Expands the left panel and selects the first page and node
+            // Expands the left panel and selects the correct page and node
             treeView.ExpandAll();
-            treeView.SelectedNode = treeView.Nodes.Cast<TreeNode>().First();
+            var node = m_preSelect ?? treeView.Nodes.Cast<TreeNode>().First();
+            if (node != null)
+            {
+                string tag = node.Tag?.ToString() ?? string.Empty;
+                treeView.SelectedNode = node;
+                multiPanel.SelectedPage = multiPanel.Controls.Cast<MultiPanelPage>().
+                    FirstOrDefault(page => page.Name == tag);
+            }
 
             // Misc settings
             cbWorksafeMode.Checked = m_settings.UI.SafeForWork;
@@ -162,6 +184,10 @@ namespace EVEMon.SettingsUI
             proxyHttpHostTextBox.Text = m_settings.Proxy.Host;
             proxyAuthenticationButton.Tag = m_settings.Proxy;
 
+            // Client ID / Secret
+            clientIDTextBox.Text = m_settings.SSOClientID;
+            clientSecretTextBox.Text = m_settings.SSOClientSecret;
+
             // Updates
             cbCheckTime.Checked = m_settings.Updates.CheckTimeOnStartup;
             cbCheckForUpdates.Checked = m_settings.Updates.CheckEVEMonVersion;
@@ -172,17 +198,16 @@ namespace EVEMon.SettingsUI
 
             // Obsolete plan entry removal behaviour
             alwaysAskRadioButton.Checked = m_settings.UI.PlanWindow.ObsoleteEntryRemovalBehaviour ==
-                                           ObsoleteEntryRemovalBehaviour.AlwaysAsk;
+                ObsoleteEntryRemovalBehaviour.AlwaysAsk;
             removeAllRadioButton.Checked = m_settings.UI.PlanWindow.ObsoleteEntryRemovalBehaviour ==
-                                           ObsoleteEntryRemovalBehaviour.RemoveAll;
+                ObsoleteEntryRemovalBehaviour.RemoveAll;
             removeConfirmedRadioButton.Checked = m_settings.UI.PlanWindow.ObsoleteEntryRemovalBehaviour ==
-                                                 ObsoleteEntryRemovalBehaviour.RemoveConfirmed;
+                ObsoleteEntryRemovalBehaviour.RemoveConfirmed;
 
             // Skill Browser Icon Set
-            cbSkillIconSet.SelectedIndex = m_settings.UI.SkillBrowser.IconsGroupIndex <= cbSkillIconSet.Items.Count &&
-                                            m_settings.UI.SkillBrowser.IconsGroupIndex > 0
-                ? m_settings.UI.SkillBrowser.IconsGroupIndex - 1
-                : 0;
+            cbSkillIconSet.SelectedIndex = (m_settings.UI.SkillBrowser.IconsGroupIndex <=
+                cbSkillIconSet.Items.Count && m_settings.UI.SkillBrowser.IconsGroupIndex > 0) ?
+                (m_settings.UI.SkillBrowser.IconsGroupIndex - 1) : 0;
 
             // System tray popup/tooltip
             trayPopupRadio.Checked = m_settings.UI.SystemTrayPopup.Style == TrayPopupStyles.PopupForm;
@@ -197,9 +222,6 @@ namespace EVEMon.SettingsUI
 
             // Run at system startup
             SetStartUpSettings();
-
-            // API providers
-            InitializeAPIProvidersDropDown();
 
             // Market Price providers
             InitilizeMarketPriceProviderDropDown();
@@ -509,6 +531,10 @@ namespace EVEMon.SettingsUI
                 m_settings.Proxy.Port = proxyPort;
             m_settings.Proxy.Host = proxyHttpHostTextBox.Text;
 
+            // Client ID / Secret
+            m_settings.SSOClientID = (clientIDTextBox.Text ?? string.Empty).Trim();
+            m_settings.SSOClientSecret = (clientSecretTextBox.Text ?? string.Empty).Trim();
+
             // Updates
             m_settings.Updates.CheckEVEMonVersion = cbCheckForUpdates.Checked;
             m_settings.Updates.CheckTimeOnStartup = cbCheckTime.Checked;
@@ -524,10 +550,7 @@ namespace EVEMon.SettingsUI
             // External calendar settings
             m_settings.Calendar.Enabled = externalCalendarCheckbox.Checked;
             externalCalendarControl.ApplyExternalCalendarSettings(m_settings);
-
-            // Updates API provider choices
-            m_settings.APIProviders.CurrentProviderName = (string)cbAPIServer.SelectedItem;
-
+            
             // Run at startup
             if (!runAtStartupComboBox.Enabled)
                 return;
@@ -543,37 +566,7 @@ namespace EVEMon.SettingsUI
             else
                 rk.DeleteValue("EVEMon", false);
         }
-
-        /// <summary>
-        /// Populates the combobox for API providers.
-        /// </summary>
-        private void InitializeAPIProvidersDropDown()
-        {
-            cbAPIServer.Items.Clear();
-            cbAPIServer.Items.Add(GlobalAPIProviderCollection.DefaultProvider.Name);
-
-            // Test Provider is only available in debug mode
-            if (EveMonClient.IsDebugBuild)
-                cbAPIServer.Items.Add(GlobalAPIProviderCollection.TestProvider.Name);
-
-            foreach (SerializableAPIProvider provider in m_settings.APIProviders.CustomProviders)
-            {
-                cbAPIServer.Items.Add(provider.Name);
-                if (provider.Name == m_settings.APIProviders.CurrentProviderName)
-                    cbAPIServer.SelectedIndex = cbAPIServer.Items.Count - 1;
-            }
-
-            if (m_settings.APIProviders.CurrentProviderName == GlobalAPIProviderCollection.TestProvider.Name)
-                cbAPIServer.SelectedIndex = EveMonClient.IsDebugBuild ? 1 : 0;
-
-            // Selects the default API server if none selected
-            if (cbAPIServer.SelectedIndex == -1)
-                cbAPIServer.SelectedIndex = 0;
-
-            // Disable the drop down box if only one available
-            cbAPIServer.Enabled = cbAPIServer.Items.Count > 1;
-        }
-
+        
         /// <summary>
         /// Populates the combobox for the market price providers.
         /// </summary>
@@ -701,7 +694,6 @@ namespace EVEMon.SettingsUI
 
             cbWindowsTitleList.Enabled = cbTitleToTime.Checked;
             cbSkillInTitle.Enabled = cbTitleToTime.Checked;
-            btnEditAPIServer.Enabled = btnDeleteAPIServer.Enabled = cbAPIServer.SelectedIndex > 1;
 
             // Portable Eve Clients settings
             portableEveClientsControl.Enabled = !EveMonClient.EveAppDataFoldersExistInDefaultLocation;
@@ -796,82 +788,7 @@ namespace EVEMon.SettingsUI
                 trayPopupRadio.Checked = true;
             }
         }
-
-        /// <summary>
-        /// General > API Providers > Add.
-        /// Displays the API provider configuration.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnAddAPIServer_Click(object sender, EventArgs e)
-        {
-            SerializableAPIProvider newProvider = new SerializableAPIProvider();
-            newProvider.Methods.AddRange(APIMethod.CreateDefaultSet().Select(
-                apiMethod => new SerializableAPIMethod
-                {
-                    MethodName = apiMethod.Method.ToString(),
-                    Path = apiMethod.Path
-                }));
-
-            using (APISettingsForm apiForm = new APISettingsForm(m_settings.APIProviders, newProvider))
-            {
-                DialogResult result = apiForm.ShowDialog();
-                if (result != DialogResult.OK)
-                    return;
-
-                m_settings.APIProviders.CustomProviders.Add(newProvider);
-                InitializeAPIProvidersDropDown();
-                cbAPIServer.SelectedIndex = cbAPIServer.Items.Count - 1;
-            }
-        }
-
-        /// <summary>
-        /// General > Network > API Providers > Edit.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnEditAPIServer_Click(object sender, EventArgs e)
-        {
-            // Search for the provider with the selected name
-            SerializableAPIProvider customProvider =
-                m_settings.APIProviders.CustomProviders.First(provider => provider.Name == (string)cbAPIServer.SelectedItem);
-
-            // Open the config form for this provider
-            using (APISettingsForm apiForm = new APISettingsForm(m_settings.APIProviders, customProvider))
-            {
-                apiForm.ShowDialog();
-            }
-        }
-
-        /// <summary>
-        /// General > Network > API Providers > Delete.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnDeleteAPIServer_Click(object sender, EventArgs e)
-        {
-            string name = (string)cbAPIServer.SelectedItem;
-            DialogResult result =
-                MessageBox.Show($"Delete API Server configuration \"{name}\"?",
-                    @"Delete API Server?", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button2);
-
-            if (result != DialogResult.Yes)
-                return;
-
-            // Search the provider with the selected name
-            SerializableAPIProvider providerToRemove =
-                m_settings.APIProviders.CustomProviders.FirstOrDefault(provider => name == provider.Name);
-
-            // Remove it
-            if (providerToRemove == null)
-                return;
-
-            m_settings.APIProviders.CustomProviders.Remove(providerToRemove);
-            InitializeAPIProvidersDropDown();
-            cbAPIServer.SelectedIndex = 0;
-        }
-
+        
         /// <summary>
         /// Reset the priorities conflict custom message box.
         /// </summary>
@@ -1079,7 +996,17 @@ namespace EVEMon.SettingsUI
             await cloudStorageServiceControl.CheckAPIAuthIsValidAsync(forceRecheck: true);
         }
 
-        #endregion
+        /// <summary>
+        /// General > Network > ESI Settings.
+        /// Opens the application registration page on link click.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void esiSettingsLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Util.OpenURL(new Uri(NetworkConstants.CCPApplicationRegistration));
+        }
 
+        #endregion
     }
 }

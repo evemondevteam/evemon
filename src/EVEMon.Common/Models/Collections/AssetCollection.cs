@@ -59,7 +59,7 @@ namespace EVEMon.Common.Models.Collections
         {
             foreach (Asset asset in Items.TakeWhile(asset => !m_isImporting))
             {
-                asset.LocationID = asset.LocationID;
+                asset.UpdateLocation();
                 asset.Jumps = GetJumps(asset);
             }
         }

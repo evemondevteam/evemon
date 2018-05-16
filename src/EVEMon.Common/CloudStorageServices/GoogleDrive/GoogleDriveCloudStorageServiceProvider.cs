@@ -136,7 +136,7 @@ namespace EVEMon.Common.CloudStorageServices.GoogleDrive
             try
             {
                 await GetCredentialsAsync().ConfigureAwait(false);
-                await CheckAuthCodeAsync(String.Empty).ConfigureAwait(false);
+                await CheckAuthCodeAsync(string.Empty).ConfigureAwait(false);
             }
             catch (GoogleApiException exc)
             {

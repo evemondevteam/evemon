@@ -1,9 +1,10 @@
-﻿using EVEMon.Common.Serialization.Eve;
+﻿using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models
 {
     public sealed class PlanetaryRoute
     {
+
         #region Constructor
 
         /// <summary>
@@ -11,7 +12,7 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="colony">The colony.</param>
         /// <param name="src">The source.</param>
-        internal PlanetaryRoute(PlanetaryColony colony, SerializablePlanetaryRoute src)
+        internal PlanetaryRoute(PlanetaryColony colony, EsiPlanetaryRoute src)
         {
             Colony = colony;
             ID = src.RouteID;
@@ -57,5 +58,6 @@ namespace EVEMon.Common.Models
         public long DestinationPinID { get; private set; }
 
         #endregion
+
     }
 }

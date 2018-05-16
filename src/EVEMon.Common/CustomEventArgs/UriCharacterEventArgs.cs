@@ -84,9 +84,8 @@ namespace EVEMon.Common.CustomEventArgs
             CharacterIdentity identity = GetIdentity(m_result);
 
             // Instantiates characters, adds, notify
-            UriCharacter uriCharacter = m_apiResult != null
-                                            ? new UriCharacter(identity, Uri, m_apiResult)
-                                            : new UriCharacter(identity, Uri, m_result as SerializableSettingsCharacter);
+            var uriCharacter = m_apiResult != null ? new UriCharacter(identity, Uri, m_apiResult) :
+                new UriCharacter(identity, Uri, m_result as SerializableSettingsCharacter);
 
             EveMonClient.Characters.Add(uriCharacter);
 
@@ -122,9 +121,6 @@ namespace EVEMon.Common.CustomEventArgs
         // Retrieve the identity and create one if needed
         private static CharacterIdentity GetIdentity(ISerializableCharacterIdentity character)
             => EveMonClient.CharacterIdentities[character.ID] ??
-               EveMonClient.CharacterIdentities.Add(character.ID, character.Name,
-                   character.CorporationID, character.CorporationName,
-                   character.AllianceID, character.AllianceName,
-                   character.FactionID, character.FactionName);
+               EveMonClient.CharacterIdentities.Add(character.ID, character.Name);
     }
 }

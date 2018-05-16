@@ -1,17 +1,15 @@
-using System.Collections.ObjectModel;
-using System.Linq;
 using EVEMon.Common.Constants;
-using EVEMon.Common.Enumerations.CCPAPI;
+using EVEMon.Common.Models;
 using EVEMon.Common.Serialization.Eve;
+using System.Collections.Generic;
 
 namespace EVEMon.Common.Service
 {
     public static class EveRefType
     {
-        private static Collection<SerializableRefTypesListItem> s_refTypes = new Collection<SerializableRefTypesListItem>();
-        private static bool s_isQuerying;
+        private static Dictionary<int, SerializableRefTypesListItem> s_refTypes =
+            new Dictionary<int, SerializableRefTypesListItem>(128);
         private static bool s_loaded;
-
 
         #region Importation
 
@@ -21,44 +19,23 @@ namespace EVEMon.Common.Service
         private static void EnsureImportation()
         {
             // Exit if we have already imported the list or are currently querying
-            if (s_loaded || s_isQuerying)
+            if (s_loaded)
                 return;
 
-            s_isQuerying = true;
+            CCPAPIResult<SerializableAPIRefTypes> result =
+                Util.DeserializeAPIResultFromString<SerializableAPIRefTypes>(Properties.Resources.RefTypes,
+                APIProvider.RowsetsTransform);
 
-            // Query the API
-            EveMonClient.APIProviders.CurrentProvider
-                .QueryMethodAsync<SerializableAPIRefTypes>(CCPAPIGenericMethods.RefTypes, OnUpdated);
-        }
-
-        /// <summary>
-        /// Processes the refTypes list.
-        /// </summary>
-        /// <param name="result">The result.</param>
-        private static void OnUpdated(CCPAPIResult<SerializableAPIRefTypes> result)
-        {
-            // Checks if EVE database is out of service
-            if (result.EVEDatabaseError)
-                return;
-
-            // Was there an error ?
-            if (result.HasError)
+            foreach (var type in result.Result.RefTypes)
             {
-                EveMonClient.Notifications.NotifyRefTypesError(result);
-                return;
+                int id = type.ID;
+                if (!s_refTypes.ContainsKey(id))
+                    s_refTypes.Add(id, type);
             }
 
-            EveMonClient.Notifications.InvalidateAPIError();
-
-            s_refTypes = result.Result.RefTypes;
-
             s_loaded = true;
-            s_isQuerying = false;
-
-            // Notify the subscribers
-            EveMonClient.OnRefTypesUpdated();
         }
-
+        
         #endregion
 
 
@@ -73,10 +50,12 @@ namespace EVEMon.Common.Service
         {
             EnsureImportation();
 
-            SerializableRefTypesListItem refType = s_refTypes.FirstOrDefault(type => type.ID == refTypeID);
+            SerializableRefTypesListItem refType;
+            s_refTypes.TryGetValue(refTypeID, out refType);
             return refType?.Name ?? EveMonConstants.UnknownText;
         }
 
         #endregion
+
     }
 }

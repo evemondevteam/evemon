@@ -1,6 +1,5 @@
 ﻿using System;
 using EVEMon.Common.Enumerations.UISettings;
-using EVEMon.Common.SettingsObjects;
 
 namespace EVEMon.Common.Attributes
 {
@@ -77,7 +76,7 @@ namespace EVEMon.Common.Attributes
         public UpdatePeriod Maximum { get; private set; }
 
         /// <summary>
-        /// Gets the update period cache style.
+        /// Gets the update period cache style. EVEMon does not actually use this attribute!
         /// </summary>
         /// <value>
         /// The cache style.

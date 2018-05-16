@@ -366,10 +366,8 @@ namespace EVEMon.InstallBuilder
             {
                 string nsisScript = Path.Combine(ProjectDirectory, OutputPath, "EVEMonInstallerScript.nsi");
                 string resourcesDir = Path.Combine(SolutionDirectory, @"src\\EVEMon.Common\Resources");
-                string appCopyright =
-                    ((AssemblyCopyrightAttribute)
-                        Attribute.GetCustomAttribute(typeof(Program).Assembly, typeof(AssemblyCopyrightAttribute)))
-                        .Copyright;
+                string appCopyright = ((AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(
+                    typeof(Program).Assembly, typeof(AssemblyCopyrightAttribute))).Copyright;
                 string productName = String.Format(CultureInfo.InvariantCulture, "/DPRODUCTNAME=\"{0}\"", Application.ProductName);
                 string companyName = String.Format(CultureInfo.InvariantCulture, "/DCOMPANYNAME=\"{0}\"", Application.CompanyName);
                 string copyright = String.Format(CultureInfo.InvariantCulture, "/DCOPYRIGHT=\"{0}\"", appCopyright);

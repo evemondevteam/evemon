@@ -238,4 +238,16 @@
   <data name="ContextMenuPointer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Cursors\ContextMenuPointer.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="RefTypes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\serialization\reftypes.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CallbackFail" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\callback_fail.htm;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CallbackOK" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\callback_ok.htm;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="chrFactions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\chrfactions.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

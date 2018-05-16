@@ -44,13 +44,13 @@ namespace EVEMon.Common.Models.Collections
         private void EveMonClient_TimerTick(object sender, EventArgs e)
         {
             IQueryMonitor charIndustryJobsMonitor =
-                m_ccpCharacter.QueryMonitors.Any(x => (CCPAPICharacterMethods)x.Method == CCPAPICharacterMethods.IndustryJobs)
-                    ? m_ccpCharacter.QueryMonitors[CCPAPICharacterMethods.IndustryJobs]
+                m_ccpCharacter.QueryMonitors.Any(x => (ESIAPICharacterMethods)x.Method == ESIAPICharacterMethods.IndustryJobs)
+                    ? m_ccpCharacter.QueryMonitors[ESIAPICharacterMethods.IndustryJobs]
                     : null;
             IQueryMonitor corpIndustryJobsMonitor =
                 m_ccpCharacter.QueryMonitors.Any(
-                    x => (CCPAPICorporationMethods)x.Method == CCPAPICorporationMethods.CorporationIndustryJobs)
-                    ? m_ccpCharacter.QueryMonitors[CCPAPICorporationMethods.CorporationIndustryJobs]
+                    x => (ESIAPICorporationMethods)x.Method == ESIAPICorporationMethods.CorporationIndustryJobs)
+                    ? m_ccpCharacter.QueryMonitors[ESIAPICorporationMethods.CorporationIndustryJobs]
                     : null;
 
             if ((charIndustryJobsMonitor == null || !charIndustryJobsMonitor.Enabled) &&

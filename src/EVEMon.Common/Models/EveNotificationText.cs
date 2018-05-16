@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using EVEMon.Common.Collections;
-using EVEMon.Common.Constants;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Models.Extended;
 using EVEMon.Common.Serialization.Eve;
 using EVEMon.Common.Service;
 using YamlDotNet.RepresentationModel;
+using EVEMon.Common.Constants;
 
 namespace EVEMon.Common.Models
 {
@@ -55,14 +55,10 @@ namespace EVEMon.Common.Models
         /// Gets or sets the notification text.
         /// </summary>
         /// <value>The notification text.</value>
-        internal string ParsedText
-            => m_parsedText = String.IsNullOrWhiteSpace(m_parsedText) ||
-                              m_parsedText.Contains(EveMonConstants.UnknownText)
-                ? Parse(EveNotificationType.GetTextLayout(m_notification.TypeID))
-                    .NewLinesToBreakLines()
-                    .DecodeUnicodeCharacters()
-                    .Normalize()
-                : m_parsedText;
+        internal string ParsedText => m_parsedText = (string.IsNullOrEmpty(m_parsedText) ||
+            m_parsedText.Contains(EveMonConstants.UnknownText)) ? Parse(
+            EveNotificationType.GetTextLayout(m_notification.TypeID)).NewLinesToBreakLines().
+            DecodeUnicodeCharacters().Normalize() : m_parsedText;
 
         #endregion
 
@@ -80,7 +76,7 @@ namespace EVEMon.Common.Models
             if (!textLayout.Contains("{") || NotificationID == 0)
                 return textLayout;
 
-            YamlMappingNode pairs = Util.ParseYaml(NotificationText);
+            var pairs = Util.ParseYaml(NotificationText) as YamlMappingNode;
 
             IDictionary<string, string> parsedDict = GetParsedDictionary(textLayout, pairs);
 
@@ -89,8 +85,8 @@ namespace EVEMon.Common.Models
                 m_parser.Parse(m_notification, pair, parsedDict);
             }
 
-            string parsedText = parsedDict.Aggregate(textLayout,
-                (current, pair) => current.Replace(string.Format("{{{0}}}", pair.Key), pair.Value.Trim('\'')));
+            string parsedText = parsedDict.Aggregate(textLayout, (current, pair) =>
+                current.Replace("{" + pair.Key + "}", pair.Value.Trim('\'')));
 
             return parsedText.Contains("{") ? NotificationText : parsedText;
         }
@@ -103,19 +99,19 @@ namespace EVEMon.Common.Models
         /// <returns></returns>
         private IDictionary<string, string> GetParsedDictionary(string textLayout, YamlMappingNode pairs)
         {
-            IDictionary<string, string> parsedDict = pairs
-                .Children
-                .ToDictionary(pair => pair.Key.ToString(), pair => pair.Value.ToString());
+            IDictionary<string, string> parsedDict = pairs.Children.ToDictionary(
+                pair => pair.Key.ToString(), pair => pair.Value.ToString());
 
-            IDictionary<string, string> textLayoutDict = Regex
-                .Matches(textLayout, "{(?<placeholder>\\w+)}", RegexOptions.Compiled | RegexOptions.IgnoreCase)
-                .Cast<Match>()
-                .Select(x => x.Groups["placeholder"].Value)
-                .ToDictionary(key => key, value => String.Empty);
+            IDictionary<string, string> textLayoutDict = Regex.Matches(textLayout,
+                "{(?<placeholder>\\w+)}", RegexOptions.Compiled | RegexOptions.IgnoreCase).
+                Cast<Match>().Select(x => x.Groups["placeholder"].Value).
+                ToDictionary(key => key, value => string.Empty);
 
-            parsedDict.AddRange(textLayoutDict.Keys.Except(parsedDict.Keys).ToDictionary(key => key, value => String.Empty));
+            parsedDict.AddRange(textLayoutDict.Keys.Except(parsedDict.Keys).ToDictionary(
+                key => key, value => string.Empty));
 
-            if (parsedDict.ContainsKey("senderName") && String.IsNullOrWhiteSpace(parsedDict["senderName"]))
+            if (parsedDict.ContainsKey("senderName") && string.IsNullOrWhiteSpace(
+                    parsedDict["senderName"]))
                 parsedDict["senderName"] = m_notification.SenderName;
 
             return parsedDict;

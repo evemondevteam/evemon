@@ -31,21 +31,5 @@ namespace EVEMon.Common.Models
         /// Returns the defined URL suffix path for this APIMethod.
         /// </summary>
         public string Path { get; set; }
-
-        /// <summary>
-        /// Creates a set of API methods with their default urls.
-        /// </summary>
-        /// <returns></returns>
-        public static IEnumerable<APIMethod> CreateDefaultSet()
-            => APIMethods.Methods
-                .Where(method => method.ToString() != "None")
-                .Select(methodName =>
-                    new
-                    {
-                        methodName,
-                        methodURL = NetworkConstants.ResourceManager.GetString($"API{methodName}")
-                    })
-                .Where(method => method.methodURL != null)
-                .Select(method => new APIMethod(method.methodName, method.methodURL));
     }
 }

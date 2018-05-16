@@ -9,10 +9,11 @@ using EVEMon.Common.Enumerations;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Serialization.Eve;
 using EVEMon.Common.Service;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models
 {
-    public sealed class KillLog
+    public sealed class KillLog : IComparable<KillLog>
     {
         /// <summary>
         /// Occurs when kill log victim ship image updated.
@@ -48,8 +49,10 @@ namespace EVEMon.Common.Models
             m_items.AddRange(src.Items.Select(item => new KillLogItem(item)));
 
             Group = src.Victim.ID == character.CharacterID ? KillGroup.Losses : KillGroup.Kills;
-        }
 
+            UpdateCharacterNames();
+        }
+        
         #endregion
 
 
@@ -157,6 +160,30 @@ namespace EVEMon.Common.Models
         }
 
         /// <summary>
+        /// Updates the names and corporations/alliances of victims and attackers.
+        /// </summary>
+        public void UpdateCharacterNames()
+        {
+            if (Victim != null)
+            {
+                // Update victim's info
+                Victim.AllianceName = EveIDToName.GetIDToName(Victim.AllianceID);
+                Victim.CorporationName = EveIDToName.GetIDToName(Victim.CorporationID);
+                Victim.FactionName = EveIDToName.GetIDToName(Victim.FactionID);
+                Victim.Name = EveIDToName.GetIDToName(Victim.ID);
+            }
+            if (Attackers != null)
+                foreach (var attacker in Attackers)
+                {
+                    // Update attacker's info
+                    attacker.AllianceName = EveIDToName.GetIDToName(attacker.AllianceID);
+                    attacker.CorporationName = EveIDToName.GetIDToName(attacker.CorporationID);
+                    attacker.FactionName = EveIDToName.GetIDToName(attacker.FactionID);
+                    attacker.Name = EveIDToName.GetIDToName(attacker.ID);
+                }
+        }
+
+        /// <summary>
         /// Gets the default image.
         /// </summary>
         /// <returns></returns>
@@ -169,15 +196,26 @@ namespace EVEMon.Common.Models
         /// <returns></returns>
         private Uri GetImageUrl(bool useFallbackUri)
         {
-            string path = String.Format(CultureConstants.InvariantCulture,
+            string path = string.Format(CultureConstants.InvariantCulture,
                 NetworkConstants.CCPIconsFromImageServer, "type", Victim.ShipTypeID,
                 (int)EveImageSize.x32);
 
-            return useFallbackUri
-                ? ImageService.GetImageServerBaseUri(path)
-                : ImageService.GetImageServerCdnUri(path);
+            return useFallbackUri ? ImageService.GetImageServerBaseUri(path) :
+                ImageService.GetImageServerCdnUri(path);
         }
 
         #endregion
+
+
+        #region Inherited Methods
+
+        public int CompareTo(KillLog other)
+        {
+            // Default order should be recent first
+            return -KillTime.CompareTo(other.KillTime);
+        }
+
+        #endregion
+
     }
 }

@@ -9,17 +9,20 @@ using EVEMon.Common.Models;
 using EVEMon.Common.Net;
 using EVEMon.Common.Serialization.Eve;
 using EVEMon.Common.SettingsObjects;
+using EVEMon.Common.Serialization;
 
 namespace EVEMon.Common.QueryMonitor
 {
     /// <summary>
     /// This class monitors a querying process. It provides services for autoupdating, update notification, etc.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     [EnforceUIThreadAffinity]
-    public class QueryMonitor<T> : IQueryMonitorEx, INetworkChangeSubscriber
+    public class QueryMonitor<T> : IQueryMonitorEx, INetworkChangeSubscriber where T : class
     {
-        private readonly Action<CCPAPIResult<T>> m_onUpdated;
+        // Matches the error reporting methods in GlobalNotificationCollection
+        internal delegate void NotifyErrorCallback(CCPCharacter character, EsiResult<T> result);
+
+        private readonly Action<EsiResult<T>> m_onUpdated;
 
         private bool m_forceUpdate;
         private bool m_retryOnForceUpdateError;
@@ -34,7 +37,7 @@ namespace EVEMon.Common.QueryMonitor
         /// <param name="method">The method.</param>
         /// <param name="callback">The callback.</param>
         /// <exception cref="System.ArgumentNullException">callback;@The callback cannot be null.</exception>
-        internal QueryMonitor(Enum method, Action<CCPAPIResult<T>> callback)
+        internal QueryMonitor(Enum method, Action<EsiResult<T>> callback)
         {
             // Check callback not null
             callback.ThrowIfNull(nameof(callback), "The callback cannot be null.");
@@ -50,7 +53,6 @@ namespace EVEMon.Common.QueryMonitor
 
             EveMonClient.TimerTick += EveMonClient_TimerTick;
         }
-
 
         #endregion
 
@@ -109,13 +111,12 @@ namespace EVEMon.Common.QueryMonitor
                 {
                     // If it's not a CCP error we try again in five minutes
                     // thus preventing spamming the trace file
-                    if (LastResult.ErrorType != CCPAPIErrors.CCP && LastResult.CachedUntil == DateTime.MinValue)
+                    if (LastResult.ErrorType != APIErrorType.CCP && LastResult.CachedUntil == DateTime.MinValue)
                         LastResult.CachedUntil = DateTime.UtcNow.AddMinutes(5);
 
                     // The 'return' condition have been placed to prevent any 'CCP screw up'
                     // with the cachedUntil timer as they have done in Incarna 1.0.1 expansion
-                    return LastResult.CachedUntil > LastResult.CurrentTime
-                        ? LastResult.CachedUntil
+                    return LastResult.CachedUntil > LastResult.CurrentTime ? LastResult.CachedUntil
                         : LastResult.CachedUntil.AddMinutes(15);
                 }
 
@@ -140,7 +141,7 @@ namespace EVEMon.Common.QueryMonitor
         /// <summary>
         /// Gets the last result queried from the API provider.
         /// </summary>
-        public CCPAPIResult<T> LastResult { get; private set; }
+        public EsiResult<T> LastResult { get; private set; }
 
         /// <summary>
         /// Gets true whether the method is curently being requeried.
@@ -197,7 +198,7 @@ namespace EVEMon.Common.QueryMonitor
         /// <remarks>
         /// This method does not fire any event.
         /// </remarks>
-        internal void UpdateWith(CCPAPIResult<T> result)
+        internal void UpdateWith(EsiResult<T> result)
         {
             LastResult = result;
             LastUpdate = DateTime.UtcNow;
@@ -271,18 +272,18 @@ namespace EVEMon.Common.QueryMonitor
         /// <param name="provider">The API provider to use.</param>
         /// <param name="callback">The callback invoked on the UI thread after a result has been queried.</param>
         /// <exception cref="System.ArgumentNullException">provider</exception>
-        protected virtual void QueryAsyncCore(APIProvider provider, Action<CCPAPIResult<T>> callback)
+        protected virtual void QueryAsyncCore(APIProvider provider, APIProvider.ESIRequestCallback<T> callback)
         {
             provider.ThrowIfNull(nameof(provider));
 
-            provider.QueryMethodAsync(Method, callback);
+            provider.QueryEsiAsync(Method, callback);
         }
 
         /// <summary>
         /// Occurs when a new result has been queried.
         /// </summary>
         /// <param name="result">The downloaded result</param>
-        private void OnQueried(CCPAPIResult<T> result)
+        private void OnQueried(EsiResult<T> result, object state)
         {
             IsUpdating = false;
             Status = QueryStatus.Pending;

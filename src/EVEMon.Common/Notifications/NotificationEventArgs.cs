@@ -33,7 +33,7 @@ namespace EVEMon.Common.Notifications
         /// <summary>
         /// Gets the API key that sent this notification, or null if the sender was not an account.
         /// </summary>
-        public APIKey SenderAPIKey => Sender as APIKey;
+        public ESIKey SenderAPIKey => Sender as ESIKey;
 
         /// <summary>
         /// Gets the character that sent this notification, or null if the sender was not a character.

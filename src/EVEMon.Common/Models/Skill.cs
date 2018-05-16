@@ -18,10 +18,13 @@ namespace EVEMon.Common.Models
     [EnforceUIThreadAffinity]
     public sealed class Skill : IStaticSkill
     {
+        private const long s_maxLevel = 5L;
+
         private readonly List<SkillLevel> m_prereqs = new List<SkillLevel>();
-        private Int64 m_currentSkillPoints;
-        private Int64 m_skillLevel;
-        private Int64 m_level;
+        private long m_currentSkillPoints;
+        // Previous dev of EVEMon made these longs, when patently unnecessary
+        private long m_skillLevel;
+        private long m_level;
         private bool m_owned;
         private bool m_known;
 
@@ -58,9 +61,8 @@ namespace EVEMon.Common.Models
         /// <param name="skills">The array of the character's skills.</param>
         public void CompleteInitialization(Skill[] skills)
         {
-            m_prereqs.AddRange(StaticData.Prerequisites
-                .Select(staticSkillLevel =>
-                    new SkillLevel(skills[staticSkillLevel.Skill.ArrayIndex], staticSkillLevel.Level)));
+            m_prereqs.AddRange(StaticData.Prerequisites.Select(staticSkillLevel =>
+                new SkillLevel(skills[staticSkillLevel.Skill.ArrayIndex], staticSkillLevel.Level)));
         }
 
         /// <summary>
@@ -74,7 +76,7 @@ namespace EVEMon.Common.Models
             m_known = fromCCP | src.IsKnown;
             SkillPoints = src.Skillpoints;
             LastConfirmedLvl = src.Level;
-            m_level = src.Level;
+            m_level = Math.Min(s_maxLevel, src.Level);
         }
 
         /// <summary>
@@ -99,8 +101,8 @@ namespace EVEMon.Common.Models
         internal void MarkAsCompleted()
         {
             m_known = true;
-            m_level++;
-            SkillPoints = StaticData.GetPointsRequiredForLevel(Math.Min(m_level, 5));
+            m_level = Math.Min(m_level + 1, s_maxLevel);
+            SkillPoints = StaticData.GetPointsRequiredForLevel(m_level);
         }
 
         /// <summary>
@@ -113,7 +115,7 @@ namespace EVEMon.Common.Models
             {
                 ID = StaticData.ID,
                 Name = StaticData.Name,
-                Level = Math.Min(m_level, 5),
+                Level = m_level,
                 Skillpoints = m_currentSkillPoints,
                 OwnsBook = IsOwned,
                 IsKnown = m_known

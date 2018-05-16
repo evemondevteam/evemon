@@ -98,6 +98,7 @@ namespace EVEMon.CharacterMonitoring
 
             EveMonClient.CharacterContactsUpdated += EveMonClient_CharacterContactsUpdated;
             EveMonClient.SettingsChanged += EveMonClient_SettingsChanged;
+            EveMonClient.EveIDToNameUpdated += EveMonClient_EveIDToNameUpdated;
             Disposed += OnDisposed;
 
             ShowAllContacts = true;
@@ -112,6 +113,7 @@ namespace EVEMon.CharacterMonitoring
         {
             EveMonClient.CharacterContactsUpdated -= EveMonClient_CharacterContactsUpdated;
             EveMonClient.SettingsChanged -= EveMonClient_SettingsChanged;
+            EveMonClient.EveIDToNameUpdated -= EveMonClient_EveIDToNameUpdated;
             Disposed -= OnDisposed;
         }
 
@@ -252,128 +254,96 @@ namespace EVEMon.CharacterMonitoring
         private void DrawItem(Contact contact, DrawItemEventArgs e)
         {
             Graphics g = e.Graphics;
-
             // Draw background
             g.FillRectangle(e.Index % 2 == 0 ? Brushes.White : Brushes.LightGray, e.Bounds);
+            // Measure and draw contact name
+            Size contactTextSize = TextRenderer.MeasureText(g, contact.Name,
+                m_contactsBoldFont, Size.Empty, Format);
+            TextRenderer.DrawText(g, contact.Name, m_contactsBoldFont, new Rectangle(
+                e.Bounds.Left + contact.EntityImage.Width + 4, e.Bounds.Top + (contact.Group ==
+                ContactGroup.Agent ? PadTop : (e.Bounds.Height - contactTextSize.Height) / 2),
+                contactTextSize.Width + PadLeft, contactTextSize.Height), Color.Black);
 
-            // Measure texts
-            Size contactTextSize = TextRenderer.MeasureText(g, contact.Name, m_contactsBoldFont, Size.Empty, Format);
-
-            // Draw texts
-            TextRenderer.DrawText(g, contact.Name, m_contactsBoldFont,
-                                  new Rectangle(
-                                      e.Bounds.Left + contact.EntityImage.Width + 4,
-                                      e.Bounds.Top + (contact.Group == ContactGroup.Agent
-                                                          ? PadTop
-                                                          : (e.Bounds.Height - contactTextSize.Height) / 2),
-                                      contactTextSize.Width + PadLeft,
-                                      contactTextSize.Height), Color.Black);
-
-            // Draw texts for agents
+            // Draw text for agents
             if (contact.Group == ContactGroup.Agent)
             {
-                Agent agent = StaticGeography.AllAgents.Single(x => x.Name == contact.Name);
-                Station agentStation = agent.Station as ConquerableStation;
-                string agentLocationText = agentStation != null
-                                               ? agentStation.Name
-                                               : agent.Station.Name;
+                Agent agent = StaticGeography.GetAgentByName(contact.Name);
+                if (agent != null)
+                {
+                    Station agentStation = agent.Station;
+                    string agentLocationText = agentStation != null ? agentStation.Name :
+                        agent.Station.Name;
+                    // Determine the agent level and division
+                    string agentLevelText = (agent.AgentType != AgentType.BasicAgent &&
+                        agent.AgentType != AgentType.ResearchAgent) ? agent.AgentType.
+                        GetDescription() : $"Level {Skill.GetRomanFromInt(agent.Level)}";
+                    string agentLevelDivisionText = $"( {agentLevelText} - {agent.Division} )";
+                    // Calculate text size
+                    Size agentLocationTextSize = TextRenderer.MeasureText(g, agentLocationText,
+                        m_contactsFont, Size.Empty, Format);
+                    Size agentLevelDivisionTextSize = TextRenderer.MeasureText(g,
+                        agentLevelDivisionText, m_contactsFont, Size.Empty, Format);
+                    // Draw agent level and division text
+                    TextRenderer.DrawText(g, agentLevelDivisionText, m_contactsFont,
+                        new Rectangle(e.Bounds.Left + contact.EntityImage.Width + 4 +
+                            contactTextSize.Width + PadRight, e.Bounds.Top + PadTop,
+                            agentLevelDivisionTextSize.Width + PadLeft,
+                            agentLevelDivisionTextSize.Height), Color.Black, Format);
 
-                string agentLevelText = agent.AgentType != AgentType.BasicAgent &&
-                              agent.AgentType != AgentType.ResearchAgent
-                    ? agent.AgentType.GetDescription()
-                    : $"Level {Skill.GetRomanFromInt(agent.Level)}";
-
-                string agentLevelDivisionText = $"( {agentLevelText} - {agent.Division} )";
-
-                Size agentLocationTextSize = TextRenderer.MeasureText(g, agentLocationText, m_contactsFont, Size.Empty, Format);
-                Size agentLevelDivisionTextSize = TextRenderer.MeasureText(g, agentLevelDivisionText, m_contactsFont, Size.Empty,
-                                                                           Format);
-
-                // Draw agent level and division text
-                TextRenderer.DrawText(g, agentLevelDivisionText, m_contactsFont,
-                                      new Rectangle(
-                                          e.Bounds.Left + contact.EntityImage.Width + 4 + contactTextSize.Width + PadRight,
-                                          e.Bounds.Top + PadTop,
-                                          agentLevelDivisionTextSize.Width + PadLeft,
-                                          agentLevelDivisionTextSize.Height), Color.Black, Format);
-
-                // Draw agent location
-                TextRenderer.DrawText(g, agentLocationText, m_contactsFont,
-                                      new Rectangle(
-                                          e.Bounds.Left + contact.EntityImage.Width + 4,
-                                          e.Bounds.Top + PadTop + agentLevelDivisionTextSize.Height,
-                                          agentLocationTextSize.Width + PadLeft,
-                                          agentLocationTextSize.Height), Color.Black);
+                    // Draw agent location
+                    TextRenderer.DrawText(g, agentLocationText, m_contactsFont, new Rectangle(
+                        e.Bounds.Left + contact.EntityImage.Width + 4, e.Bounds.Top + PadTop +
+                        agentLevelDivisionTextSize.Height, agentLocationTextSize.Width +
+                        PadLeft, agentLocationTextSize.Height), Color.Black);
+                }
             }
-
-            if (contact.Group != ContactGroup.Agent)
+            else if (Settings.UI.SafeForWork)
             {
-                if (Settings.UI.SafeForWork)
+                string contactStandingStatusText = $"({Standing.Status(contact.Standing)})";
+                // Measure and draw standing text
+                Size contactStandingStatusTextSize = TextRenderer.MeasureText(g,
+                    contactStandingStatusText, m_contactsFont, Size.Empty, Format);
+                TextRenderer.DrawText(g, contactStandingStatusText, m_contactsFont,
+                    new Rectangle(e.Bounds.Left + contact.EntityImage.Width + 4 +
+                    contactTextSize.Width + PadRight, e.Bounds.Top + (e.Bounds.Height -
+                    contactStandingStatusTextSize.Height) / 2, contactStandingStatusTextSize.
+                    Width + PadLeft, contactStandingStatusTextSize.Height), Color.Black);
+                // Draw watchlist text
+                if (contact.IsInWatchlist)
                 {
-                    // Texts
-                    string contactStandingStatusText = $"({Standing.Status(contact.Standing)})";
-
-                    // Measure texts
-                    Size contactStandingStatusTextSize = TextRenderer.MeasureText(g, contactStandingStatusText, m_contactsFont,
-                                                                                  Size.Empty, Format);
-
-                    // Draw contact standing status text
-                    TextRenderer.DrawText(g, contactStandingStatusText, m_contactsFont,
-                                          new Rectangle(
-                                              e.Bounds.Left + contact.EntityImage.Width + 4 + contactTextSize.Width +
-                                              PadRight,
-                                              e.Bounds.Top + (e.Bounds.Height - contactStandingStatusTextSize.Height) / 2,
-                                              contactStandingStatusTextSize.Width + PadLeft,
-                                              contactStandingStatusTextSize.Height), Color.Black);
-
-                    //Draw watchlist text
-                    if (contact.IsInWatchlist)
-                    {
-                        const string ContactInWatchListText = " - Watching";
-                        Size contactInWatchListTextSize = TextRenderer.MeasureText(g, ContactInWatchListText, m_contactsFont,
-                                                                                   Size.Empty, Format);
-
-                        TextRenderer.DrawText(g, ContactInWatchListText, m_contactsFont,
-                                              new Rectangle(
-                                                  e.Bounds.Left + contact.EntityImage.Width + 4 + contactTextSize.Width +
-                                                  contactStandingStatusTextSize.Width + PadRight,
-                                                  e.Bounds.Top + (e.Bounds.Height - contactStandingStatusTextSize.Height) / 2,
-                                                  contactInWatchListTextSize.Width + PadLeft,
-                                                  contactInWatchListTextSize.Height), Color.Black);
-                    }
+                    const string ContactInWatchListText = " - Watching";
+                    Size contactInWatchListTextSize = TextRenderer.MeasureText(g,
+                        ContactInWatchListText, m_contactsFont, Size.Empty, Format);
+                    TextRenderer.DrawText(g, ContactInWatchListText, m_contactsFont,
+                        new Rectangle(e.Bounds.Left + contact.EntityImage.Width + 4 +
+                            contactTextSize.Width + contactStandingStatusTextSize.Width +
+                            PadRight, e.Bounds.Top + (e.Bounds.Height -
+                            contactStandingStatusTextSize.Height) / 2,
+                            contactInWatchListTextSize.Width + PadLeft,
+                            contactInWatchListTextSize.Height), Color.Black);
                 }
-                else
-                {
-                    //Draw standing image
-                    Image standingImage = Standing.GetStandingImage((int)contact.Standing);
-                    g.DrawImage(standingImage,
-                                new Rectangle(
-                                    e.Bounds.Left + contact.EntityImage.Width + 4 + contactTextSize.Width + PadRight * 2,
-                                    e.Bounds.Top + (e.Bounds.Height - standingImage.Size.Height) / 2,
-                                    standingImage.Width, standingImage.Height));
-
-                    //Draw watchlist image
-                    if (contact.IsInWatchlist)
-                    {
-                        g.DrawImage(Resources.Watch,
-                                    new Rectangle(
-                                        e.Bounds.Left + contact.EntityImage.Width + 4 + contactTextSize.Width +
-                                        standingImage.Width + PadRight * 3,
-                                        e.Bounds.Top + (e.Bounds.Height - Resources.Watch.Height) / 2,
-                                        Resources.Watch.Width, Resources.Watch.Height));
-                    }
-                }
+            }
+            else
+            {
+                // Draw standing image
+                Image standingImage = Standing.GetStandingImage((int)contact.Standing);
+                g.DrawImage(standingImage, new Rectangle(e.Bounds.Left + contact.EntityImage.
+                    Width + 4 + contactTextSize.Width + PadRight * 2, e.Bounds.Top + (e.Bounds.
+                    Height - standingImage.Size.Height) / 2, standingImage.Width,
+                    standingImage.Height));
+                // Draw watchlist image
+                if (contact.IsInWatchlist)
+                    g.DrawImage(Resources.Watch, new Rectangle(e.Bounds.Left + contact.
+                        EntityImage.Width + 4 + contactTextSize.Width + standingImage.Width +
+                        PadRight * 3, e.Bounds.Top + (e.Bounds.Height - Resources.Watch.
+                        Height) / 2, Resources.Watch.Width, Resources.Watch.Height));
             }
 
             // Draw images
-            if (Settings.UI.SafeForWork)
-                return;
-
-            // Draw the entity image
-            g.DrawImage(contact.EntityImage,
-                        new Rectangle(e.Bounds.Left + PadLeft / 2,
-                                      ContactDetailHeight / 2 - contact.EntityImage.Height / 2 + e.Bounds.Top,
-                                      contact.EntityImage.Width, contact.EntityImage.Height));
+            if (!Settings.UI.SafeForWork)
+                g.DrawImage(contact.EntityImage, new Rectangle(e.Bounds.Left + PadLeft / 2,
+                    ContactDetailHeight / 2 - contact.EntityImage.Height / 2 + e.Bounds.Top,
+                    contact.EntityImage.Width, contact.EntityImage.Height));
         }
 
         /// <summary>
@@ -613,6 +583,16 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void EveMonClient_SettingsChanged(object sender, EventArgs e)
+        {
+            UpdateContent();
+        }
+
+        /// <summary>
+        /// When ID to namae is updated we update the content.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        private void EveMonClient_EveIDToNameUpdated(object sender, EventArgs e)
         {
             UpdateContent();
         }

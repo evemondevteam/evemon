@@ -14,7 +14,7 @@ namespace EVEMon.Common.Serialization.Settings
         public SerializableAPIProvider()
         {
             Name = "New provider";
-            Address = NetworkConstants.APIBase;
+            Address = NetworkConstants.ESIBase;
             SupportsCompressedResponse = false;
             m_methods = new Collection<SerializableAPIMethod>();
         }

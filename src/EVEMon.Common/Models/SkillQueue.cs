@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using EVEMon.Common.Attributes;
 using EVEMon.Common.Collections;
-using EVEMon.Common.Constants;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Serialization.Eve;
 using EVEMon.Common.Service;
@@ -77,9 +76,9 @@ namespace EVEMon.Common.Models
         /// Gets a value indicating whether the skill queue has less than the warning threshold worth of training.
         /// </summary>
         /// <value>
-        /// <c>true</c> if the skill queue has less thanthe warning threshold worth of training; otherwise, <c>false</c>.
+        /// <c>true</c> if the skill queue has less than the warning threshold worth of training; otherwise, <c>false</c>.
         /// </value>
-        public bool LessThanWarningThreshold => EndTime < DateTime.UtcNow.AddDays(Settings.UI.MainWindow.SkillQueueWarningThresholdDays);
+        public bool LessThanWarningThreshold => EndTime <= DateTime.UtcNow.AddDays(Settings.UI.MainWindow.SkillQueueWarningThresholdDays);
 
         /// <summary>
         /// Gets the warning threshold time span.
@@ -99,35 +98,28 @@ namespace EVEMon.Common.Models
         /// </summary>
         private void UpdateOnTimerTick()
         {
-            List<QueuedSkill> skillsCompleted = new List<QueuedSkill>();
+            var now = DateTime.UtcNow;
+            var skillsCompleted = new LinkedList<QueuedSkill>();
+            QueuedSkill skill;
 
             // Pops all the completed skills
-            while (Items.Any())
+            while (Items.Any() && (skill = Items.First()).EndTime <= now)
             {
-                QueuedSkill skill = Items.First();
-
-                // If the skill is not completed, we jump out of the loop
-                if (skill.EndTime > DateTime.UtcNow)
-                    break;
-
                 // The skill has been completed
                 skill.Skill?.MarkAsCompleted();
-
-                skillsCompleted.Add(skill);
+                skillsCompleted.AddLast(skill);
                 LastCompleted = skill;
                 Items.Remove(skill);
-
                 // Sends an email alert
                 if (!Settings.IsRestoring && Settings.Notifications.SendMailAlert)
                     Emailer.SendSkillCompletionMail(Items, skill, m_character);
-
-                // Sends a notification
-                EveMonClient.Notifications.NotifySkillCompletion(m_character, skillsCompleted);
             }
-
-            // At least one skill completed ?
             if (skillsCompleted.Any())
+            {
+                // Send a notification, only 
+                EveMonClient.Notifications.NotifySkillCompletion(m_character, skillsCompleted);
                 EveMonClient.OnCharacterQueuedSkillsCompleted(m_character, skillsCompleted);
+            }
         }
 
         #endregion
@@ -189,6 +181,7 @@ namespace EVEMon.Common.Models
         }
 
         #endregion
+
 
         #region Helper Methods
 

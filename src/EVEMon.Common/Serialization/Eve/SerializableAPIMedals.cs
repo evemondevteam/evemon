@@ -62,17 +62,5 @@ namespace EVEMon.Common.Serialization.Eve
                 return m_otherCorpsMedals;
             }
         }
-
-        [XmlIgnore]
-        public IEnumerable<SerializableMedalsListItem> CharacterAllMedals
-        {
-            get
-            {
-                List<SerializableMedalsListItem> medals = new List<SerializableMedalsListItem>();
-                medals.AddRange(CurrentCorpMedals);
-                medals.AddRange(OtherCorpsMedals);
-                return medals;
-            }
-        }
     }
 }

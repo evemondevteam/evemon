@@ -12,26 +12,36 @@ namespace EVEMon.Common.Extensions
 {
     public static class StringExtensions
     {
+        // Regular expressions used to speed up string operations.
+        private static readonly Regex s_email = new Regex(@"^(?("")(""[^""]+?""@)|(([0-9a-z" +
+            @"A-Z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-zA-Z])@))(?(\[)(\[(" +
+            @"\d{1,3}\.){3}\d{1,3}\])|(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,6}))$");
+        private static readonly Regex s_removePath = new Regex(@"[a-zA-Z]+:\\.*\\(?=EVEMon)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex s_unicode = new Regex(@"\\u(?<Value>[a-zA-Z0-9]{4})",
+            RegexOptions.Compiled);
+        private static readonly Regex s_upperText = new Regex("\\B([A-Z])",
+            RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
         /// <summary>
         /// Removes the project local path from the text.
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns></returns>
-        public static string RemoveProjectLocalPath(this string text)
-            => Regex.Replace(text, @"[a-zA-Z]+:\\.*\\(?=EVEMon)",
-                String.Empty, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        public static string RemoveProjectLocalPath(this string text) => s_removePath.Replace(
+            text, string.Empty);
 
         /// <summary>
-        ///Converts a string that has been HTML-encoded for HTTP transmission into a decoded string.        
+        /// Converts a string that has been HTML-encoded for HTTP transmission into a decoded
+        /// string.        
         /// </summary>
         /// <param name="text">The string to decode.</param>
         /// <returns></returns>
         public static string HtmlDecode(this string text)
         {
-            while (text != HttpUtility.HtmlDecode(text))
-            {
-                text = HttpUtility.HtmlDecode(text);
-            }
+            string newText;
+            while (text != (newText = HttpUtility.HtmlDecode(text)))
+                text = newText;
             return text;
         }
 
@@ -43,34 +53,31 @@ namespace EVEMon.Common.Extensions
         /// 	<c>true</c> if the string is of a valid email format; otherwise, <c>false</c>.
         /// </returns>
         // Return true if strIn is in valid e-mail format
-        public static bool IsValidEmail(this string strIn) => Regex.IsMatch(strIn,
-            @"^(?("")(""[^""]+?""@)|(([0-9a-zA-Z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-zA-Z])@))" +
-            @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,6}))$");
+        public static bool IsValidEmail(this string strIn) => s_email.IsMatch(strIn);
 
         /// <summary>
         /// Converts new lines to break lines.
         /// </summary>
         /// <param name="text">The text.</param>
-        /// <returns></returns>
+        /// <returns>The text with all "\r", "\r\n", and "\n" replaced with "&lt;br&gt;"</returns>
         /// <exception cref="System.ArgumentNullException">text</exception>
         public static string NewLinesToBreakLines(this string text)
         {
             text.ThrowIfNull(nameof(text));
 
-            if (String.IsNullOrWhiteSpace(text))
+            if (string.IsNullOrWhiteSpace(text))
                 return text;
 
-            text = text.Replace(@"\r\n", Environment.NewLine)
-                .Replace(@"\r", Environment.NewLine)
-                .Replace(@"\n", Environment.NewLine);
+            text = text.Replace(@"\r\n", Environment.NewLine).Replace(@"\r",
+                Environment.NewLine).Replace(@"\n", Environment.NewLine);
 
             using (StringReader sr = new StringReader(text))
             using (StringWriter sw = new StringWriter(CultureConstants.InvariantCulture))
             {
-                //Loop while next character exists
                 while (sr.Peek() > -1)
                 {
-                    // Read a line from the string and writes it to an internal StringBuilder created automatically
+                    // Read a line from the string and writes it to an internal StringBuilder
+                    // created automatically
                     sw.Write(sr.ReadLine());
 
                     // Adds an HTML break line as long as it's not the last line
@@ -83,6 +90,19 @@ namespace EVEMon.Common.Extensions
         }
 
         /// <summary>
+        /// Converts underscores to dashes, meant for getting around limitations on valid
+        /// identifiers for Enum names.
+        /// </summary>
+        /// <param name="text">The text to convert.</param>
+        /// <returns>The text with all "_" replaced with "-".</returns>
+        /// <exception cref="System.ArgumentNullException">text</exception>
+        public static string UnderscoresToDashes(this string text)
+        {
+            text.ThrowIfNull(nameof(text));
+            return text.Replace('_', '-');
+        }
+
+        /// <summary>
         /// Decodes the unicode characters.
         /// </summary>
         /// <param name="text">The text.</param>
@@ -92,11 +112,9 @@ namespace EVEMon.Common.Extensions
         {
             text.ThrowIfNull(nameof(text));
 
-            return Regex.Replace(text, @"\\u(?<Value>[a-zA-Z0-9]{4})",
-                m => ((char)int.Parse(m.Groups["Value"].Value,
-                    NumberStyles.HexNumber,
-                    CultureConstants.InvariantCulture)).ToString(
-                        CultureConstants.DefaultCulture));
+            return s_unicode.Replace(text, m => ((char)int.Parse(m.Groups["Value"].Value,
+                NumberStyles.HexNumber, CultureConstants.InvariantCulture)).
+                ToString(CultureConstants.DefaultCulture));
         }
 
         /// <summary>
@@ -109,7 +127,8 @@ namespace EVEMon.Common.Extensions
         {
             text.ThrowIfNull(nameof(text));
 
-            return String.Concat(text.Substring(0, 1).ToLowerInvariant(), text.Substring(1, text.Length - 1));
+            return string.Concat(text.Substring(0, 1).ToLowerInvariant(), text.Substring(1,
+                text.Length - 1));
         }
 
         /// <summary>
@@ -117,8 +136,8 @@ namespace EVEMon.Common.Extensions
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns></returns>
-        public static string ConvertUpperCamelCaseToString(this string text)
-            => Regex.Replace(text.Trim(), "\\B([A-Z])", " $1", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        public static string ConvertUpperCamelCaseToString(this string text) => s_upperText.
+            Replace(text.Trim(), " $1");
 
         /// <summary>
         /// Determines whether the source contains the specified text.
@@ -136,6 +155,16 @@ namespace EVEMon.Common.Extensions
         }
 
         /// <summary>
+        /// Returns true if the text is null, empty, or equal to EveMonConstants.UnknownText.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <returns></returns>
+        public static bool IsEmptyOrUnknown(this string text)
+        {
+            return string.IsNullOrEmpty(text) || text == EveMonConstants.UnknownText;
+        }
+
+        /// <summary>
         /// Converts the specified string to titlecase.
         /// </summary>
         /// <param name="text">The text.</param>
@@ -150,13 +179,13 @@ namespace EVEMon.Common.Extensions
 
             foreach (string word in words)
             {
-                if (String.IsNullOrEmpty(word))
+                if (string.IsNullOrEmpty(word))
                 {
                     sb.Append(" ");
                     continue;
                 }
 
-                sb.Append(String.Concat(word.Substring(0, 1).ToUpperInvariant(),
+                sb.Append(string.Concat(word.Substring(0, 1).ToUpperInvariant(),
                     word.Substring(1, word.Length - 1).ToLowerInvariant()));
                 if (word != words.Last())
                     sb.Append(" ");
@@ -204,7 +233,7 @@ namespace EVEMon.Common.Extensions
         /// <returns></returns>
         public static string ToNumericString(this long number, int decimals, CultureInfo culture = null)
         {
-            string decimalsString = String.Format(culture ?? CultureConstants.DefaultCulture, "N{0}", decimals);
+            string decimalsString = string.Format(culture ?? CultureConstants.DefaultCulture, "N{0}", decimals);
             return number.ToString(decimalsString, culture ?? CultureConstants.DefaultCulture);
         }
 
@@ -217,7 +246,7 @@ namespace EVEMon.Common.Extensions
         /// <returns></returns>
         public static string ToNumericString(this double number, int decimals, CultureInfo culture = null)
         {
-            string decimalsString = String.Format(culture ?? CultureConstants.DefaultCulture, "N{0}", decimals);
+            string decimalsString = string.Format(culture ?? CultureConstants.DefaultCulture, "N{0}", decimals);
             return number.ToString(decimalsString, culture ?? CultureConstants.DefaultCulture);
         }
 
@@ -230,12 +259,11 @@ namespace EVEMon.Common.Extensions
         /// <returns></returns>
         public static string WordWrap(this string text, int maxLength, bool removeNewLine = true)
         {
-            if (String.IsNullOrWhiteSpace(text))
-                return String.Empty;
+            if (string.IsNullOrWhiteSpace(text))
+                return string.Empty;
 
-            text = removeNewLine
-                ? text.Replace(Environment.NewLine, " ")
-                : text.Replace(Environment.NewLine, " " + Environment.NewLine + " ");
+            text = removeNewLine ? text.Replace(Environment.NewLine, " ") :
+                text.Replace(Environment.NewLine, " " + Environment.NewLine + " ");
 
             text = text.Replace(".", ". ");
             text = text.Replace(">", "> ");
@@ -244,9 +272,9 @@ namespace EVEMon.Common.Extensions
             text = text.Replace(";", "; ");
 
             string[] words = text.Split(' ');
-            List<string> lines = new List<string>();
+            var lines = new LinkedList<string>();
             int currentLineLength = 0;
-            string currentLine = String.Empty;
+            string currentLine = string.Empty;
             bool inTag = false;
 
             foreach (string currentWord in words.Where(currentWord => currentWord.Length > 0))
@@ -256,7 +284,7 @@ namespace EVEMon.Common.Extensions
 
                 if (inTag)
                 {
-                    //Handle filenames inside html tags
+                    // Handle filenames inside html tags
                     if (currentLine.EndsWith(".", StringComparison.CurrentCulture))
                         currentLine += currentWord;
                     else
@@ -275,7 +303,7 @@ namespace EVEMon.Common.Extensions
                     }
                     else
                     {
-                        lines.Add(currentLine.Trim());
+                        lines.AddLast(currentLine.Trim());
                         currentLine = currentWord + " ";
                         currentLineLength = currentWord.Length;
                     }
@@ -283,13 +311,9 @@ namespace EVEMon.Common.Extensions
             }
 
             if (currentLine.Length != 0)
-                lines.Add(currentLine.Trim());
-
-            string[] textLinesStr = new string[lines.Count];
-            lines.CopyTo(textLinesStr, 0);
-
-            return textLinesStr.Aggregate(String.Empty,
-                (current, line) => $"{current}{line}{Environment.NewLine}");
+                lines.AddLast(currentLine.Trim());
+            
+            return string.Join(Environment.NewLine, lines);
         }
     }
 }

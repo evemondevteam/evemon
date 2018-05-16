@@ -13,6 +13,8 @@ namespace EVEMon.Common.Models
         private readonly EveProperty m_volumeProperty = StaticProperties.GetPropertyByID(DBConstants.VolumePropertyID);
         private long m_locationID;
         private string m_flag;
+        private string m_fullLocation;
+        private SolarSystem m_solarSystem;
 
 
         #region Constructor
@@ -32,7 +34,7 @@ namespace EVEMon.Common.Models
             FlagID = src.EVEFlag;
             m_flag = EveFlag.GetFlagText(src.EVEFlag);
             TypeOfBlueprint = GetTypeOfBlueprint(src.RawQuantity);
-            Container = String.Empty;
+            Container = string.Empty;
             Volume = GetVolume();
             TotalVolume = Quantity * Volume;
         }
@@ -54,19 +56,35 @@ namespace EVEMon.Common.Models
                     return;
 
                 m_locationID = value;
-                Location = GetLocation();
+                // Force update the full location, solar system, station
+                m_solarSystem = null;
+                m_fullLocation = string.Empty;
+                UpdateLocation();
             }
         }
 
         /// <summary>
         /// Gets the full celestrial path of the item's location.
         /// </summary>
-        public string FullLocation { get; private set; }
+        public string FullLocation {
+            get
+            {
+                UpdateLocation();
+                return m_fullLocation;
+            }
+        }
 
         /// <summary>
         /// Gets the solar system.
         /// </summary>
-        public SolarSystem SolarSystem { get; private set; }
+        public SolarSystem SolarSystem
+        {
+            get
+            {
+                UpdateLocation();
+                return m_solarSystem;
+            }
+        }
 
         /// <summary>
         /// Gets the item.
@@ -95,7 +113,7 @@ namespace EVEMon.Common.Models
         {
             get
             {
-                if (m_flag == EveMonConstants.UnknownText)
+                if (m_flag.IsEmptyOrUnknown())
                     m_flag = EveFlag.GetFlagText(FlagID);
 
                 return m_flag;
@@ -120,10 +138,8 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the jumps text.
         /// </summary>
-        public string JumpsText
-            => Jumps == -1
-                ? String.Empty
-                : $"{Jumps} jump{(Jumps != 1 ? "s" : String.Empty)}";
+        public string JumpsText => Jumps == -1 ? string.Empty :
+            $"{Jumps} jump{(Jumps != 1 ? "s" : string.Empty)}";
 
         /// <summary>
         /// Gets the volume.
@@ -138,12 +154,9 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the price.
         /// </summary>
-        public double Price
-            => TypeOfBlueprint != BlueprintType.Copy.ToString()
-                ? Settings.MarketPricer.Pricer != null
-                    ? Settings.MarketPricer.Pricer.GetPriceByTypeID(Item.ID)
-                    : 0
-                : 0;
+        public double Price => (TypeOfBlueprint != BlueprintType.Copy.ToString()) ?
+            (Settings.MarketPricer.Pricer != null ? Settings.MarketPricer.Pricer.
+            GetPriceByTypeID(Item.ID) : 0.0) : 0.0;
 
         /// <summary>
         /// Gets the cost.
@@ -160,55 +173,56 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="rawQuantity">The raw quantity.</param>
         /// <returns></returns>
-        private string GetTypeOfBlueprint(int rawQuantity)
-            => Item != null && StaticBlueprints.GetBlueprintByID(Item.ID) != null &&
-               !Item.MarketGroup.BelongsIn(DBConstants.AncientRelicsMarketGroupID)
-                ? rawQuantity == -2 ? BlueprintType.Copy.ToString() : BlueprintType.Original.ToString()
-                : String.Empty;
+        private string GetTypeOfBlueprint(int rawQuantity) => (Item != null &&
+            StaticBlueprints.GetBlueprintByID(Item.ID) != null && !Item.MarketGroup.BelongsIn(
+            DBConstants.AncientRelicsMarketGroupID)) ? (rawQuantity == -2 ?
+            BlueprintType.Copy.ToString() : BlueprintType.Original.ToString()) : string.Empty;
 
         /// <summary>
         /// Gets the volume.
         /// </summary>
         /// <returns></returns>
-        private double GetVolume() => Item != null && m_volumeProperty != null
-            ? m_volumeProperty.GetNumericValue(Item)
-            : 0d;
+        private double GetVolume() => (Item != null && m_volumeProperty != null) ?
+            m_volumeProperty.GetNumericValue(Item) : 0d;
 
         /// <summary>
-        /// Gets the location.
+        /// Updates the location.
         /// </summary>
         /// <returns></returns>
-        private string GetLocation()
+        public void UpdateLocation()
         {
-            if (m_locationID == 0)
-                return String.Empty;
-
             string location = m_locationID.ToString(CultureConstants.InvariantCulture);
-
-            if (m_locationID > Int32.MaxValue)
-                return location;
-
-            int locationID = Convert.ToInt32(LocationID);
-            Station station = Station.GetByID(locationID);
-            ConquerableStation outpost = station as ConquerableStation;
-
-            SolarSystem = station == null
-                ? StaticGeography.GetSolarSystemByID(locationID)
-                : station.SolarSystem;
-
-            FullLocation = station == null
-                ? SolarSystem == null
-                    ? location
-                    : SolarSystem.FullLocation
-                : outpost != null
-                    ? outpost.FullLocation
-                    : station.FullLocation;
-
-            return station == null
-                ? SolarSystem == null
-                    ? location
-                    : SolarSystem.Name
-                : station.Name;
+            // If location not already determined
+            if (m_locationID != 0L && (m_solarSystem == null || m_fullLocation.
+                IsEmptyOrUnknown()))
+            {
+                Station station = EveIDToStation.GetIDToStation(m_locationID);
+                if (station == null)
+                {
+                    SolarSystem sys;
+                    if (m_locationID < int.MaxValue && (sys = StaticGeography.
+                        GetSolarSystemByID((int)m_locationID)) != null)
+                    {
+                        // In space
+                        m_solarSystem = sys;
+                        m_fullLocation = sys.FullLocation;
+                    }
+                    else
+                    {
+                        // In an inaccessible citadel, or one that is not yet loaded
+                        m_solarSystem = null;
+                        m_fullLocation = EveMonConstants.UnknownText;
+                    }
+                }
+                else
+                {
+                    // Station known
+                    m_solarSystem = station.SolarSystem;
+                    m_fullLocation = station.FullLocation;
+                }
+                Location = (station == null ? (m_solarSystem == null ? location :
+                    m_solarSystem.Name) : station.Name);
+            }
         }
 
         #endregion

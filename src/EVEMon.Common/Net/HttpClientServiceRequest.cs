@@ -13,6 +13,22 @@ namespace EVEMon.Common.Net
 {
     internal class HttpClientServiceRequest
     {
+        internal string AuthToken { get; set; }
+
+        internal bool AcceptEncoded
+        {
+            get
+            {
+                return m_acceptEncoded;
+            }
+            set
+            {
+                m_acceptEncoded = value;
+            }
+        }
+
+        internal DataCompression DataCompression { get; set; }
+
         private static TimeSpan s_timeout;
 
         private HttpPostData m_postData;
@@ -33,6 +49,9 @@ namespace EVEMon.Common.Net
         public HttpClientServiceRequest()
         {
             m_redirectsRemaining = HttpWebClientServiceState.MaxRedirects;
+            DataCompression = DataCompression.None;
+            m_acceptEncoded = false;
+            AuthToken = null;
 
             // Pull the timeout from the settings
             TimeSpan timeoutSetting = TimeSpan.FromSeconds(Settings.Updates.HttpTimeout);
@@ -56,13 +75,9 @@ namespace EVEMon.Common.Net
         /// <param name="url">The URL.</param>
         /// <param name="method">The method.</param>
         /// <param name="postData">The post data.</param>
-        /// <param name="dataCompression">The data compression.</param>
-        /// <param name="acceptEncoded">if set to <c>true</c> accept encoded response.</param>
         /// <param name="accept">The accept.</param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> SendAsync(Uri url, HttpMethod method, HttpPostData postData,
-            DataCompression dataCompression,
-            bool acceptEncoded, string accept)
+        public async Task<HttpResponseMessage> SendAsync(Uri url, HttpMethod method, HttpPostData postData, string accept)
         {
             while (true)
             {
@@ -71,14 +86,13 @@ namespace EVEMon.Common.Net
                 m_accept = accept;
                 m_postData = postData;
                 m_method = postData == null || method == null ? HttpMethod.Get : method;
-                m_dataCompression = postData == null ? DataCompression.None : dataCompression;
-                m_acceptEncoded = acceptEncoded;
+                m_dataCompression = postData == null ? DataCompression.None : DataCompression;
 
                 HttpResponseMessage response = null;
                 try
                 {
                     HttpClientHandler httpClientHandler = GetHttpClientHandler();
-                    HttpRequestMessage request = GetHttpRequest();
+                    HttpRequestMessage request = GetHttpRequest(AuthToken, postData?.ContentType);
                     response = await GetHttpResponseAsync(httpClientHandler, request).ConfigureAwait(false);
 
                     EnsureSuccessStatusCode(response);
@@ -211,8 +225,10 @@ namespace EVEMon.Common.Net
         /// <summary>
         /// Gets the HTTP request.
         /// </summary>
-        /// <returns></returns>
-        private HttpRequestMessage GetHttpRequest()
+        /// <param name="token">If not null, adds the specified ESI token to the headers.</param>
+        /// <param name="dataContentType">The content type of the input data.</param>
+        /// <returns>The HTTP request.</returns>
+        private HttpRequestMessage GetHttpRequest(string token, string dataContentType)
         {
             if (m_method == HttpMethod.Get && m_postData != null)
                 m_url = new Uri($"{m_url.AbsoluteUri}?{m_postData}");
@@ -222,6 +238,18 @@ namespace EVEMon.Common.Net
                 RequestUri = m_url,
                 Method = m_method,
             };
+            if (token != null)
+            {
+                // If the token has a space, use that type of auth header
+                string type = "Bearer";
+                int index = token.IndexOf(' ');
+                if (index > 0)
+                {
+                    type = token.Substring(0, index);
+                    token = token.Substring(index + 1).TrimStart();
+                }
+                request.Headers.Authorization = new AuthenticationHeaderValue(type, token);
+            }
             request.Headers.AcceptCharset.TryParseAdd("ISO-8859-1,utf-8;q=0.8,*;q=0.7");
             request.Headers.AcceptLanguage.TryParseAdd("en-us,en;q=0.5");
             request.Headers.Pragma.TryParseAdd("no-cache");
@@ -238,13 +266,13 @@ namespace EVEMon.Common.Net
                 return request;
 
             request.Content = new ByteArrayContent(m_postData.Content.ToArray());
-            request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
+            if (!string.IsNullOrEmpty(dataContentType))
+                request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(dataContentType);
 
             // If we are going to send a compressed request set the appropriate header
             if (Enum.IsDefined(typeof(DataCompression), m_dataCompression) && m_dataCompression != DataCompression.None)
             {
-                request.Content.Headers.ContentEncoding
-                    .Add(m_dataCompression.ToString().ToLower(CultureConstants.InvariantCulture));
+                request.Content.Headers.ContentEncoding.Add(m_dataCompression.ToString().ToLowerInvariant());
             }
 
             return request;

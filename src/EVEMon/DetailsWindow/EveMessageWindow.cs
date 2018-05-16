@@ -38,7 +38,6 @@ namespace EVEMon.DetailsWindow
             message.ThrowIfNull(nameof(message));
 
             EveMonClient.CharacterEVEMailBodyDownloaded += EveMonClient_CharacterEVEMailBodyDownloaded;
-            EveMonClient.CharacterEVENotificationTextDownloaded += EveMonClient_CharacterEVENotificationTextDownloaded;
             EveMonClient.NotificationSent += EveMonClient_NotificationSent;
             EveMonClient.EveIDToNameUpdated += EveMonClient_EveIDToNameUpdated;
             Disposed += OnDisposed;
@@ -56,13 +55,24 @@ namespace EVEMon.DetailsWindow
         {
             base.OnLoad(e);
 
-            throbber.State = ThrobberState.Rotating;
+            var notification = Tag as EveNotification;
+            if (notification != null)
+            {
+                // Notification text is available now
+                throbber.State = ThrobberState.Stopped;
+                throbber.Visible = false;
+                readingPane.SelectedObject = notification;
+            }
+            else
+            {
+                throbber.State = ThrobberState.Rotating;
 
-            // Configure the timer to close the form on queries timeout
-            m_timer.Start();
-            m_timer.Interval = (int)TimeSpan.FromSeconds(Settings.Updates.HttpTimeout).TotalMilliseconds;
+                // Configure the timer to close the form on queries timeout
+                m_timer.Start();
+                m_timer.Interval = (int)TimeSpan.FromSeconds(Settings.Updates.HttpTimeout).TotalMilliseconds;
 
-            m_timer.Tick += timer_Tick;
+                m_timer.Tick += timer_Tick;
+            }
         }
 
         /// <summary>
@@ -73,7 +83,6 @@ namespace EVEMon.DetailsWindow
         private void OnDisposed(object sender, EventArgs e)
         {
             EveMonClient.CharacterEVEMailBodyDownloaded -= EveMonClient_CharacterEVEMailBodyDownloaded;
-            EveMonClient.CharacterEVENotificationTextDownloaded -= EveMonClient_CharacterEVENotificationTextDownloaded;
             EveMonClient.NotificationSent -= EveMonClient_NotificationSent;
             EveMonClient.EveIDToNameUpdated -= EveMonClient_EveIDToNameUpdated;
             Disposed -= OnDisposed;
@@ -104,19 +113,7 @@ namespace EVEMon.DetailsWindow
             throbber.Visible = false;
             readingPane.SelectedObject = (EveMailMessage)Tag;
         }
-
-        /// <summary>
-        /// Handles the CharacterEVENotificationTextDownloaded event of the EveMonClient control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EVEMon.Common.CustomEventArgs.CharacterChangedEventArgs"/> instance containing the event data.</param>
-        private void EveMonClient_CharacterEVENotificationTextDownloaded(object sender, CharacterChangedEventArgs e)
-        {
-            throbber.State = ThrobberState.Stopped;
-            throbber.Visible = false;
-            readingPane.SelectedObject = (EveNotification)Tag;
-        }
-
+        
         /// <summary>
         /// Handles the NotificationSent event of the EveMonClient control.
         /// </summary>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EVEMon.Common.Collections;
 using EVEMon.Common.Constants;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models.Collections
 {
@@ -53,11 +53,10 @@ namespace EVEMon.Common.Models.Collections
             List<string> ids = eveNotificationsIDs.Split(',').ToList();
             foreach (long id in ids.Select(long.Parse))
             {
-                Items.Add(new EveNotification(m_ccpCharacter,
-                    new SerializableNotificationsListItem
-                    {
-                        NotificationID = id
-                    }));
+                Items.Add(new EveNotification(m_ccpCharacter, new EsiNotificationsListItem
+                {
+                    NotificationID = id
+                }));
             }
 
             // Set the last received ID 
@@ -68,14 +67,14 @@ namespace EVEMon.Common.Models.Collections
         /// Imports an enumeration of API objects.
         /// </summary>
         /// <param name="src">The enumeration of serializable notifications from the API.</param>
-        internal void Import(IEnumerable<SerializableNotificationsListItem> src)
+        internal void Import(IEnumerable<EsiNotificationsListItem> src)
         {
             NewNotifications = 0;
 
             List<EveNotification> newNotifications = new List<EveNotification>();
 
             // Import the notifications from the API
-            foreach (SerializableNotificationsListItem srcEVENotification in src.OrderBy(x => x.NotificationID))
+            foreach (EsiNotificationsListItem srcEVENotification in src.OrderBy(x => x.NotificationID))
             {
                 // If it's a new notification and not an old notification added to the API list, increase the counter
                 EveNotification notification = Items.FirstOrDefault(x => x.NotificationID == srcEVENotification.NotificationID);
@@ -102,11 +101,10 @@ namespace EVEMon.Common.Models.Collections
         /// Exports the eve notifications IDs to a serializable object.
         /// </summary>
         /// <returns></returns>
-        internal String Export()
-            =>
-                String.Join(",",
-                    Items.Select(notification => notification.NotificationID.ToString(CultureConstants.InvariantCulture)));
+        internal string Export() => string.Join(",", Items.Select(notification =>
+            notification.NotificationID.ToString(CultureConstants.InvariantCulture)));
 
         #endregion
+
     }
 }

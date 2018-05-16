@@ -39,10 +39,6 @@ namespace EVEMon.Common.Serialization.Settings
         [XmlArrayItem("contract")]
         public Collection<SerializableContract> Contracts => m_contracts;
 
-        [XmlArray("contractBids")]
-        [XmlArrayItem("bid")]
-        public Collection<SerializableContractBid> ContractBids => m_contractBids;
-
         [XmlArray("industryJobs")]
         [XmlArrayItem("job")]
         public Collection<SerializableJob> IndustryJobs => m_industryJobs;

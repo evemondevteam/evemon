@@ -1,11 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using EVEMon.Common;
+﻿using EVEMon.Common;
 using EVEMon.Common.Constants;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Enumerations.UISettings;
@@ -13,7 +6,13 @@ using EVEMon.Common.ExternalCalendar;
 using EVEMon.Common.Factories;
 using EVEMon.Common.Serialization;
 using EVEMon.Common.Serialization.Settings;
-using EVEMon.Common.SettingsObjects;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace EVEMon.SettingsUI
 {
@@ -22,7 +21,7 @@ namespace EVEMon.SettingsUI
         /// <summary>
         /// Initializes a new instance of the <see cref="ExternalCalendarControl"/> class.
         /// </summary>
-        internal ExternalCalendarControl()
+        public ExternalCalendarControl()
         {
             InitializeComponent();
 

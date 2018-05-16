@@ -31,12 +31,24 @@ namespace EVEMon.Common.Models
         public Int64 SkillPoints => TotalSkillPoints;
 
         /// <summary>
-        /// Computes the SP per hour for the given skill, without factoring out the newbies bonus.
+        /// Computes the SP per hour for the given skill, without factoring in the newbies bonus.
         /// </summary>
         /// <param name="skill">The skill.</param>
-        /// <returns></returns>
+        /// <returns>SP earned per hour.</returns>
         /// <exception cref="System.ArgumentNullException">skill</exception>
         public virtual float GetBaseSPPerHour(StaticSkill skill)
+        {
+            return GetOmegaSPPerHour(skill);
+        }
+
+        /// <summary>
+        /// Computes the SP per hour for the given skill for an Omega clone, without factoring
+        /// in the newbies bonus.
+        /// </summary>
+        /// <param name="skill">The skill.</param>
+        /// <returns>SP earned per hour.</returns>
+        /// <exception cref="System.ArgumentNullException">skill</exception>
+        protected float GetOmegaSPPerHour(StaticSkill skill)
         {
             skill.ThrowIfNull(nameof(skill));
 

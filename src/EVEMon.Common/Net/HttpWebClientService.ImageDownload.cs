@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using EVEMon.Common.Enumerations;
+using EVEMon.Common.Extensions;
 
 namespace EVEMon.Common.Net
 {
@@ -38,17 +39,20 @@ namespace EVEMon.Common.Net
             if (!IsValidURL(url, out urlValidationError))
                 throw new ArgumentException(urlValidationError);
 
-            HttpPostData postData = String.IsNullOrWhiteSpace(postdata) ? null : new HttpPostData(postdata, dataCompression);
+            HttpPostData postData = string.IsNullOrWhiteSpace(postdata) ? null : new HttpPostData(postdata, dataCompression);
             HttpClientServiceRequest request = new HttpClientServiceRequest();
+            request.AuthToken = null;
+            request.AcceptEncoded = acceptEncoded;
+            request.DataCompression = dataCompression;
             try
             {
-                HttpResponseMessage response =
-                    await request.SendAsync(url, method, postData, dataCompression, acceptEncoded, ImageAccept).ConfigureAwait(false);
+                HttpResponseMessage response = await request.SendAsync(url, method, postData,
+                    ImageAccept).ConfigureAwait(false);
 
                 using (response)
                 {
                     Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                    return GetImage(request.BaseUrl, stream);
+                    return GetImage(request.BaseUrl, stream, response);
                 }
             }
             catch (HttpWebClientServiceException ex)
@@ -62,16 +66,20 @@ namespace EVEMon.Common.Net
         /// </summary>
         /// <param name="requestBaseUrl">The request base URL.</param>
         /// <param name="stream">The stream.</param>
+        /// <param name="response">The response from the server.</param>
         /// <returns></returns>
-        private static DownloadResult<Image> GetImage(Uri requestBaseUrl, Stream stream)
+        private static DownloadResult<Image> GetImage(Uri requestBaseUrl, Stream stream,
+            HttpResponseMessage response)
         {
             Image image = null;
             HttpWebClientServiceException error = null;
+            int responseCode = (int)response.StatusCode;
+            DateTime serverTime = response.Headers.ServerTimeUTC();
 
             if (stream == null)
             {
                 error = HttpWebClientServiceException.Exception(requestBaseUrl, new ArgumentNullException(nameof(stream)));
-                return new DownloadResult<Image>(null, error);
+                return new DownloadResult<Image>(null, error, responseCode, serverTime);
             }
 
             try
@@ -83,7 +91,7 @@ namespace EVEMon.Common.Net
                 error = HttpWebClientServiceException.ImageException(requestBaseUrl, ex);
             }
 
-            return new DownloadResult<Image>(image, error);
+            return new DownloadResult<Image>(image, error, responseCode, serverTime);
         }
     }
 }

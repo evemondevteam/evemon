@@ -36,6 +36,7 @@ namespace EVEMon.Common.Controls
         {
             m_initialDelayTimer.Tick -= m_initialDelayTimer_Tick;
             m_initialDelayTimer.Dispose();
+            Disposed -= OnDisposed;
         }
 
         /// <summary>

@@ -1,19 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Media;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using EVEMon.About;
 using EVEMon.ApiCredentialsManagement;
-using EVEMon.ApiTester;
 using EVEMon.CharacterMonitoring;
 using EVEMon.CharactersComparison;
 using EVEMon.Common;
@@ -44,9 +30,21 @@ using EVEMon.SkillPlanner;
 using EVEMon.Updater;
 using EVEMon.Watchdog;
 using EVEMon.WindowsApi;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Media;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
-namespace EVEMon
-{
+namespace EVEMon {
     public sealed partial class MainWindow : EVEMonForm
     {
         #region Fields
@@ -93,7 +91,6 @@ namespace EVEMon
 
             lblStatus.Text = $"EVE Time: {DateTime.UtcNow:HH:mm}";
             lblServerStatus.Text = $"|  {EveMonClient.EVEServer?.StatusText ?? EveMonConstants.UnknownText}";
-            Clients.Winforms.ViewBinders.ServerStatusViewBinder.registerForLegacyUIUpdate(lblServerStatus);
 
             tsDatafilesLoadingProgressBar.Step =
                 (int)Math.Ceiling((double)tsDatafilesLoadingProgressBar.Maximum / EveMonClient.Datafiles.Count);
@@ -674,7 +671,6 @@ namespace EVEMon
         private void EveMonClient_ServerStatusUpdated(object sender, EveServerEventArgs e)
         {
             lblServerStatus.Text = $"|  {e.Server.StatusText}";
-            Common.Entities.ServerStatus.ServerStatus.onEvent();
         }
 
         /// <summary>
@@ -1268,7 +1264,7 @@ namespace EVEMon
         /// <param name="e"></param>
         private void addAPIKeyMenu_Click(object sender, EventArgs e)
         {
-            using (ApiKeyUpdateOrAdditionWindow window = new ApiKeyUpdateOrAdditionWindow())
+            using (EsiKeyUpdateOrAdditionWindow window = new EsiKeyUpdateOrAdditionWindow())
             {
                 window.ShowDialog(this);
             }
@@ -1282,7 +1278,7 @@ namespace EVEMon
         /// <param name="e"></param>
         private void manageAPIKeysMenuItem_Click(object sender, EventArgs e)
         {
-            using (ApiKeysManagementWindow window = new ApiKeysManagementWindow())
+            using (EsiKeysManagementWindow window = new EsiKeysManagementWindow())
             {
                 window.ShowDialog(this);
             }
@@ -1423,10 +1419,8 @@ namespace EVEMon
         private async void resetSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Manually delete the Settings file for any non-recoverable errors
-            DialogResult dr = MessageBox.Show(
-                $"Are you sure you want to reset the settings ?{Environment.NewLine}" +
-                @"Everything will be lost, including the plans.",
-                @"Confirm Settings Reseting",
+            DialogResult dr = MessageBox.Show($"Are you sure you want to reset settings?{Environment.NewLine}" +
+                @"Everything will be lost, including the plans.", @"Confirm Settings Reset",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
 
             if (dr != DialogResult.Yes)
@@ -1513,10 +1507,8 @@ namespace EVEMon
             Character character = GetCurrentCharacter();
 
             // Enable or disable items
-            tsmiNewPlan.Enabled =
-                tsmiImportPlanFromFile.Enabled =
-                        tsmiManagePlans.Enabled =
-                            plansSeparator.Visible = character != null;
+            tsmiNewPlan.Enabled = tsmiImportPlanFromFile.Enabled =
+                tsmiManagePlans.Enabled = plansSeparator.Visible = (character != null);
 
             CCPCharacter ccpCharacter = character as CCPCharacter;
             tsmiCreatePlanFromSkillQueue.Enabled = ccpCharacter != null && ccpCharacter.SkillQueue.Any();
@@ -1674,18 +1666,7 @@ namespace EVEMon
             // Show or bring to front if a window with the same plan as tag already exists
             PlanWindow.ShowPlanWindow(GetCurrentCharacter(), plan);
         }
-
-        /// <summary>
-        /// Tools > API Tester.
-        /// Open the API tester window.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void apiTesterToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            WindowsFactory.ShowUnique<ApiTesterWindow>();
-        }
-
+        
         /// <summary>
         /// Tools > Characters Comparison.
         /// Open the Characters Comparison window.
@@ -2284,7 +2265,7 @@ namespace EVEMon
             m_apiProviderName = EveMonClient.APIProviders.CurrentProvider.Name;
             EveMonClient.EVEServer.ForceUpdate();
 
-            foreach (APIKey apiKey in EveMonClient.APIKeys)
+            foreach (ESIKey apiKey in EveMonClient.ESIKeys)
             {
                 apiKey.ForceUpdate();
             }
@@ -2412,7 +2393,7 @@ namespace EVEMon
         }
 
         /// <summary>
-        /// Handles the Click event of the testTimeoutOneSecToolStripMenuItem control.
+        /// Resets the HTTP timeout to 1 second.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
@@ -2423,7 +2404,7 @@ namespace EVEMon
         }
 
         /// <summary>
-        /// Handles the Click event of the restartToolStripMenuItem control.
+        /// Restarts the application.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
@@ -2433,11 +2414,5 @@ namespace EVEMon
         }
 
         #endregion
-
-        private void debugESIEventToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Common.Entities.ServerStatus.ServerStatus.onEvent();
-            Common.Entities.Dockable.onEvent(1025080492051);
-        }
     }
 }

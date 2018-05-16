@@ -11,6 +11,8 @@ using EVEMon.Common.Models.Extended;
 using EVEMon.Common.QueryMonitor;
 using EVEMon.Common.Serialization.Eve;
 using EVEMon.Common.Serialization.Settings;
+using EVEMon.Common.Service;
+using EVEMon.Common.Extensions;
 
 namespace EVEMon.Common.Models
 {
@@ -33,6 +35,9 @@ namespace EVEMon.Common.Models
 
         private Enum m_errorNotifiedMethod = CCPAPIMethodsEnum.None;
         private bool m_isFwEnlisted;
+
+        private string m_allianceName;
+        private string m_corporationName;
 
         #endregion
 
@@ -57,8 +62,6 @@ namespace EVEMon.Common.Models
             CorporationMarketOrders = new MarketOrderCollection(this);
             CharacterContracts = new ContractCollection(this);
             CorporationContracts = new ContractCollection(this);
-            CharacterContractBids = new ContractBidCollection(this);
-            CorporationContractBids = new ContractBidCollection(this);
             CharacterIndustryJobs = new IndustryJobCollection(this);
             CorporationIndustryJobs = new IndustryJobCollection(this);
             ResearchPoints = new ResearchPointCollection(this);
@@ -79,6 +82,8 @@ namespace EVEMon.Common.Models
             m_endedContractsForCorporation = new List<Contract>();
 
             m_jobsCompletedForCharacter = new List<IndustryJob>();
+            m_allianceName = EveIDToName.GetIDToName(AllianceID);
+            m_corporationName = EveIDToName.GetIDToName(CorporationID);
 
             EveMonClient.CharacterAssetsUpdated += EveMonClient_CharacterAssetsUpdated;
             EveMonClient.CharacterMarketOrdersUpdated += EveMonClient_CharacterMarketOrdersUpdated;
@@ -90,7 +95,8 @@ namespace EVEMon.Common.Models
             EveMonClient.CharacterIndustryJobsCompleted += EveMonClient_CharacterIndustryJobsCompleted;
             EveMonClient.CorporationIndustryJobsCompleted += EveMonClient_CorporationIndustryJobsCompleted;
             EveMonClient.CharacterPlaneteryPinsCompleted += EveMonClient_CharacterPlaneteryPinsCompleted;
-            EveMonClient.APIKeyInfoUpdated += EveMonClient_APIKeyInfoUpdated;
+            EveMonClient.ESIKeyInfoUpdated += EveMonClient_ESIKeyInfoUpdated;
+            EveMonClient.EveIDToNameUpdated += EveMonClient_EveIDToNameUpdated;
             EveMonClient.TimerTick += EveMonClient_TimerTick;
         }
 
@@ -121,15 +127,13 @@ namespace EVEMon.Common.Models
 
 
         #region Public Properties
-
+        
         /// <summary>
         /// Gets an adorned name, with (file), (url) or (cached) labels.
         /// </summary>
-        public override string AdornedName
-            => !Identity.APIKeys.Any() || Identity.APIKeys.All(apiKey => !apiKey.Monitored) ||
-               (m_characterDataQuerying != null && m_characterDataQuerying.CharacterSheetMonitor.HasError)
-                ? $"{Name} (cached)"
-                : Name;
+        public override string AdornedName => !Identity.ESIKeys.Any() || Identity.ESIKeys.All(
+            apiKey => !apiKey.Monitored) || (m_characterDataQuerying != null &&
+            m_characterDataQuerying.CharacterSheetMonitor.HasError) ? $"{Name} (cached)" : Name;
 
         /// <summary>
         /// Gets the skill queue for this character.
@@ -164,9 +168,8 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the collection of market orders.
         /// </summary>
-        public IEnumerable<MarketOrder> MarketOrders
-            => CharacterMarketOrders
-                .Concat(CorporationMarketOrders.Where(order => order.OwnerID == CharacterID));
+        public IEnumerable<MarketOrder> MarketOrders => CharacterMarketOrders.Concat(
+            CorporationMarketOrders.Where(order => order.OwnerID == CharacterID));
 
         /// <summary>
         /// Gets or sets the character market orders.
@@ -184,12 +187,9 @@ namespace EVEMon.Common.Models
         /// Gets the collection of contracts.
         /// </summary>
         /// <remarks>Excludes contracts that appear in both collections</remarks>
-        public IEnumerable<Contract> Contracts
-            => CharacterContracts
-                .Where(charContract => CorporationContracts
-                    .All(corpContract => corpContract.ID != charContract.ID))
-                .Concat(CorporationContracts
-                    .Where(contract => contract.IssuerID == CharacterID));
+        public IEnumerable<Contract> Contracts => CharacterContracts.Where(charContract =>
+            CorporationContracts.All(corpContract => corpContract.ID != charContract.ID)).
+            Concat(CorporationContracts.Where(contract => contract.IssuerID == CharacterID));
 
         /// <summary>
         /// Gets or sets the character contracts.
@@ -202,25 +202,12 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <value>The character contracts.</value>
         public ContractCollection CorporationContracts { get; }
-
-        /// <summary>
-        /// Gets or sets the character contract bids.
-        /// </summary>
-        /// <value>The character contract bids.</value>
-        public ContractBidCollection CharacterContractBids { get; }
-
-        /// <summary>
-        /// Gets or sets the corporation contract bids.
-        /// </summary>
-        /// <value>The character contract bids.</value>
-        public ContractBidCollection CorporationContractBids { get; }
-
+        
         /// <summary>
         /// Gets the collection of industry jobs.
         /// </summary>
-        public IEnumerable<IndustryJob> IndustryJobs
-            => CharacterIndustryJobs
-                .Concat(CorporationIndustryJobs.Where(job => job.InstallerID == CharacterID));
+        public IEnumerable<IndustryJob> IndustryJobs => CharacterIndustryJobs.Concat(
+            CorporationIndustryJobs.Where(job => job.InstallerID == CharacterID));
 
         /// <summary>
         /// Gets or sets the character industry jobs.
@@ -297,7 +284,7 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the skill currently in training, even when it is paused.
         /// </summary>
-        public override QueuedSkill CurrentlyTrainingSkill => SkillQueue.CurrentlyTraining;
+        public override QueuedSkill CurrentlyTrainingSkill => SkillQueue?.CurrentlyTraining;
 
         /// <summary>
         /// Gets a value indicating whether the character has insufficient balance to complete its buy orders.
@@ -309,11 +296,12 @@ namespace EVEMon.Common.Models
         {
             get
             {
-                IEnumerable<BuyOrder> activeBuyOrders = MarketOrders.OfType<BuyOrder>().Where(
-                    order => (order.State == OrderState.Active || order.State == OrderState.Modified) &&
-                             order.IssuedFor == IssuedFor.Character).ToList();
+                var activeBuyOrders = MarketOrders.OfType<BuyOrder>().Where(order =>
+                    (order.State == OrderState.Active || order.State == OrderState.Modified) &&
+                    order.IssuedFor == IssuedFor.Character).ToList();
 
-                decimal additionalToCover = activeBuyOrders.Sum(x => x.TotalPrice) - activeBuyOrders.Sum(order => order.Escrow);
+                decimal additionalToCover = activeBuyOrders.Sum(x => x.TotalPrice) -
+                    activeBuyOrders.Sum(order => order.Escrow);
 
                 return Balance >= additionalToCover;
             }
@@ -359,10 +347,7 @@ namespace EVEMon.Common.Models
 
             // Contracts
             serial.Contracts.AddRange(ContractsExport());
-
-            // ContractBids
-            serial.ContractBids.AddRange(CharacterContractBids.Export());
-
+            
             // Industry jobs
             serial.IndustryJobs.AddRange(IndustryJobsExport());
 
@@ -398,12 +383,12 @@ namespace EVEMon.Common.Models
             // we have to keep the data unprocessed. Once we know, we filter them
 
             IEnumerable<SerializableOrderBase> corporationMarketOrdersExport =
-                EveMonClient.APIKeys.Any(apiKey => !apiKey.IsProcessed) || m_corporationDataQuerying != null
+                EveMonClient.ESIKeys.Any(apiKey => !apiKey.IsProcessed) || m_corporationDataQuerying != null
                     ? CorporationMarketOrders.ExportOnlyIssuedByCharacter()
                     : new List<SerializableOrderBase>();
 
             IEnumerable<SerializableOrderBase> characterMarketOrdersExport =
-                EveMonClient.APIKeys.Any(apiKey => !apiKey.IsProcessed) || m_characterDataQuerying != null
+                EveMonClient.ESIKeys.Any(apiKey => !apiKey.IsProcessed) || m_characterDataQuerying != null
                     ? CharacterMarketOrders.Export()
                     : new List<SerializableOrderBase>();
 
@@ -421,12 +406,12 @@ namespace EVEMon.Common.Models
             // we have to keep the data unprocessed. Once we know, we filter them
 
             IEnumerable<SerializableContract> corporationContractsExport =
-                EveMonClient.APIKeys.Any(apiKey => !apiKey.IsProcessed) || m_corporationDataQuerying != null
+                EveMonClient.ESIKeys.Any(apiKey => !apiKey.IsProcessed) || m_corporationDataQuerying != null
                     ? CorporationContracts.ExportOnlyIssuedByCharacter()
                     : new List<SerializableContract>();
 
             IEnumerable<SerializableContract> characterContractsExport =
-                EveMonClient.APIKeys.Any(apiKey => !apiKey.IsProcessed) || m_characterDataQuerying != null
+                EveMonClient.ESIKeys.Any(apiKey => !apiKey.IsProcessed) || m_characterDataQuerying != null
                     ? CharacterContracts.Export().Where(charContract => corporationContractsExport.All(
                         corpContract => corpContract.ContractID != charContract.ContractID))
                     : new List<SerializableContract>();
@@ -444,12 +429,12 @@ namespace EVEMon.Common.Models
             // we have to keep the data unprocessed. Once we know, we filter them
 
             IEnumerable<SerializableJob> corporationIndustryJobsExport =
-                EveMonClient.APIKeys.Any(apiKey => !apiKey.IsProcessed) || m_corporationDataQuerying != null
+                EveMonClient.ESIKeys.Any(apiKey => !apiKey.IsProcessed) || m_corporationDataQuerying != null
                     ? CorporationIndustryJobs.ExportOnlyIssuedByCharacter()
                     : new List<SerializableJob>();
 
             IEnumerable<SerializableJob> characterIndustryJobsExport =
-                EveMonClient.APIKeys.Any(apiKey => !apiKey.IsProcessed) || m_characterDataQuerying != null
+                EveMonClient.ESIKeys.Any(apiKey => !apiKey.IsProcessed) || m_characterDataQuerying != null
                     ? CharacterIndustryJobs.Export()
                     : new List<SerializableJob>();
 
@@ -472,10 +457,7 @@ namespace EVEMon.Common.Models
 
             // Contracts
             ContractsImport(serial.Contracts);
-
-            // Contract Bids
-            CharacterContractBids.Import(serial.ContractBids);
-
+            
             // Industry jobs
             IndustryJobsImport(serial.IndustryJobs);
 
@@ -543,7 +525,8 @@ namespace EVEMon.Common.Models
             EveMonClient.CharacterIndustryJobsCompleted -= EveMonClient_CharacterIndustryJobsCompleted;
             EveMonClient.CorporationIndustryJobsCompleted -= EveMonClient_CorporationIndustryJobsCompleted;
             EveMonClient.CharacterPlaneteryPinsCompleted -= EveMonClient_CharacterPlaneteryPinsCompleted;
-            EveMonClient.APIKeyInfoUpdated -= EveMonClient_APIKeyInfoUpdated;
+            EveMonClient.ESIKeyInfoUpdated -= EveMonClient_ESIKeyInfoUpdated;
+            EveMonClient.EveIDToNameUpdated -= EveMonClient_EveIDToNameUpdated;
             EveMonClient.TimerTick -= EveMonClient_TimerTick;
 
             // Unsubscribe events
@@ -579,39 +562,18 @@ namespace EVEMon.Common.Models
         /// <returns></returns>
         internal bool ShouldNotifyError(IAPIResult result, Enum method)
         {
-            // Checks if EVE database is out of service
-            if (result.EVEDatabaseError)
-                return false;
-
-            // We don't want to be notified about corp roles error
-            if (result.CCPError != null && result.CCPError.IsCorpRolesError)
-                return false;
-
-            // We don't want to be notified about kill log exhausted error
-            if (result.CCPError != null && result.CCPError.IsKillLogExhaustedError)
-                return false;
-
-            // We don't want to be notified about not enlisted in factional warfare error
-            if (result.CCPError != null && result.CCPError.IsFactionalWarfareEnlistedError)
-                return false;
-
-            // Notify an error occurred
             if (result.HasError)
             {
                 if (!m_errorNotifiedMethod.Equals(CCPAPIMethodsEnum.None))
                     return false;
-
                 m_errorNotifiedMethod = method;
                 return true;
             }
-
             // Removes the previous error notification
             if (!m_errorNotifiedMethod.Equals(method))
                 return false;
-
             EveMonClient.Notifications.InvalidateCharacterAPIError(this);
             m_errorNotifiedMethod = CCPAPIMethodsEnum.None;
-
             return false;
         }
 
@@ -641,7 +603,7 @@ namespace EVEMon.Common.Models
         {
             // Notify ended orders issued by the character
             if (m_endedOrdersForCharacter.Any())
-                EveMonClient.Notifications.NotifyCharacterMarkerOrdersEnded(this, m_endedOrdersForCharacter);
+                EveMonClient.Notifications.NotifyCharacterMarketOrdersEnded(this, m_endedOrdersForCharacter);
 
             // Uncomment upon implementing an exclusive corporation monitor
             // Notify ended orders issued for the corporation
@@ -748,7 +710,7 @@ namespace EVEMon.Common.Models
         {
             foreach (SerializableAPIUpdate lastUpdate in lastUpdates)
             {
-                Enum method = APIMethods.Methods.FirstOrDefault(apiMethod => apiMethod.ToString() == lastUpdate.Method);
+                Enum method = ESIMethods.Methods.FirstOrDefault(apiMethod => apiMethod.ToString() == lastUpdate.Method);
                 if (method == null)
                     continue;
 
@@ -778,29 +740,29 @@ namespace EVEMon.Common.Models
         }
 
         /// <summary>
-        /// Handles the APIKeyInfoUpdated event of the EveMonClient control.
+        /// Handles the ESIKeyInfoUpdated event of the EveMonClient control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void EveMonClient_APIKeyInfoUpdated(object sender, EventArgs e)
+        private void EveMonClient_ESIKeyInfoUpdated(object sender, EventArgs e)
         {
-            if (EveMonClient.APIKeys.Any(apiKey => !apiKey.IsProcessed))
+            if (EveMonClient.ESIKeys.Any(apiKey => !apiKey.IsProcessed))
                 return;
 
-            if (!Identity.APIKeys.Any() || Identity.APIKeys.Any(apiKey => apiKey.Type == CCPAPIKeyType.Unknown))
+            if (!Identity.ESIKeys.Any())
                 return;
 
-            if (m_characterDataQuerying == null && Identity.APIKeys.Any(apiKey => apiKey.IsCharacterOrAccountType))
+            if (m_characterDataQuerying == null && Identity.ESIKeys.Any())
             {
                 m_characterDataQuerying = new CharacterDataQuerying(this);
-                ResetLastAPIUpdates(m_lastAPIUpdates.Where(lastUpdate => Enum.IsDefined(typeof(CCPAPICharacterMethods),
+                ResetLastAPIUpdates(m_lastAPIUpdates.Where(lastUpdate => Enum.IsDefined(typeof(ESIAPICharacterMethods),
                                                                                         lastUpdate.Method)));
             }
 
-            if (m_corporationDataQuerying == null && Identity.APIKeys.Any(apiKey => apiKey.IsCorporationType))
+            if (m_corporationDataQuerying == null && Identity.ESIKeys.Any())
             {
                 m_corporationDataQuerying = new CorporationDataQuerying(this);
-                ResetLastAPIUpdates(m_lastAPIUpdates.Where(lastUpdate => Enum.IsDefined(typeof(CCPAPICorporationMethods),
+                ResetLastAPIUpdates(m_lastAPIUpdates.Where(lastUpdate => Enum.IsDefined(typeof(ESIAPICorporationMethods),
                                                                                         lastUpdate.Method)));
             }
         }
@@ -813,10 +775,8 @@ namespace EVEMon.Common.Models
         /// <remarks>Triggering a settings exportation to update the character owned skillbooks found in Assets</remarks>
         private void EveMonClient_CharacterAssetsUpdated(object sender, CharacterChangedEventArgs e)
         {
-            if (e.Character != this)
-                return;
-
-            Export();
+            if (e.Character == this)
+                Export();
         }
 
         /// <summary>
@@ -826,18 +786,13 @@ namespace EVEMon.Common.Models
         /// <param name="e">The <see cref="EVEMon.Common.CustomEventArgs.MarketOrdersEventArgs"/> instance containing the event data.</param>
         private void EveMonClient_CharacterMarketOrdersUpdated(object sender, MarketOrdersEventArgs e)
         {
-            if (e.Character != this)
-                return;
-
-            m_endedOrdersForCharacter.AddRange(e.EndedOrders);
-
-            if (Identity.CanQueryCorporationInfo && m_corporationDataQuerying != null &&
-                !m_corporationDataQuerying.CorporationMarketOrdersQueried)
+            if (e.Character == this)
             {
-                return;
-            }
+                m_endedOrdersForCharacter.AddRange(e.EndedOrders);
 
-            NotifyForMarketOrdersRelatedEvents();
+                if (m_corporationDataQuerying?.CorporationMarketOrdersQueried ?? true)
+                    NotifyForMarketOrdersRelatedEvents();
+            }
         }
 
         /// <summary>
@@ -847,19 +802,14 @@ namespace EVEMon.Common.Models
         /// <param name="e">The <see cref="EVEMon.Common.CustomEventArgs.MarketOrdersEventArgs"/> instance containing the event data.</param>
         private void EveMonClient_CorporationMarketOrdersUpdated(object sender, MarketOrdersEventArgs e)
         {
-            if (e.Character != this)
-                return;
-
-            m_endedOrdersForCorporation.AddRange(e.EndedOrders);
-            m_endedOrdersForCharacter.AddRange(e.EndedOrders.Where(order => order.OwnerID == CharacterID));
-
-            if (Identity.CanQueryCharacterInfo && m_characterDataQuerying != null &&
-                !m_characterDataQuerying.CharacterMarketOrdersQueried)
+            if (e.Character == this)
             {
-                return;
-            }
+                m_endedOrdersForCorporation.AddRange(e.EndedOrders);
+                m_endedOrdersForCharacter.AddRange(e.EndedOrders.Where(order => order.OwnerID == CharacterID));
 
-            NotifyForMarketOrdersRelatedEvents();
+                if (m_characterDataQuerying?.CharacterMarketOrdersQueried ?? true)
+                    NotifyForMarketOrdersRelatedEvents();
+            }
         }
 
         /// <summary>
@@ -869,20 +819,15 @@ namespace EVEMon.Common.Models
         /// <param name="e">The <see cref="EVEMon.Common.CustomEventArgs.ContractsEventArgs"/> instance containing the event data.</param>
         private void EveMonClient_CharacterContractsUpdated(object sender, ContractsEventArgs e)
         {
-            if (e.Character != this)
-                return;
-
-            m_endedContractsForCharacter.AddRange(e.EndedContracts.Where(
-                charEndedContract => m_endedContractsForCorporation.All(
+            if (e.Character == this)
+            {
+                m_endedContractsForCharacter.AddRange(e.EndedContracts.Where(
+                    charEndedContract => m_endedContractsForCorporation.All(
                     corpEndedContract => corpEndedContract.ID != charEndedContract.ID)));
 
-            if (Identity.CanQueryCorporationInfo && m_corporationDataQuerying != null &&
-                !m_corporationDataQuerying.CorporationContractsQueried)
-            {
-                return;
+                if (m_corporationDataQuerying?.CorporationContractsQueried ?? true)
+                    NotifyForContractsRelatedEvents();
             }
-
-            NotifyForContractsRelatedEvents();
         }
 
         /// <summary>
@@ -892,21 +837,17 @@ namespace EVEMon.Common.Models
         /// <param name="e">The <see cref="EVEMon.Common.CustomEventArgs.ContractsEventArgs"/> instance containing the event data.</param>
         private void EveMonClient_CorporationContractsUpdated(object sender, ContractsEventArgs e)
         {
-            if (e.Character != this)
-                return;
-
-            m_endedContractsForCorporation.AddRange(e.EndedContracts);
-            m_endedContractsForCharacter.AddRange(e.EndedContracts.Where(contract => contract.IssuerID == CharacterID).Where(
-                corpEndedContract => m_endedContractsForCharacter.All(
-                    charEndedContract => charEndedContract.ID != corpEndedContract.ID)));
-
-            if (Identity.CanQueryCharacterInfo && m_characterDataQuerying != null &&
-                !m_characterDataQuerying.CharacterContractsQueried)
+            if (e.Character == this)
             {
-                return;
-            }
+                m_endedContractsForCorporation.AddRange(e.EndedContracts);
+                m_endedContractsForCharacter.AddRange(e.EndedContracts.Where(contract =>
+                    contract.IssuerID == CharacterID).Where(corpEndedContract =>
+                    m_endedContractsForCharacter.All(charEndedContract => charEndedContract.
+                    ID != corpEndedContract.ID)));
 
-            NotifyForContractsRelatedEvents();
+                if (m_characterDataQuerying?.CharacterContractsQueried ?? true)
+                    NotifyForContractsRelatedEvents();
+            }
         }
 
         /// <summary>
@@ -916,16 +857,9 @@ namespace EVEMon.Common.Models
         /// <param name="e">The <see cref="EVEMon.Common.CustomEventArgs.CharacterChangedEventArgs"/> instance containing the event data.</param>
         private void EveMonClient_CharacterIndustryJobsUpdated(object sender, CharacterChangedEventArgs e)
         {
-            if (e.Character != this)
-                return;
-
-            if (Identity.CanQueryCorporationInfo && m_corporationDataQuerying != null &&
-                !m_corporationDataQuerying.CorporationIndustryJobsQueried)
-            {
-                return;
-            }
-
-            NotifyForIndustryJobsRelatedEvents();
+            if (e.Character == this && (m_corporationDataQuerying?.
+                    CorporationIndustryJobsQueried ?? true))
+                NotifyForIndustryJobsRelatedEvents();
         }
 
         /// <summary>
@@ -935,16 +869,9 @@ namespace EVEMon.Common.Models
         /// <param name="e">The <see cref="EVEMon.Common.CustomEventArgs.CharacterChangedEventArgs"/> instance containing the event data.</param>
         private void EveMonClient_CorporationIndustryJobsUpdated(object sender, CharacterChangedEventArgs e)
         {
-            if (e.Character != this)
-                return;
-
-            if (Identity.CanQueryCharacterInfo && m_characterDataQuerying != null &&
-                !m_characterDataQuerying.CharacterIndustryJobsQueried)
-            {
-                return;
-            }
-
-            NotifyForIndustryJobsRelatedEvents();
+            if (e.Character == this && (m_characterDataQuerying?.
+                    CharacterIndustryJobsQueried ?? true))
+                NotifyForIndustryJobsRelatedEvents();
         }
 
         /// <summary>
@@ -954,21 +881,21 @@ namespace EVEMon.Common.Models
         /// <param name="e">The <see cref="EVEMon.Common.CustomEventArgs.IndustryJobsEventArgs"/> instance containing the event data.</param>
         private void EveMonClient_CharacterIndustryJobsCompleted(object sender, IndustryJobsEventArgs e)
         {
-            if (e.Character != this)
-                return;
+            if (e.Character == this)
+            {
+                m_jobsCompletedForCharacter.AddRange(e.CompletedJobs);
 
-            // Add the completed jobs to a list
-            m_jobsCompletedForCharacter.AddRange(e.CompletedJobs);
+                // If character has completed corporation issued jobs, wait until those are gathered too
+                if (!CorporationIndustryJobs.Any(job => job.ActiveJobState ==
+                        ActiveJobState.Ready && !job.NotificationSend))
+                {
+                    EveMonClient.Notifications.NotifyCharacterIndustryJobCompletion(this,
+                        m_jobsCompletedForCharacter);
 
-            // If character has completed corporation issued jobs, we wait till we gather those too
-            if (CorporationIndustryJobs.Any(job => job.ActiveJobState == ActiveJobState.Ready && !job.NotificationSend))
-                return;
-
-            // Notify completed jobs issued by the character
-            EveMonClient.Notifications.NotifyCharacterIndustryJobCompletion(this, m_jobsCompletedForCharacter);
-
-            // Now that we have send the notification clear the list
-            m_jobsCompletedForCharacter.Clear();
+                    // Now that we have send the notification clear the list
+                    m_jobsCompletedForCharacter.Clear();
+                }
+            }
         }
 
         /// <summary>
@@ -978,9 +905,6 @@ namespace EVEMon.Common.Models
         /// <param name="e">The <see cref="EVEMon.Common.CustomEventArgs.IndustryJobsEventArgs"/> instance containing the event data.</param>
         private void EveMonClient_CorporationIndustryJobsCompleted(object sender, IndustryJobsEventArgs e)
         {
-            if (e.Character != this)
-                return;
-
             // Uncomment upon implementing an exclusive corporation monitor
             // Notify completed jobs issued for the corporation
             //EveMonClient.Notifications.NotifyCorporationIndustryJobCompletion(Corporation, e.CompletedJobs);
@@ -993,11 +917,44 @@ namespace EVEMon.Common.Models
         /// <param name="e">The <see cref="PlanetaryPinsEventArgs"/> instance containing the event data.</param>
         private void EveMonClient_CharacterPlaneteryPinsCompleted(object sender, PlanetaryPinsEventArgs e)
         {
-            if (e.Character != this)
-                return;
+            if (e.Character == this)
+                EveMonClient.Notifications.NotifyCharacterPlanetaryPinCompleted(this,
+                    e.CompletedPins);
+        }
 
-            // Notify completed pins the character
-            EveMonClient.Notifications.NotifyCharacterPlanetaryPinCompleted(this, e.CompletedPins);
+        /// <summary>
+        /// Handles the EveIDToNameUpdated event of the EveMonClient control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        private void EveMonClient_EveIDToNameUpdated(object sender, EventArgs e)
+        {
+            bool updated = false;
+            string cname = CorporationName, aname = AllianceName, fname = FactionName;
+
+            // If the corp, alliance, or faction was unknown, update it
+            if (cname.IsEmptyOrUnknown())
+            {
+                CorporationName = EveIDToName.GetIDToName(CorporationID);
+                if (CorporationName != cname)
+                    updated = true;
+            }
+            if (aname.IsEmptyOrUnknown())
+            {
+                AllianceName = EveIDToName.GetIDToName(AllianceID);
+                if (AllianceName != aname)
+                    updated = true;
+            }
+            if (fname.IsEmptyOrUnknown())
+            {
+                FactionName = EveIDToName.GetIDToName(FactionID);
+                if (FactionName != fname)
+                    updated = true;
+            }
+
+            // Only fire update if the new names changed
+            if (updated)
+                EveMonClient.OnCharacterInfoUpdated(this);
         }
 
         #endregion

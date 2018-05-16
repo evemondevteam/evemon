@@ -24,7 +24,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return InWatchlist.ToString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     InWatchlist = Convert.ToBoolean(value, CultureConstants.InvariantCulture);
             }
         }
