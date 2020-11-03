@@ -279,10 +279,10 @@ namespace EVEMon.SkillPlanner
 
             cmiExpandSelected.Text = selectedItem == null && node != null && !node.IsExpanded
                 ? $"Expand \"{node.Text}\""
-                : String.Empty;
+                : string.Empty;
             cmiCollapseSelected.Text = selectedItem == null && node != null && node.IsExpanded
                 ? $"Collapse \"{node.Text}\""
-                : String.Empty;
+                : string.Empty;
             
             // "Expand All" and "Collapse All" menus
             cmiCollapseAll.Enabled = cmiCollapseAll.Visible = m_allExpanded;
@@ -375,10 +375,10 @@ namespace EVEMon.SkillPlanner
             if (m_loadoutInfo == null || !m_loadoutInfo.Loadouts.Any())
                 return;
 
-            LoadoutNameLabel.Text = $"Name: {m_loadoutInfo.Loadouts.First().Name}{(m_loadoutFormat == LoadoutFormat.DNA ? " - DNA loadout" : String.Empty)}"
+            LoadoutNameLabel.Text = $"Name: {m_loadoutInfo.Loadouts.First().Name}{(m_loadoutFormat == LoadoutFormat.DNA ? " - DNA loadout" : string.Empty)}"
                 .WordWrap(55);
 
-            ShipTypeNameLabel.Text = $"Ship: {(m_loadoutInfo.Ship?.Name ?? String.Empty)}"
+            ShipTypeNameLabel.Text = $"Ship: {(m_loadoutInfo.Ship?.Name ?? string.Empty)}"
                 .WordWrap(55);
 
             DescriptionLabel.Text = $"Description: {m_loadoutInfo.Loadouts.First().Description}"
@@ -390,7 +390,7 @@ namespace EVEMon.SkillPlanner
 
             // Order the nodes
             TreeNode[] orderNodes = ResultsTreeView.Nodes.Cast<TreeNode>().OrderBy(
-                node => LoadoutHelper.OrderedSlotNames.IndexOf(String.Intern(node.Text))).ToArray();
+                node => LoadoutHelper.OrderedSlotNames.IndexOf(string.Intern(node.Text))).ToArray();
             ResultsTreeView.Nodes.Clear();
             ResultsTreeView.Nodes.AddRange(orderNodes);
 
@@ -506,7 +506,7 @@ namespace EVEMon.SkillPlanner
             else
             {
                 AddToPlanButton.Enabled = true;
-                PlanedLabel.Text = String.Empty;
+                PlanedLabel.Text = string.Empty;
                 PlanedLabel.Visible = false;
                 TrainTimeLabel.Visible = true;
 

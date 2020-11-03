@@ -7,12 +7,14 @@ using EVEMon.Common.Constants;
 using EVEMon.Common.Data;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Extensions;
+using EVEMon.Common.Helpers;
 using EVEMon.Common.Serialization.Eve;
 using EVEMon.Common.Service;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models
 {
-    public sealed class KillLog
+    public sealed class KillLog : IComparable<KillLog>
     {
         /// <summary>
         /// Occurs when kill log victim ship image updated.
@@ -48,8 +50,10 @@ namespace EVEMon.Common.Models
             m_items.AddRange(src.Items.Select(item => new KillLogItem(item)));
 
             Group = src.Victim.ID == character.CharacterID ? KillGroup.Losses : KillGroup.Kills;
-        }
 
+            UpdateCharacterNames();
+        }
+        
         #endregion
 
 
@@ -130,30 +134,63 @@ namespace EVEMon.Common.Models
         #region Helper Methods
 
         /// <summary>
+        /// Exports this object to a serializable form.
+        /// </summary>
+        /// <returns>The SerializableKillLogListItem representing this object.</returns>
+        public SerializableKillLogListItem Export()
+        {
+            var exported = new SerializableKillLogListItem()
+            {
+                KillTime = KillTime,
+                MoonID = MoonID,
+                SolarSystemID = SolarSystem?.ID ?? 0,
+                Victim = Victim
+            };
+            // Export items
+            foreach (var item in m_items)
+                exported.Items.Add(item.Export());
+            // Export attackers
+            foreach (var attacker in Attackers)
+                exported.Attackers.Add(attacker);
+            return exported;
+        }
+
+        /// <summary>
         /// Gets the victim's ship image.
         /// </summary>
-        /// <param name="useFallbackUri">if set to <c>true</c> [use fallback URI].</param>
-        private async Task GetVictimShipImageAsync(bool useFallbackUri = false)
+        private async Task GetVictimShipImageAsync()
         {
-            while (true)
-            {
-                Image img = await ImageService.GetImageAsync(GetImageUrl(useFallbackUri)).ConfigureAwait(false);
-
-                if (img == null)
-                {
-                    if (useFallbackUri)
-                        return;
-
-                    useFallbackUri = true;
-                    continue;
-                }
-
+            Uri uri = ImageHelper.GetTypeImageURL(Victim.ShipTypeID);
+            Image img = await ImageService.GetImageAsync(uri).ConfigureAwait(false);
+            if (img != null) {
                 m_image = img;
-
                 // Notify the subscriber that we got the image
                 KillLogVictimShipImageUpdated?.ThreadSafeInvoke(this, EventArgs.Empty);
-                break;
             }
+        }
+
+        /// <summary>
+        /// Updates the names and corporations/alliances of victims and attackers.
+        /// </summary>
+        public void UpdateCharacterNames()
+        {
+            if (Victim != null)
+            {
+                // Update victim's info
+                Victim.AllianceName = EveIDToName.GetIDToName(Victim.AllianceID);
+                Victim.CorporationName = EveIDToName.GetIDToName(Victim.CorporationID);
+                Victim.FactionName = EveIDToName.GetIDToName(Victim.FactionID);
+                Victim.Name = EveIDToName.GetIDToName(Victim.ID);
+            }
+            if (Attackers != null)
+                foreach (var attacker in Attackers)
+                {
+                    // Update attacker's info
+                    attacker.AllianceName = EveIDToName.GetIDToName(attacker.AllianceID);
+                    attacker.CorporationName = EveIDToName.GetIDToName(attacker.CorporationID);
+                    attacker.FactionName = EveIDToName.GetIDToName(attacker.FactionID);
+                    attacker.Name = EveIDToName.GetIDToName(attacker.ID);
+                }
         }
 
         /// <summary>
@@ -162,22 +199,18 @@ namespace EVEMon.Common.Models
         /// <returns></returns>
         private static Bitmap GetDefaultImage() => new Bitmap(32, 32);
 
-        /// <summary>
-        /// Gets the image URL.
-        /// </summary>
-        /// <param name="useFallbackUri">if set to <c>true</c> [use fallback URI].</param>
-        /// <returns></returns>
-        private Uri GetImageUrl(bool useFallbackUri)
-        {
-            string path = String.Format(CultureConstants.InvariantCulture,
-                NetworkConstants.CCPIconsFromImageServer, "type", Victim.ShipTypeID,
-                (int)EveImageSize.x32);
+        #endregion
 
-            return useFallbackUri
-                ? ImageService.GetImageServerBaseUri(path)
-                : ImageService.GetImageServerCdnUri(path);
+
+        #region Inherited Methods
+
+        public int CompareTo(KillLog other)
+        {
+            // Default order should be recent first
+            return -KillTime.CompareTo(other.KillTime);
         }
 
         #endregion
+
     }
 }

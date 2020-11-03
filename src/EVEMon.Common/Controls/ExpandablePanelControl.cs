@@ -47,7 +47,7 @@ namespace EVEMon.Common.Controls
         {
             components = new Container();
 
-            HeaderText = String.Empty;
+            HeaderText = string.Empty;
             ExpandDirection = Direction.Up;
 
             // Header
@@ -146,10 +146,11 @@ namespace EVEMon.Common.Controls
         /// </summary>
         private void SetAnimationSpeedContextMenuItemCheckState()
         {
-            foreach (ToolStripMenuItem item in m_tsmiSelectAnim.DropDownItems.Cast<ToolStripMenuItem>().Where(
-                item => Enum.IsDefined(typeof(AnimationSpeed), item.Text)))
+            foreach (ToolStripMenuItem item in m_tsmiSelectAnim.DropDownItems.Cast<ToolStripMenuItem>())
             {
-                item.Checked = (AnimationSpeed)Enum.Parse(typeof(AnimationSpeed), item.Text) == AnimationSpeed;
+                AnimationSpeed speed;
+                if (Enum.TryParse(item.Text, out speed))
+                    item.Checked = (speed == AnimationSpeed);
             }
         }
 

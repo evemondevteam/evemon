@@ -7,7 +7,7 @@ namespace EVEMon.Common.Data
 {
     public class Blueprint : Item
     {
-        private readonly Dictionary<int, double> m_inventBlueprints;
+        private readonly Dictionary<int, decimal> m_inventBlueprints;
         private readonly FastList<StaticRequiredMaterial> m_materialRequirements;
 
 
@@ -29,9 +29,12 @@ namespace EVEMon.Common.Data
             ResearchProductivityTime = src.ResearchProductivityTime;
             ResearchInventionTime = src.InventionTime;
             ReverseEngineeringTime = src.ReverseEngineeringTime;
+            ReactionTime = src.ReactionTime;
+            if (src.ReactionOutcome != null)
+                ReactionOutcome = new Material(src.ReactionOutcome);
 
             // Invented blueprints
-            m_inventBlueprints = new Dictionary<int, double>(src.InventionTypeIDs?.Count ?? 0);
+            m_inventBlueprints = new Dictionary<int, decimal>(src.InventionTypeIDs?.Count ?? 0);
             if (src.InventionTypeIDs != null && src.InventionTypeIDs.Any())
             {
                 m_inventBlueprints.AddRange(src.InventionTypeIDs);
@@ -95,6 +98,16 @@ namespace EVEMon.Common.Data
         public double ReverseEngineeringTime { get; private set; }
 
         /// <summary>
+        /// Gets the reaction time.
+        /// </summary>
+        public double ReactionTime { get; private set; }
+
+        /// <summary>
+        /// Gets the reaction outcome material.
+        /// </summary>
+        public Material ReactionOutcome { get; private set; }
+
+        /// <summary>
         /// Gets the collection of materials this blueprint must satisfy to be build.
         /// </summary>
         public IEnumerable<StaticRequiredMaterial> MaterialRequirements => m_materialRequirements;
@@ -102,9 +115,9 @@ namespace EVEMon.Common.Data
         /// <summary>
         /// Gets the collection of blueprints this object can invent.
         /// </summary>
-        public IEnumerable<KeyValuePair<Blueprint, double>> InventBlueprints
+        public IEnumerable<KeyValuePair<Blueprint, decimal>> InventBlueprints
             => m_inventBlueprints
-                .Select(inventBlueprint => new KeyValuePair<Blueprint, double>(
+                .Select(inventBlueprint => new KeyValuePair<Blueprint, decimal>(
                     StaticBlueprints.GetBlueprintByID(inventBlueprint.Key), inventBlueprint.Value));
 
         #endregion

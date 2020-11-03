@@ -25,7 +25,7 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Planned level.
         /// </summary>
-        public Int64 PlannedLevel { get; set; }
+        public long PlannedLevel { get; set; }
 
         /// <summary>
         /// Has the user been notified that this entry has been marked as invalid.

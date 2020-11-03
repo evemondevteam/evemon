@@ -60,7 +60,7 @@ namespace EVEMon.PieChart
             skillPieChartControl.ColorTypeOfEdge(EdgeColorType.DarkerThanSurface);
             skillPieChartControl.EdgeLineWidth(1F);
 
-            Text = String.Format(CultureInfo.CurrentCulture, "Skillgroup chart for {0}", m_character.Name);
+            Text = string.Format(CultureInfo.CurrentCulture, "Skillgroup chart for {0}", m_character.Name);
 
             // Events
             skillPieChartControl.AngleChange += skillPieChartControl_AngleChange;
@@ -174,7 +174,7 @@ namespace EVEMon.PieChart
             decimal[] targetSkillPoints = new decimal[groupCount];
             foreach (StaticSkill skill in StaticSkills.AllSkills)
             {
-                Int64 sp = scratchpad.GetSkillPoints(skill);
+                long sp = scratchpad.GetSkillPoints(skill);
                 int groupIndex = indices[skill.Group];
 
                 targetSkillPoints[groupIndex] += sp;

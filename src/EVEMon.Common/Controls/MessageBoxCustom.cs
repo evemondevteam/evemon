@@ -89,7 +89,7 @@ namespace EVEMon.Common.Controls
         /// <param name="caption">Text to display in the title bar.</param>
         /// <returns>One of the <see cref="DialogResult"/> values.</returns>
         public static DialogResult Show(IWin32Window owner, string text, string caption)
-            => Show(owner, text, caption, String.Empty);
+            => Show(owner, text, caption, string.Empty);
 
         /// <summary>
         /// Displays a message box.
@@ -97,7 +97,7 @@ namespace EVEMon.Common.Controls
         /// <param name="owner">Owner window.</param>
         /// <param name="text">Text to display.</param>
         /// <returns>One of the <see cref="DialogResult"/> values.</returns>
-        public static DialogResult Show(IWin32Window owner, string text) => Show(owner, text, String.Empty, String.Empty);
+        public static DialogResult Show(IWin32Window owner, string text) => Show(owner, text, string.Empty, string.Empty);
 
         #endregion
 

@@ -75,7 +75,7 @@ namespace EVEMon.Common.CloudStorageServices.GoogleDrive
             {
                 try
                 {
-                    return !String.IsNullOrWhiteSpace(GetCredentialsPath(checkAuth: true));
+                    return !string.IsNullOrWhiteSpace(GetCredentialsPath(checkAuth: true));
                 }
                 catch (APIException)
                 {
@@ -136,7 +136,7 @@ namespace EVEMon.Common.CloudStorageServices.GoogleDrive
             try
             {
                 await GetCredentialsAsync().ConfigureAwait(false);
-                await CheckAuthCodeAsync(String.Empty).ConfigureAwait(false);
+                await CheckAuthCodeAsync(string.Empty).ConfigureAwait(false);
             }
             catch (GoogleApiException exc)
             {
@@ -264,7 +264,7 @@ namespace EVEMon.Common.CloudStorageServices.GoogleDrive
                 {
                     ResumableUpload<GoogleFile, GoogleFile> request;
                     GoogleFile fileMetadata = new GoogleFile { Name = SettingsFileNameWithoutExtension };
-                    if (String.IsNullOrWhiteSpace(m_fileId))
+                    if (string.IsNullOrWhiteSpace(m_fileId))
                     {
                         //Upload
                         fileMetadata.Parents = new List<string> { Spaces };
@@ -320,7 +320,7 @@ namespace EVEMon.Common.CloudStorageServices.GoogleDrive
             {
                 m_fileId = m_fileId ?? await GetFileIdAsync().ConfigureAwait(false);
 
-                if (String.IsNullOrWhiteSpace(m_fileId))
+                if (string.IsNullOrWhiteSpace(m_fileId))
                     throw new FileNotFoundException();
 
                 using (DriveService client = GetClient())
@@ -392,7 +392,7 @@ namespace EVEMon.Common.CloudStorageServices.GoogleDrive
             string certPath = Directory.GetParent(configuration.FilePath).Parent?.Parent?.FullName;
 
             bool fileExists = false;
-            if (!String.IsNullOrWhiteSpace(certPath))
+            if (!string.IsNullOrWhiteSpace(certPath))
             {
                 certPath = Path.Combine(certPath, CredentialsDirectory);
                 string filePath = Path.Combine(certPath, $"{typeof(TokenResponse).FullName}-{UserId}");

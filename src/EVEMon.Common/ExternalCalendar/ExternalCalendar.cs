@@ -88,7 +88,7 @@ namespace EVEMon.Common.ExternalCalendar
             {
                 StartDate = DateTime.Now.AddDays(-40),
                 EndDate = DateTime.Now.AddDays(100),
-                Subject = String.Format(
+                Subject = string.Format(
                     CultureConstants.DefaultCulture,
                     "{0} - {1} {2}",
                     queuedSkill.Owner.Name,
@@ -135,7 +135,7 @@ namespace EVEMon.Common.ExternalCalendar
                 {
                     StartDate = DateTime.Now.AddDays(-40),
                     EndDate = DateTime.Now.AddDays(100),
-                    Subject = String.Format(
+                    Subject = string.Format(
                         CultureConstants.DefaultCulture,
                         "{0} - {1} {2}",
                         queuedSkill.Owner.Name,

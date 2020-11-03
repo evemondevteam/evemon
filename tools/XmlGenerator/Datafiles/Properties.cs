@@ -253,10 +253,10 @@ namespace EVEMon.XmlGenerator.Datafiles
                     new
                     {
                         attribute,
-                        name = String.IsNullOrEmpty(attribute.DisplayName) ? attribute.Name : attribute.DisplayName
+                        name = string.IsNullOrEmpty(attribute.DisplayName) ? attribute.Name : attribute.DisplayName
                     })
                 .Where(
-                    att =>
+                    att => !string.IsNullOrEmpty(att.name) &&
                         Regex.IsMatch(att.name.Substring(0, 1), "[a-z]", RegexOptions.Compiled | RegexOptions.CultureInvariant) &&
                         att.attribute.CategoryID != DBConstants.MiscellaneousAttributeCategoryID &&
                         att.attribute.CategoryID != DBConstants.NullAtributeCategoryID).Select(att => att.attribute))
@@ -299,21 +299,21 @@ namespace EVEMon.XmlGenerator.Datafiles
                     prop.DefaultValue = srcProp.DefaultValue;
                     prop.Description = srcProp.Description;
                     prop.HigherIsBetter = srcProp.HigherIsBetter;
-                    prop.Name = !String.IsNullOrEmpty(srcProp.DisplayName)
+                    prop.Name = !string.IsNullOrEmpty(srcProp.DisplayName)
                         ? srcProp.DisplayName
-                        : !String.IsNullOrEmpty(srcProp.Name)
+                        : !string.IsNullOrEmpty(srcProp.Name)
                             ? srcProp.Name
-                            : String.Empty;
+                            : string.Empty;
 
                     // Unit
                     prop.UnitID = srcProp.UnitID.GetValueOrDefault();
                     prop.Unit = srcProp.UnitID.HasValue
                         ? Database.EveUnitsTable.Concat(s_injectedUnits).First(
                             x => x.ID == srcProp.UnitID.Value).DisplayName
-                        : String.Empty;
+                        : string.Empty;
 
                     // Icon
-                    prop.Icon = srcProp.IconID.HasValue ? Database.EveIconsTable[srcProp.IconID.Value].Icon : String.Empty;
+                    prop.Icon = srcProp.IconID.HasValue ? Database.EveIconsTable[srcProp.IconID.Value].Icon : string.Empty;
 
                     // Reordering some properties
                     ReorderProperties(gProperties, prop, srcProp, properties);

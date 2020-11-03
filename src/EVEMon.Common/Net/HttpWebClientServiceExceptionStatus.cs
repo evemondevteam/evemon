@@ -16,6 +16,7 @@ namespace EVEMon.Common.Net
         Timeout,
         XmlException,
         ImageException,
-        FileError
+        FileError,
+        Forbidden
     }
 }

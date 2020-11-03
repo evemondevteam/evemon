@@ -25,7 +25,7 @@ namespace EVEMon.SettingsUI
         {
             InitializeComponent();
             apiResponseLabel.Font = FontFactory.GetFont("Tahoma", FontStyle.Bold);
-            apiResponseLabel.Text = String.Empty;
+            apiResponseLabel.Text = string.Empty;
             throbber.Visible = false;
             throbber.BringToFront();
         }

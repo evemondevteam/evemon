@@ -248,7 +248,7 @@ namespace EVEMon.Common.Helpers
             // Open the dialog box
             using (SaveFileDialog characterSaveDialog = new SaveFileDialog())
             {
-                characterSaveDialog.Title = $"Save {(isAfterPlanExport ? "After Plan " : String.Empty)}Character Info";
+                characterSaveDialog.Title = $"Save {(isAfterPlanExport ? "After Plan " : string.Empty)}Character Info";
                 characterSaveDialog.Filter =
                     @"Text Format|*.txt|CHR Format (EFT)|*.chr|HTML Format|*.html|XML Format (EVEMon)|*.xml";
 
@@ -256,7 +256,7 @@ namespace EVEMon.Common.Helpers
                     characterSaveDialog.Filter += @"|XML Format (CCP API)|*.xml|PNG Image|*.png";
 
                 characterSaveDialog.FileName =
-                    $"{character.Name}{(isAfterPlanExport ? $" (after plan {plan.Name})" : String.Empty)}";
+                    $"{character.Name}{(isAfterPlanExport ? $" (after plan {plan.Name})" : string.Empty)}";
 
                 characterSaveDialog.FilterIndex = isAfterPlanExport
                                                       ? (int)CharacterSaveFormat.EVEMonXML

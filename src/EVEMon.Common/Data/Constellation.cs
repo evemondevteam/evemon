@@ -81,7 +81,7 @@ namespace EVEMon.Common.Data
 
             return Region != other.Region
                 ? Region.CompareTo(other.Region)
-                : String.Compare(Name, other.Name, StringComparison.CurrentCulture);
+                : string.Compare(Name, other.Name, StringComparison.CurrentCulture);
         }
 
         #endregion

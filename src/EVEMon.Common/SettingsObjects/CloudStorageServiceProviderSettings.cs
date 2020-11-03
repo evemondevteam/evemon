@@ -18,7 +18,7 @@ namespace EVEMon.Common.SettingsObjects
                 s_cloudStorageServiceProviders[provider.Name] = provider;
             }
 
-            ProviderName = s_cloudStorageServiceProviders.FirstOrDefault().Key ?? String.Empty;
+            ProviderName = s_cloudStorageServiceProviders.FirstOrDefault().Key ?? string.Empty;
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace EVEMon.Common.SettingsObjects
                 if (s_cloudStorageServiceProviders.ContainsKey(ProviderName))
                     return s_cloudStorageServiceProviders[ProviderName];
 
-                ProviderName = s_cloudStorageServiceProviders.FirstOrDefault().Key ?? String.Empty;
+                ProviderName = s_cloudStorageServiceProviders.FirstOrDefault().Key ?? string.Empty;
 
                 return s_cloudStorageServiceProviders.FirstOrDefault().Value;
             }

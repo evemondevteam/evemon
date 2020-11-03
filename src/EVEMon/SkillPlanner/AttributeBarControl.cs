@@ -23,10 +23,10 @@ namespace EVEMon.SkillPlanner
 
         private int m_points = 5;
         private int m_baseValue;
-        private Int64 m_value;
+        private long m_value;
         private int m_tileWidth = 6;
         private int m_tileHeight = 20;
-        private Int64 m_highlightedItem = -1;
+        private long m_highlightedItem = -1;
 
         private readonly Timer m_timer = new Timer();
 
@@ -48,13 +48,13 @@ namespace EVEMon.SkillPlanner
         /// Gets or sets the delta value.
         /// </summary>
         /// <value>The delta value.</value>
-        internal Int64 DeltaValue { get; set; }
+        internal long DeltaValue { get; set; }
 
         /// <summary>
         /// Gets or sets the highlighed value.
         /// </summary>
         /// <value>The highlighed value.</value>
-        internal Int64 HighlightedValue { private get; set; }
+        internal long HighlightedValue { private get; set; }
 
         /// <summary>
         /// Gets or sets the color of the border between cells.
@@ -173,7 +173,7 @@ namespace EVEMon.SkillPlanner
         /// </summary>
         [Category("Behavior")]
         [DefaultValue(0)]
-        public Int64 Value
+        public long Value
         {
             get { return m_value; }
             set
@@ -244,9 +244,9 @@ namespace EVEMon.SkillPlanner
         /// Changes highlighted tile and causes invalidation of it's region.
         /// </summary>
         /// <param name="newHighlight">Index of the new highlighted tile. Can be -1 if no one is highlighted.</param>
-        private void ChangeHighlight(Int64 newHighlight)
+        private void ChangeHighlight(long newHighlight)
         {
-            Int64 previousHighlighted = m_highlightedItem;
+            long previousHighlighted = m_highlightedItem;
             m_highlightedItem = newHighlight;
 
             if (previousHighlighted < 0 && m_highlightedItem < 0)

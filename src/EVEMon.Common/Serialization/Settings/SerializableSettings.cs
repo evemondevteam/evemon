@@ -12,20 +12,21 @@ namespace EVEMon.Common.Serialization.Settings
     public sealed class SerializableSettings
     {
         private readonly Collection<SerializablePlan> m_plans;
-        private readonly Collection<SerializableAPIKey> m_apiKeys;
+        private readonly Collection<SerializableESIKey> m_esiKeys;
         private readonly Collection<SerializableSettingsCharacter> m_characters;
         private readonly Collection<MonitoredCharacterSettings> m_monitoredCharacters;
 
         public SerializableSettings()
         {
             m_plans = new Collection<SerializablePlan>();
-            m_apiKeys = new Collection<SerializableAPIKey>();
+            m_esiKeys = new Collection<SerializableESIKey>();
             m_characters = new Collection<SerializableSettingsCharacter>();
             m_monitoredCharacters = new Collection<MonitoredCharacterSettings>();
+            SSOClientID = string.Empty;
+            SSOClientSecret = string.Empty;
             CloudStorageServiceProvider = new CloudStorageServiceProviderSettings();
             PortableEveInstallations = new PortableEveInstallationsSettings();
             Notifications = new NotificationSettings();
-            APIProviders = new APIProvidersSettings();
             LoadoutsProvider = new LoadoutsProviderSettings();
             MarketPricer = new MarketPricerSettings();
             Exportation = new ExportationSettings();
@@ -37,15 +38,20 @@ namespace EVEMon.Common.Serialization.Settings
             UI = new UISettings();
         }
 
+        [XmlAttribute("clientID")]
+        public string SSOClientID { get; set; }
+        [XmlAttribute("clientSecret")]
+        public string SSOClientSecret { get; set; }
+
         [XmlAttribute("revision")]
         public int Revision { get; set; }
 
         [XmlElement("compatibility")]
         public CompatibilityMode Compatibility { get; set; }
 
-        [XmlArray("apiKeys")]
-        [XmlArrayItem("apikey")]
-        public Collection<SerializableAPIKey> APIKeys => m_apiKeys;
+        [XmlArray("esiKeys")]
+        [XmlArrayItem("esikey")]
+        public Collection<SerializableESIKey> ESIKeys => m_esiKeys;
 
         [XmlArray("characters")]
         [XmlArrayItem("ccp", typeof(SerializableCCPCharacter))]
@@ -59,10 +65,7 @@ namespace EVEMon.Common.Serialization.Settings
         [XmlArray("monitoredCharacters")]
         [XmlArrayItem("character")]
         public Collection<MonitoredCharacterSettings> MonitoredCharacters => m_monitoredCharacters;
-
-        [XmlElement("apiProviders")]
-        public APIProvidersSettings APIProviders { get; set; }
-
+        
         [XmlElement("updates")]
         public UpdateSettings Updates { get; set; }
 

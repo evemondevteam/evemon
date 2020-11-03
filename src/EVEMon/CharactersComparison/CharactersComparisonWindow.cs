@@ -94,7 +94,7 @@ namespace EVEMon.CharactersComparison
             if (!m_selectedCharacters.Any())
             {
                 // Hide skills groupbox
-                gbAttributes.Visible = false;
+                gbSkills.Visible = false;
 
                 // View help message
                 lblHelp.Visible = true;
@@ -105,7 +105,7 @@ namespace EVEMon.CharactersComparison
             UpdateCharacterInfo();
 
             lblHelp.Visible = false;
-            gbAttributes.Visible = true;
+            gbSkills.Visible = true;
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace EVEMon.CharactersComparison
             {
                 // Refresh columns
                 lvCharacterInfo.Columns.Clear();
-                lvCharacterInfo.Columns.Add("Attribute");
+                lvCharacterInfo.Columns.Add("Skill");
 
                 foreach (Character character in m_selectedCharacters)
                 {
@@ -151,20 +151,20 @@ namespace EVEMon.CharactersComparison
         private List<ListViewItem> AddGroups()
         {
             lvCharacterInfo.Groups.Clear();
-            List<ListViewItem> items = new List<ListViewItem>();
+            var items = new List<ListViewItem>();
             foreach (StaticSkillGroup skillGroup in StaticSkills.AllGroups)
             {
-                ListViewGroup group = new ListViewGroup(skillGroup.Name);
+                var group = new ListViewGroup(skillGroup.Name);
                 foreach (StaticSkill skill in skillGroup.Where(skill => skill.IsPublic))
                 {
                     // Create the list view item
-                    ListViewItem item = new ListViewItem(group) { ToolTipText = skill.Description, Text = skill.Name };
+                    var item = new ListViewItem(group) { ToolTipText = skill.Description, Text = skill.Name };
                     items.Add(item);
 
                     string[] labels = m_selectedCharacters
                         .Select(character => skill.ToCharacter(character).Level.ToString(CultureConstants.DefaultCulture))
                         .ToArray();
-                    Int64[] values = m_selectedCharacters.Select(character => skill.ToCharacter(character).Level).ToArray();
+                    long[] values = m_selectedCharacters.Select(character => skill.ToCharacter(character).Level).ToArray();
 
                     // Retrieve the data to put in the columns
                     AddValueForSelectedCharacters(item, labels, values);
@@ -185,8 +185,8 @@ namespace EVEMon.CharactersComparison
         /// <param name="items">The items.</param>
         private void AddAdditionalInfo(ICollection<ListViewItem> items)
         {
-            ListViewGroup group = new ListViewGroup("Miscellaneous");
-            List<string[]> additionalInfo = new List<string[]>
+            var group = new ListViewGroup("Miscellaneous");
+            var additionalInfo = new List<string[]>
             {
                 new[] { "Total SP", "The total skillpoints of the character." },
                 new[] { "Known Skills", "The number of known skills of the character." },
@@ -199,7 +199,7 @@ namespace EVEMon.CharactersComparison
 
             foreach (string[] text in additionalInfo)
             {
-                ListViewItem item = new ListViewItem(group) { Text = text.First(), ToolTipText = text.Last() };
+                var item = new ListViewItem(group) { Text = text.First(), ToolTipText = text.Last() };
 
                 string[] labels = m_selectedCharacters.Select(
                     character => GetValue(character, text.First()).ToNumericString(0)).ToArray();
@@ -250,7 +250,7 @@ namespace EVEMon.CharactersComparison
             for (int index = 0; index < m_selectedCharacters.Count(); index++)
             {
                 // Create the subitem and choose its forecolor
-                ListViewItem.ListViewSubItem subItem = new ListViewItem.ListViewSubItem(item, labels[index]);
+                var subItem = new ListViewItem.ListViewSubItem(item, labels[index]);
                 if (!allEqual)
                 {
                     if (values[index].Equals(max))
@@ -531,7 +531,7 @@ namespace EVEMon.CharactersComparison
         /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
         private void characterInfoContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            List<ListViewItem> items = lvCharacterInfo.SelectedItems.Cast<ListViewItem>().ToList();
+            var items = lvCharacterInfo.SelectedItems.Cast<ListViewItem>().ToList();
             bool showExportSelectedSkillsAsPlan = items.Any() && items.All(item => item.Group?.Header != "Miscellaneous");
 
             exportSelectedSkillsAsPlanFromToolStripMenuItem.Visible = showExportSelectedSkillsAsPlan;

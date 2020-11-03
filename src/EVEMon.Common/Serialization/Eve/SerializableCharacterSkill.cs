@@ -15,10 +15,13 @@ namespace EVEMon.Common.Serialization.Eve
         public string Name { get; set; }
 
         [XmlAttribute("level")]
-        public Int64 Level { get; set; }
+        public long Level { get; set; }
+
+        [XmlAttribute("activelevel")]
+        public long ActiveLevel { get; set; }
 
         [XmlAttribute("skillpoints")]
-        public Int64 Skillpoints { get; set; }
+        public long Skillpoints { get; set; }
 
         [XmlAttribute("ownsBook")]
         public bool OwnsBook { get; set; }

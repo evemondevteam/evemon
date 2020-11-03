@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using EVEMon.Common;
+using EVEMon.Common.Constants;
 using EVEMon.Common.Controls;
 using EVEMon.Common.CustomEventArgs;
+using EVEMon.Common.Data;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Factories;
@@ -217,7 +219,7 @@ namespace EVEMon.SkillPlanner
             rightPanel.Visible = true;
 
             // Updates the main labels
-            lblSkillClass.Text = m_selectedSkill.Group.Name;
+            lblSkillClass.Text = m_selectedSkill.Group?.Name ?? EveMonConstants.UnknownText;
             lblSkillName.Text = $"{m_selectedSkill.Name} ({m_selectedSkill.Rank})";
             lblSkillCost.Text = $"{m_selectedSkill.FormattedCost} ISK";
             descriptionTextBox.Text = m_selectedSkill.Description;
@@ -302,6 +304,10 @@ namespace EVEMon.SkillPlanner
                     sb.Append($" ({percentDone:P0} complete)");
                 }
             }
+            if(level > m_selectedSkill.StaticData.AlphaLimit)
+            {
+                sb.Append(" (Omega only)");
+            }
 
             label.Text = sb.ToString();
         }
@@ -323,8 +329,8 @@ namespace EVEMon.SkillPlanner
         {
             // Set button check state according to skills 'owned' property;
             // this will also trigger a check through the character's assets
-            ownsBookToolStripButton.Checked = m_selectedSkill.IsOwned |
-                                              (m_selectedSkill.HasBookInAssets && !m_selectedSkill.IsKnown);
+            ownsBookToolStripButton.Checked = m_selectedSkill.IsOwned | (m_selectedSkill.
+                HasBookInAssets && !m_selectedSkill.IsKnown);
 
             skillSelectControl.UpdateContent();
 
@@ -333,10 +339,9 @@ namespace EVEMon.SkillPlanner
             planWindow?.UpdatePlanEditorSkillSelection();
 
             // Update the Owned Skill books window if open
-            OwnedSkillBooksWindow ownedSkillBooksWindow =
-                WindowsFactory.GetByTag<OwnedSkillBooksWindow, Character>((Character)m_plan.Character);
-
-            ownedSkillBooksWindow?.UpdateList();
+            if (m_plan != null)
+                WindowsFactory.GetByTag<OwnedSkillBooksWindow, Character>(m_plan.Character as
+                    Character)?.UpdateList();
         }
 
         #endregion
@@ -438,8 +443,8 @@ namespace EVEMon.SkillPlanner
         private void showSkillExplorerMenu_Click(object sender, EventArgs e)
         {
             // Open the skill explorer
-            SkillExplorerWindow.ShowSkillExplorerWindow(skillSelectControl.Character, m_plan)
-                .ShowSkillInExplorer(m_selectedSkill);
+            SkillExplorerWindow.ShowSkillExplorerWindow(skillSelectControl.Character, m_plan).
+                ShowSkillInExplorer(m_selectedSkill);
         }
 
         #endregion

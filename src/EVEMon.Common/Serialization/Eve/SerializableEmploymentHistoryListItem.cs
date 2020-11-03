@@ -21,7 +21,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return StartDate.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     StartDate = value.TimeStringToDateTime();
             }
         }

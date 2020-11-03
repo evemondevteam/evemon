@@ -114,6 +114,15 @@ namespace EVEMon.SkillPlanner
         #region Methods
 
         /// <summary>
+        /// Replaces the user set search string with another.
+        /// </summary>
+        /// <param name="text">The text to replace it with.</param>
+        internal void SetSearchText(string text)
+        {
+            itemSelectControl.SearchText = text;
+        }
+
+        /// <summary>
         /// Updates the controls when the selection is changed.
         /// </summary>
         protected override void OnSelectionChanged()

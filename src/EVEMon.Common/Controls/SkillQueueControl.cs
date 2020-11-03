@@ -444,7 +444,7 @@ namespace EVEMon.Common.Controls
                 ? skill.EndTime.ToLocalTime().ToAbsoluteDateTimeDescription(DateTimeKind.Local)
                 : "Paused";
             string startText = skill.StartTime < DateTime.UtcNow ? "ed" : "s";
-            string text = String.Format(CultureConstants.DefaultCulture, Format, skillName, skillLevel, startText, skillStart,
+            string text = string.Format(CultureConstants.DefaultCulture, Format, skillName, skillLevel, startText, skillStart,
                 skillEnd);
             Size textSize = TextRenderer.MeasureText(text, Font);
             Size toolTipSize = new Size(textSize.Width + 13, textSize.Height + 11);
@@ -461,7 +461,7 @@ namespace EVEMon.Common.Controls
         private void DisplayFreeRoomToolTip(RectangleF emptyRect)
         {
             int remaining = EveConstants.MaxSkillsInQueue - m_skillQueue.Count;
-            string text = $"Room for {remaining} more skill{(remaining == 1 ? String.Empty : "s")}";
+            string text = $"Room for {remaining} more skill{(remaining == 1 ? string.Empty : "s")}";
             Size textSize = TextRenderer.MeasureText(text, Font);
             Size toolTipSize = new Size(textSize.Width + 13, textSize.Height + 11);
             Point tipPoint = new Point((int)(emptyRect.Right + emptyRect.Left) / 2 - toolTipSize.Width / 2, -toolTipSize.Height);

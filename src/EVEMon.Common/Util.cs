@@ -1,10 +1,20 @@
+using EVEMon.Common.Data;
+using EVEMon.Common.Exceptions;
+using EVEMon.Common.Extensions;
+using EVEMon.Common.Helpers;
+using EVEMon.Common.Net;
+using EVEMon.Common.Serialization;
+using EVEMon.Common.Serialization.Esi;
+using EVEMon.Common.Serialization.Eve;
+using ICSharpCode.SharpZipLib.GZip;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -12,18 +22,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-using EVEMon.Common.Data;
-using EVEMon.Common.Extensions;
-using EVEMon.Common.Helpers;
-using EVEMon.Common.Net;
-using EVEMon.Common.Serialization.Eve;
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using YamlDotNet.RepresentationModel;
 
 namespace EVEMon.Common
@@ -220,15 +222,13 @@ namespace EVEMon.Common
             }
             catch (InvalidOperationException ex)
             {
-                String message =
-                    $"An error occurred decompressing {filename}, the error message was '{ex.Message}' from '{ex.Source}'. " +
+                string message = $"An error occurred decompressing {filename}, the error message was '{ex.Message}' from '{ex.Source}'. " +
                     $"Try deleting all of the {Datafile.DatafilesExtension} files in %APPDATA%\\EVEMon.";
                 throw new InvalidOperationException(message, ex);
             }
             catch (XmlException ex)
             {
-                String message =
-                    $"An error occurred reading the XML from {filename}, the error message was '{ex.Message}' from '{ex.Source}'. " +
+                string message = $"An error occurred reading the XML from {filename}, the error message was '{ex.Message}' from '{ex.Source}'. " +
                     $"Try deleting all of the {Datafile.DatafilesExtension} files in %APPDATA%\\EVEMon.";
                 throw new XmlException(message, ex);
             }
@@ -283,24 +283,19 @@ namespace EVEMon.Common
         /// </summary>
         /// <typeparam name="T">The inner type to deserialize</typeparam>
         /// <param name="url">The url to query</param>
-        /// <param name="acceptEncoded">if set to <c>true</c> accept encoded response.</param>
-        /// <param name="postData">The post data.</param>
+        /// <param name="param">The request parameters. If null, defaults will be used.</param>
         /// <param name="transform">The XSL transform to apply, may be null.</param>
-        internal static async Task<CCPAPIResult<T>> DownloadAPIResultAsync<T>(Uri url, bool acceptEncoded = false,
-            string postData = null,
-            XslCompiledTransform transform = null)
+        internal static async Task<CCPAPIResult<T>> DownloadAPIResultAsync<T>(Uri url,
+            RequestParams param = null, XslCompiledTransform transform = null)
         {
-            DownloadResult<IXPathNavigable> asyncResult =
-                await HttpWebClientService.DownloadXmlAsync(url, HttpMethod.Post, acceptEncoded, postData);
+            var asyncResult = await HttpWebClientService.DownloadXmlAsync(url, param);
 
             CCPAPIResult<T> result;
             try
             {
                 // Was there an HTTP error ?
-                result = asyncResult.Error != null
-                    ? new CCPAPIResult<T>(asyncResult.Error)
-                    : DeserializeAPIResultCore<T>(asyncResult.Result, transform);
-
+                result = (asyncResult.Error != null) ? new CCPAPIResult<T>(asyncResult.Error) :
+                    DeserializeAPIResultCore<T>(asyncResult.Result, transform);
                 // We got the result
                 return result;
             }
@@ -309,50 +304,13 @@ namespace EVEMon.Common
                 result = new CCPAPIResult<T>(HttpWebClientServiceException.Exception(url, e));
 
                 ExceptionHandler.LogException(e, false);
-                EveMonClient.Trace(
-                    $"Method: DownloadAPIResultAsync, url: {url.AbsoluteUri}, postdata: {postData}, type: {typeof(T).Name}",
+                EveMonClient.Trace($"Method: DownloadAPIResultAsync, url: {url.AbsoluteUri}, postdata: {param?.Content}, type: {typeof(T).Name}",
                     false);
             }
 
             return result;
         }
-
-        /// <summary>
-        /// Synchronously download an XML and deserializes it into the specified type.
-        /// </summary>
-        /// <typeparam name="T">The inner type to deserialize</typeparam>
-        /// <param name="url">The url to query</param>
-        /// <param name="acceptEncoded">if set to <c>true</c> accept encoded response.</param>
-        /// <param name="postData">The post data.</param>
-        /// <param name="transform">The XSL transform to apply, may be null.</param>
-        internal static CCPAPIResult<T> DownloadAPIResult<T>(Uri url, bool acceptEncoded = false,
-            string postData = null, XslCompiledTransform transform = null)
-        {
-            CCPAPIResult<T> result;
-
-            try
-            {
-                DownloadResult<IXPathNavigable> apiResult =
-                    HttpWebClientService.DownloadXmlAsync(url, HttpMethod.Post, acceptEncoded, postData).Result;
-
-                // Was there an HTTP error ?
-                result = apiResult.Error != null
-                    ? new CCPAPIResult<T>(apiResult.Error)
-                    : DeserializeAPIResultCore<T>(apiResult.Result, transform);
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.LogException(e, true);
-                result = new CCPAPIResult<T>(Enumerations.CCPAPI.CCPAPIErrors.Http, e.Message);
-                EveMonClient.Trace(
-                    $"Method: DownloadAPIResult, url: {url.AbsoluteUri}, postdata: {postData}, type: {typeof(T).Name}",
-                    false);
-            }
-
-            // Returns
-            return result;
-        }
-
+        
         /// <summary>
         /// Process XML document.
         /// </summary>
@@ -427,20 +385,15 @@ namespace EVEMon.Common
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="url">The url to download from</param>
-        /// <param name="acceptEncoded">if set to <c>true</c> accept encoded response.</param>
-        /// <param name="postData">The http POST data to pass with the url. May be null.</param>
+        /// <param name="param">The request parameters. If null, defaults will be used.</param>
         /// <param name="transform">The transform.</param>
         /// <returns></returns>
-        public static async Task<DownloadResult<T>> DownloadXmlAsync<T>(Uri url, bool acceptEncoded = false,
-            string postData = null, XslCompiledTransform transform = null)
-            where T : class
+        public static async Task<DownloadResult<T>> DownloadXmlAsync<T>(Uri url,
+            RequestParams param = null, XslCompiledTransform transform = null) where T : class
         {
-            DownloadResult<IXPathNavigable> asyncResult =
-                await HttpWebClientService.DownloadXmlAsync(url, HttpMethod.Post, acceptEncoded, postData);
-
+            var asyncResult = await HttpWebClientService.DownloadXmlAsync(url, param);
             T result = null;
             HttpWebClientServiceException error = null;
-
             // Was there an HTTP error ??
             if (asyncResult.Error != null)
                 error = asyncResult.Error;
@@ -491,54 +444,63 @@ namespace EVEMon.Common
                     error = new HttpWebClientServiceException(exc.GetBaseException().Message);
                 }
             }
-
-            return new DownloadResult<T>(result, error);
+            return new DownloadResult<T>(result, error, asyncResult.Response);
         }
 
         /// <summary>
-        /// Asynchronously download an object from a JSON stream.
+        /// Asynchronously downloads a JSON object from a JSON stream.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="url">The URL.</param>
-        /// <param name="acceptEncoded">if set to <c>true</c> [accept encoded].</param>
-        /// <param name="postData">The post data.</param>
+        /// <param name="param">The request parameters. If null, defaults will be used.</param>
         /// <returns></returns>
-        public static async Task<DownloadResult<T>> DownloadJsonAsync<T>(Uri url, bool acceptEncoded = false,
-            string postData = null)
-            where T : class
+        public static async Task<JsonResult<T>> DownloadJsonAsync<T>(Uri url,
+            RequestParams param = null) where T : class
         {
-            DownloadResult<String> asyncResult =
-                await HttpWebClientService.DownloadStringAsync(url, HttpMethod.Post, acceptEncoded, postData);
-
-            T result = null;
-            HttpWebClientServiceException error = null;
-
-            // Was there an HTTP error ??
-            if (asyncResult.Error != null)
-                error = asyncResult.Error;
-            else
+            JsonResult<T> result;
+            try
             {
-                // No http error, let's try to deserialize
-                try
-                {
-                    // Deserialize
-                    result = new JavaScriptSerializer().Deserialize<T>(asyncResult.Result);
-                }
-                catch (ArgumentException exc)
-                {
-                    // An error occurred during the deserialization
-                    ExceptionHandler.LogException(exc, true);
-                    error = new HttpWebClientServiceException(exc.InnerException?.Message ?? exc.Message);
-                }
-                catch (InvalidOperationException exc)
-                {
-                    // An error occurred during the deserialization
-                    ExceptionHandler.LogException(exc, true);
-                    error = new HttpWebClientServiceException(exc.InnerException?.Message ?? exc.Message);
-                }
+                var asyncResult = await HttpWebClientService.DownloadStreamAsync<T>(url,
+                    ParseJSONObject<T>, param);
+                var error = asyncResult.Error;
+                T data;
+                // Was there an HTTP error?
+                if (error != null)
+                    result = new JsonResult<T>(error);
+                else if ((data = asyncResult.Result) == default(T) && !asyncResult.Response.
+                        IsNotModifiedResponse)
+                    // This will become a json error
+                    result = new JsonResult<T>(new InvalidOperationException(
+                        "null JSON response"));
+                else
+                    result = new JsonResult<T>(asyncResult.Response, data);
             }
-
-            return new DownloadResult<T>(result, error);
+            catch (InvalidOperationException e)
+            {
+                result = new JsonResult<T>(e);
+                ExceptionHandler.LogException(e, true);
+            }
+            catch (InvalidDataContractException e)
+            {
+                result = new JsonResult<T>(e);
+                ExceptionHandler.LogException(e, true);
+            }
+            catch (SerializationException e)
+            {
+                // For deserializing non-errors
+                result = new JsonResult<T>(e);
+                ExceptionHandler.LogException(e, true);
+            }
+            catch (APIException e)
+            {
+                int code;
+                // Error code was converted to a string to match APIException
+                if (!e.ErrorCode.TryParseInv(out code))
+                    code = 0;
+                result = new JsonResult<T>(new ResponseParams(code), e.Message);
+                ExceptionHandler.LogException(e, true);
+            }
+            return result;
         }
 
         /// <summary>
@@ -552,7 +514,10 @@ namespace EVEMon.Common
             doc.ThrowIfNull(nameof(doc));
 
             // Creates the settings for the text writer
-            XmlWriterSettings settings = new XmlWriterSettings { Indent = true, NewLineHandling = NewLineHandling.Replace };
+            var settings = new XmlWriterSettings {
+                Indent = true,
+                NewLineHandling = NewLineHandling.Replace
+            };
 
             // Writes to a string builder
             StringBuilder xmlBuilder = new StringBuilder();
@@ -638,7 +603,7 @@ namespace EVEMon.Common
 
             // Returns the revision number (first group is the whole match, the second one the capture)
             int revision;
-            return Int32.TryParse(match.Groups[1].Value, out revision) ? revision : default(int);
+            return match.Groups[1].Value.TryParseInv(out revision) ? revision : default(int);
         }
 
         /// <summary>
@@ -655,9 +620,9 @@ namespace EVEMon.Common
             try
             {
                 stream = File.OpenRead(filename);
-                GZipStream gzipStream = new GZipStream(stream, CompressionMode.Decompress);
+                var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
 
-                using (FileStream outStream = File.OpenWrite(tempFile))
+                using (var outStream = File.OpenWrite(tempFile))
                 {
                     byte[] bytes = new byte[4096];
 
@@ -704,7 +669,7 @@ namespace EVEMon.Common
             if (!File.Exists(filename.LocalPath))
                 throw new FileNotFoundException("Document not found", filename.LocalPath);
 
-            using (XmlTextReader reader = new XmlTextReader(filename.LocalPath))
+            using (var reader = new XmlTextReader(filename.LocalPath))
             {
                 reader.XmlResolver = null;
                 while (reader.Read())
@@ -729,7 +694,7 @@ namespace EVEMon.Common
 
             try
             {
-                XmlDocument xmlDoc = new XmlDocument();
+                var xmlDoc = new XmlDocument();
                 xmlDoc.Load(input);
                 return xmlDoc.DocumentElement?.Name;
             }
@@ -749,8 +714,7 @@ namespace EVEMon.Common
             if (!File.Exists(filename))
                 throw new FileNotFoundException($"{filename} not found!");
 
-            Stream fileStream = GetFileStream(filename, FileMode.Open, FileAccess.Read);
-            return CreateMD5(fileStream);
+            return CreateMD5(GetFileStream(filename, FileMode.Open, FileAccess.Read));
         }
 
         /// <summary>
@@ -761,10 +725,10 @@ namespace EVEMon.Common
         public static string CreateMD5(Stream stream)
         {
             using (stream)
-            using (MD5 md5 = MD5.Create())
+            using (var md5 = MD5.Create())
             {
                 byte[] hash = md5.ComputeHash(stream);
-                return BitConverter.ToString(hash).Replace("-", String.Empty).ToLowerInvariant();
+                return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
             }
         }
 
@@ -774,13 +738,13 @@ namespace EVEMon.Common
         /// <returns></returns>
         public static string CreateSHA1SumFromMacAddress()
         {
-            NetworkInterface ni = NetworkInterface.GetAllNetworkInterfaces()
-                .FirstOrDefault(nic => nic.OperationalStatus == OperationalStatus.Up);
+            var ni = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(nic =>
+                nic.OperationalStatus == OperationalStatus.Up);
 
             if (ni == null)
-                return String.Empty;
+                return string.Empty;
 
-            Stream stream = GetMemoryStream(ni.GetPhysicalAddress().GetAddressBytes());
+            var stream = GetMemoryStream(ni.GetPhysicalAddress().GetAddressBytes());
             return CreateSHA1(stream);
         }
 
@@ -792,10 +756,10 @@ namespace EVEMon.Common
         public static string CreateSHA1(Stream stream)
         {
             using (stream)
-            using (SHA1 sha1 = SHA1.Create())
+            using (var sha1 = SHA1.Create())
             {
                 byte[] hash = sha1.ComputeHash(stream);
-                return BitConverter.ToString(hash).Replace("-", String.Empty).ToLowerInvariant();
+                return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
             }
         }
 
@@ -816,7 +780,7 @@ namespace EVEMon.Common
         /// <returns></returns>
         public static MemoryStream GetMemoryStream(Stream inputStream)
         {
-            using (MemoryStream outputStream = GetMemoryStream())
+            using (var outputStream = GetMemoryStream())
             {
                 inputStream.CopyTo(outputStream);
                 return outputStream;
@@ -845,9 +809,9 @@ namespace EVEMon.Common
         {
             inputData.ThrowIfNull(nameof(inputData));
 
-            using (MemoryStream outputStream = GetMemoryStream())
+            using (var outputStream = GetMemoryStream())
             {
-                GZipOutputStream gZipOutputStream = new GZipOutputStream(outputStream);
+                var gZipOutputStream = new GZipOutputStream(outputStream);
                 gZipOutputStream.Write(inputData, 0, inputData.Length);
                 gZipOutputStream.Finish();
 
@@ -865,10 +829,10 @@ namespace EVEMon.Common
         {
             inputData.ThrowIfNull(nameof(inputData));
 
-            using (MemoryStream inputStream = GetMemoryStream(inputData))
-            using (MemoryStream outputStream = GetMemoryStream())
+            using (var inputStream = GetMemoryStream(inputData))
+            using (var outputStream = GetMemoryStream())
             {
-                GZipInputStream gZipOutputStream = new GZipInputStream(inputStream);
+                var gZipOutputStream = new GZipInputStream(inputStream);
                 gZipOutputStream.CopyTo(outputStream);
                 gZipOutputStream.Flush();
 
@@ -886,9 +850,9 @@ namespace EVEMon.Common
         {
             inputData.ThrowIfNull(nameof(inputData));
 
-            using (MemoryStream outputStream = GetMemoryStream())
+            using (var outputStream = GetMemoryStream())
             {
-                DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(outputStream);
+                var deflaterOutputStream = new DeflaterOutputStream(outputStream);
                 deflaterOutputStream.Write(inputData, 0, inputData.Length);
                 deflaterOutputStream.Finish();
 
@@ -906,10 +870,10 @@ namespace EVEMon.Common
         {
             inputData.ThrowIfNull(nameof(inputData));
 
-            using (MemoryStream inputStream = GetMemoryStream(inputData))
-            using (MemoryStream outputStream = GetMemoryStream())
+            using (var inputStream = GetMemoryStream(inputData))
+            using (var outputStream = GetMemoryStream())
             {
-                InflaterInputStream deflaterOutputStream = new InflaterInputStream(inputStream);
+                var deflaterOutputStream = new InflaterInputStream(inputStream);
                 deflaterOutputStream.CopyTo(outputStream);
                 deflaterOutputStream.Flush();
 
@@ -950,7 +914,7 @@ namespace EVEMon.Common
             inputStream.ThrowIfNull(nameof(inputStream));
 
             // If it's not a MemoryStream copy it to one
-            MemoryStream stream = inputStream as MemoryStream ?? GetMemoryStream(inputStream);
+            var stream = (inputStream as MemoryStream) ?? GetMemoryStream(inputStream);
 
             if (stream == null)
                 return inputStream;
@@ -966,14 +930,17 @@ namespace EVEMon.Common
         /// <typeparam name="T"></typeparam>
         /// <param name="json">The json.</param>
         /// <returns></returns>
-        public static T DeserializeJson<T>(string json)
-            where T : class
+        public static T DeserializeJson<T>(string json) where T : class
         {
             try
             {
-                using (MemoryStream stream = GetMemoryStream(Encoding.Unicode.GetBytes(json)))
+                using (var stream = GetMemoryStream(Encoding.Unicode.GetBytes(json)))
                 {
-                    DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(T));
+                    var settings = new DataContractJsonSerializerSettings()
+                    {
+                        UseSimpleDictionaryFormat = true
+                    };
+                    var js = new DataContractJsonSerializer(typeof(T), settings);
                     return (T)js.ReadObject(stream);
                 }
             }
@@ -983,35 +950,13 @@ namespace EVEMon.Common
                 ExceptionHandler.LogException(exc, true);
                 return null;
             }
-            catch (SerializationException exc)
+            catch (InvalidDataContractException exc)
             {
                 ExceptionHandler.LogException(exc, true);
                 return null;
             }
         }
-
-        /// <summary>
-        /// Deserializes a JSON string to an object.
-        /// </summary>
-        /// <param name="value">The json string.</param>
-        /// <returns></returns>
-        public static T DeserializeJsonToObject<T>(string value)
-        {
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            return serializer.Deserialize<T>(value);
-        }
-
-        /// <summary>
-        /// Serializes the object to a JSON string.
-        /// </summary>
-        /// <param name="obj">The object.</param>
-        /// <returns></returns>
-        public static string SerializeObjectToJson(object obj)
-        {
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            return serializer.Serialize(obj);
-        }
-
+        
         /// <summary>
         /// Encrypts the specified text using the provided password.
         /// </summary>
@@ -1021,7 +966,7 @@ namespace EVEMon.Common
         public static string Encrypt(string text, string password)
         {
             // If no password is provided return the text unencrypted
-            if (String.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(password))
                 return text;
 
             // Ensure that salt is of the correct size
@@ -1031,14 +976,14 @@ namespace EVEMon.Common
             }
 
             byte[] encrypted;
-            using (Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, Encoding.Unicode.GetBytes(password)))
+            using (var pdb = new Rfc2898DeriveBytes(password, Encoding.Unicode.GetBytes(password)))
             {
-                using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+                using (var aes = new AesCryptoServiceProvider())
                 {
-                    ICryptoTransform encryptor = aes.CreateEncryptor(pdb.GetBytes(32), pdb.GetBytes(16));
-                    MemoryStream msEncrypt = GetMemoryStream();
-                    CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
-                    using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                    var encryptor = aes.CreateEncryptor(pdb.GetBytes(32), pdb.GetBytes(16));
+                    var msEncrypt = GetMemoryStream();
+                    var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
+                    using (var swEncrypt = new StreamWriter(csEncrypt))
                     {
                         // Write all data to the stream
                         swEncrypt.Write(text);
@@ -1059,7 +1004,7 @@ namespace EVEMon.Common
         public static string Decrypt(string cipheredText, string password)
         {
             // If no password is provided return the text undecrypted
-            if (String.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(password))
                 return cipheredText;
 
             byte[] text;
@@ -1080,16 +1025,16 @@ namespace EVEMon.Common
             }
 
             string decrypted;
-            using (Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, Encoding.Unicode.GetBytes(password)))
+            using (var pdb = new Rfc2898DeriveBytes(password, Encoding.Unicode.GetBytes(password)))
             {
-                using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+                using (var aes = new AesCryptoServiceProvider())
                 {
                     try
                     {
-                        ICryptoTransform decryptor = aes.CreateDecryptor(pdb.GetBytes(32), pdb.GetBytes(16));
-                        MemoryStream msDecrypt = GetMemoryStream(text);
-                        CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        var decryptor = aes.CreateDecryptor(pdb.GetBytes(32), pdb.GetBytes(16));
+                        var msDecrypt = GetMemoryStream(text);
+                        var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
+                        using (var srDecrypt = new StreamReader(csDecrypt))
                         {
                             // Read the decrypted bytes from the decrypting stream and place them in a string
                             decrypted = srDecrypt.ReadToEnd();
@@ -1109,18 +1054,117 @@ namespace EVEMon.Common
         }
 
         /// <summary>
+        /// Parsing delegate for JSON objects.
+        /// </summary>
+        /// <typeparam name="T">The type to decode.</typeparam>
+        /// <param name="stream">The stream to read.</param>
+        /// <param name="response">The response from the server.</param>
+        /// <returns>The parsed object; or an EsiAPIError if that is relevant; or otherwise
+        /// null</returns>
+        private static T ParseJSONObject<T>(Stream stream, ResponseParams response)
+            where T : class
+        {
+            T value = default(T);
+            if (!response.IsNotModifiedResponse)
+            {
+                if (!response.IsOKResponse)
+                    ThrowJSONError(stream, response);
+                // Deserialize
+                var settings = new DataContractJsonSerializerSettings()
+                {
+                    UseSimpleDictionaryFormat = true
+                };
+                // If an invalid operation exception or data contract exception occurs, the
+                // message will be passed up the stack and wrapped in a
+                // HttpWebClientServiceException
+                value = new DataContractJsonSerializer(typeof(T), settings).ReadObject(
+                    stream) as T;
+            }
+            return value;
+        }
+
+        /// <summary>
+        /// Throws an appropriate exception when a JSON error is parsed.
+        /// </summary>
+        /// <param name="stream">The stream which has the failure details.</param>
+        /// <param name="response">The response from the server.</param>
+        private static void ThrowJSONError(Stream stream, ResponseParams response)
+        {
+            // Initialize parser to attempt and parse error details
+            var settings = new DataContractJsonSerializerSettings();
+            var serializer = new DataContractJsonSerializer(typeof(EsiAPIError), settings);
+            int code = response.ResponseCode;
+            string responseCode = code.ToString(CultureInfo.InvariantCulture);
+            try
+            {
+                var esiError = serializer.ReadObject(stream) as EsiAPIError;
+                if (esiError != null)
+                    // Create a serializable error for an API exception
+                    throw new APIException(new SerializableAPIError()
+                    {
+                        ErrorMessage = esiError.Error,
+                        ErrorCode = responseCode
+                    });
+            }
+            catch (InvalidOperationException e)
+            {
+                ExceptionHandler.LogException(e, true);
+            }
+            catch (InvalidDataContractException e)
+            {
+                ExceptionHandler.LogException(e, true);
+            }
+            catch (SerializationException e)
+            {
+                // For deserializing errors
+                ExceptionHandler.LogException(e, true);
+            }
+            // Throw with what we have
+            throw new HttpWebClientServiceException(responseCode)
+            {
+                StatusCode = (System.Net.HttpStatusCode)code
+            };
+        }
+
+        /// <summary>
         /// Parses the specified yaml text.
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns></returns>
-        internal static YamlMappingNode ParseYaml(string text)
+        internal static YamlNode ParseYaml(string text)
         {
             using (var sr = new StringReader(text))
             {
                 YamlStream yStream = new YamlStream();
                 yStream.Load(sr);
-                return yStream.Documents.First().RootNode as YamlMappingNode;
+                return yStream.Documents.First().RootNode;
             }
+        }
+
+        /// <summary>
+        /// Converts the binary data to URL-safe Base 64 encoding.
+        /// </summary>
+        /// <param name="data">The byte data to convert.</param>
+        /// <returns>The URL safe encoded version.</returns>
+        public static string URLSafeBase64(byte[] data)
+        {
+            return Convert.ToBase64String(data).Replace('+', '-').Replace('/', '_').
+                Replace("=", "");
+        }
+
+        /// <summary>
+        /// Computes the Base-64 URL safe SHA-256 hash of the data.
+        /// </summary>
+        /// <param name="data">The encoded data to hash.</param>
+        /// <returns>The URL safe encoded SHA-256 hash of that data.</returns>
+        public static string SHA256Base64(byte[] data)
+        {
+            string hash;
+            using (var sha = new SHA256Managed())
+            {
+                hash = URLSafeBase64(sha.ComputeHash(data));
+            }
+            return hash;
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -49,7 +47,7 @@ namespace EVEMon.Common.Helpers
         /// <remarks>Default action is 'Start'</remarks>
         public static void TrackStart(Type type, string action = null)
         {
-            if (String.IsNullOrWhiteSpace(action))
+            if (string.IsNullOrWhiteSpace(action))
                 action = SessionStatus.Start.ToString();
 
             if (action != SessionStatus.Start.ToString() && action != DailyStartText)
@@ -78,28 +76,26 @@ namespace EVEMon.Common.Helpers
         private static void TrackEvent(Type type, string category, string action)
         {
             InitEvent(type, category, action);
-
             if (NetworkMonitor.IsNetworkAvailable)
             {
-                DownloadResult<Image> result = HttpWebClientService.DownloadImage(new Uri(NetworkConstants.GoogleAnalyticsUrl),
-                    HttpMethod.Post, postdata: BuildQueryString());
-
-                if (!EveMonClient.IsDebugBuild)
-                    return;
-
-                EveMonClient.Trace($"({category} - {action})");
-
-                if (result.Error != null)
-                    EveMonClient.Trace($"{result.Error.Message}");
-
-                return;
+                var result = HttpWebClientService.DownloadImage(new Uri(NetworkConstants.
+                    GoogleAnalyticsUrl), new RequestParams(BuildQueryString()));
+                if (EveMonClient.IsDebugBuild)
+                {
+                    // Trace the error (if any) and event category
+                    EveMonClient.Trace($"({category} - {action})");
+                    if (result.Error != null)
+                        EveMonClient.Trace($"{result.Error.Message}");
+                }
             }
-
-            // Reschedule later otherwise
-            Dispatcher.Schedule(TimeSpan.FromMinutes(1), () => TrackEvent(type, category, action));
-
-            if (EveMonClient.IsDebugBuild)
-                EveMonClient.Trace($"in {TimeSpan.FromMinutes(1)}");
+            else
+            {
+                // Reschedule later
+                Dispatcher.Schedule(TimeSpan.FromMinutes(1), () => TrackEvent(type, category,
+                    action));
+                if (EveMonClient.IsDebugBuild)
+                    EveMonClient.Trace($"in {TimeSpan.FromMinutes(1)}");
+            }
         }
 
         /// <summary>
@@ -116,35 +112,31 @@ namespace EVEMon.Common.Helpers
             if (NetworkMonitor.IsNetworkAvailable)
             {
                 HttpWebClientService.DownloadImageAsync(new Uri(NetworkConstants.GoogleAnalyticsUrl),
-                    HttpMethod.Post, postdata: BuildQueryString())
-                    .ContinueWith(task =>
+                    new RequestParams(BuildQueryString())).ContinueWith(task =>
+                {
+                    if (EveMonClient.IsDebugBuild)
                     {
-                        if (EveMonClient.IsDebugBuild)
-                        {
-                            EveMonClient.Trace($"GAnalyticsTracker.TrackEventAsync - ({category} - {action})", printMethod: false);
-
-                            if (task.Result.Error != null)
-                            {
-                                EveMonClient.Trace($"GAnalyticsTracker.TrackEventAsync - {task.Result.Error.Message}", printMethod: false);
-
-                                return;
-                            }
-
-                            EveMonClient.Trace($"GAnalyticsTracker.TrackEventAsync - in {TimeSpan.FromDays(1)}", printMethod: false);
-                        }
-
-                        Dispatcher.Schedule(TimeSpan.FromDays(1), () => TrackStart(type, DailyStartText));
-
-                    }, EveMonClient.CurrentSynchronizationContext);
-
-                return;
+                        EveMonClient.Trace($"GAnalyticsTracker.TrackEventAsync - ({category} - {action})",
+                            printMethod: false);
+                        if (task.Result.Error != null)
+                            EveMonClient.Trace($"GAnalyticsTracker.TrackEventAsync - {task.Result.Error.Message}",
+                                printMethod: false);
+                        else
+                            EveMonClient.Trace($"GAnalyticsTracker.TrackEventAsync - in {TimeSpan.FromDays(1)}",
+                                printMethod: false);
+                    }
+                    Dispatcher.Schedule(TimeSpan.FromDays(1), () => TrackStart(type, DailyStartText));
+                }, EveMonClient.CurrentSynchronizationContext);
             }
-
-            // Reschedule later otherwise
-            Dispatcher.Schedule(TimeSpan.FromMinutes(1), () => TrackEventAsync(type, category, action));
-
-            if (EveMonClient.IsDebugBuild)
-                EveMonClient.Trace($"GAnalyticsTracker.TrackEventAsync - in {TimeSpan.FromMinutes(1)}", printMethod: false);
+            else
+            {
+                // Reschedule later
+                Dispatcher.Schedule(TimeSpan.FromMinutes(1), () => TrackEventAsync(type,
+                    category, action));
+                if (EveMonClient.IsDebugBuild)
+                    EveMonClient.Trace($"GAnalyticsTracker.TrackEventAsync - in {TimeSpan.FromMinutes(1)}",
+                        printMethod: false);
+            }
         }
 
         /// <summary>
@@ -216,7 +208,7 @@ namespace EVEMon.Common.Helpers
 
                 if (prop.PropertyType.IsEnum)
                     value = value.ToString().ToLowerInvariant();
-                else if (prop.PropertyType == typeof(Boolean))
+                else if (prop.PropertyType == typeof(bool))
                     value = Convert.ToInt32(value);
 
                 parametersDict.Add(attribute.Token, value.ToString());

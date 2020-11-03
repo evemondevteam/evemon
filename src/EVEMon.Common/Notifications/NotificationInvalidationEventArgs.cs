@@ -13,7 +13,7 @@ namespace EVEMon.Common.Notifications
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="category"></param>
-        public NotificationInvalidationEventArgs(Object sender, NotificationCategory category)
+        public NotificationInvalidationEventArgs(object sender, NotificationCategory category)
         {
             Key = NotificationEventArgs.GetKey(sender, category);
         }

@@ -64,9 +64,9 @@ namespace EVEMon.Common.Models.Comparers
             switch (m_column)
             {
                 case EveNotificationColumn.SenderName:
-                    return String.Compare(x.SenderName, y.SenderName, StringComparison.CurrentCulture);
+                    return string.Compare(x.SenderName, y.SenderName, StringComparison.CurrentCulture);
                 case EveNotificationColumn.Type:
-                    return String.Compare(x.Title, y.Title, StringComparison.CurrentCulture);
+                    return string.Compare(x.Title, y.Title, StringComparison.CurrentCulture);
                 case EveNotificationColumn.SentDate:
                     return x.SentDate.CompareTo(y.SentDate);
                 default:

@@ -28,7 +28,7 @@ namespace EVEMon.Common.Models.Collections
             // Import the wallet transactions from the API
             foreach (SerializableWalletTransactionsListItem srcWalletTransaction in src)
             {
-                Items.Add(new WalletTransaction(srcWalletTransaction));
+                Items.Add(new WalletTransaction(srcWalletTransaction, m_character));
             }
         }
     }

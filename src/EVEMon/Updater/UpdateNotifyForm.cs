@@ -22,8 +22,6 @@ namespace EVEMon.Updater
         private UpdateNotifyForm()
         {
             InitializeComponent();
-
-            ClientSize = new Size(ClientSize.Width, (int)(ClientSize.Width * 1.25));
         }
 
         /// <summary>
@@ -42,13 +40,11 @@ namespace EVEMon.Updater
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
             // Set the basic update information
-            labelInfo.Text = String.Format(labelInfo.Text, m_args.CurrentVersion, m_args.NewestVersion);
-
+            labelInfo.Text = string.Format(labelInfo.Text, m_args.CurrentVersion, m_args.NewestVersion);
             // Set the detailed update information (from the XML)
             string updMessage = m_args.UpdateMessage;
-            updMessage = updMessage.Replace("\r", String.Empty);
+            updMessage = updMessage.Replace("\r", string.Empty);
             updateNotesTextBox.Lines = updMessage.Split('\n');
 
             cbAutoInstall.Enabled = m_args.CanAutoInstall;
@@ -62,15 +58,9 @@ namespace EVEMon.Updater
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
-
-            if (!Visible ||
-                (e.CloseReason != CloseReason.ApplicationExitCall && e.CloseReason != CloseReason.TaskManagerClosing &&
-                 e.CloseReason != CloseReason.WindowsShutDown))
-            {
-                return;
-            }
-
-            m_formClosing = true;
+            if (Visible && (e.CloseReason == CloseReason.ApplicationExitCall || e.CloseReason ==
+                CloseReason.TaskManagerClosing || e.CloseReason == CloseReason.WindowsShutDown))
+                m_formClosing = true;
         }
         /// <summary>
         /// Occurs on "ignore" button click.
@@ -79,18 +69,15 @@ namespace EVEMon.Updater
         /// <param name="e"></param>
         private void btnIgnore_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show(@"Are you sure you want to ignore this update? You will not " +
-                                              @"be prompted again until a newer version is released.",
-                                              @"Ignore Update?",
-                                              MessageBoxButtons.YesNo,
-                                              MessageBoxIcon.Question,
-                                              MessageBoxDefaultButton.Button2);
-            if (dr == DialogResult.No)
-                return;
-
-            Settings.Updates.MostRecentDeniedUpgrade = m_args.NewestVersion.ToString();
-            Settings.Save();
-            DialogResult = DialogResult.Ignore;
+            DialogResult dr = MessageBox.Show(Properties.Resources.PromptIgnoreUpdate,
+                @"Ignore Update?", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2);
+            if (dr != DialogResult.No)
+            {
+                Settings.Updates.MostRecentDeniedUpgrade = m_args.NewestVersion.ToString();
+                Settings.Save();
+                DialogResult = DialogResult.Ignore;
+            }
         }
 
         /// <summary>
@@ -103,11 +90,10 @@ namespace EVEMon.Updater
             if (cbAutoInstall.Enabled && cbAutoInstall.Checked)
             {
                 DialogResult result = DialogResult.Yes;
-
                 while (result == DialogResult.Yes && !DownloadUpdate())
                 {
                     // File download failed
-                    result = MessageBox.Show(@"File failed to download correctly, do you wish to try again?",
+                    result = MessageBox.Show(Properties.Resources.ErrorDownloadFailure,
                         @"Failed Download", MessageBoxButtons.YesNo);
                 }
             }
@@ -124,7 +110,7 @@ namespace EVEMon.Updater
         private bool DownloadUpdate()
         {
             string filename = Path.GetFileName(m_args.InstallerUrl.AbsoluteUri);
-            if (String.IsNullOrWhiteSpace(filename))
+            if (string.IsNullOrWhiteSpace(filename))
                 return false;
 
             string localFilename = Path.Combine(EveMonClient.EVEMonDataDir, filename);
@@ -158,8 +144,8 @@ namespace EVEMon.Updater
         {
             if (!File.Exists(filename))
             {
-                MessageBox.Show(this, @"The installer file could not be found. EVEMon will continue without updating.",
-                                @"File not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, Properties.Resources.ErrorInstallerNotFound,
+                    @"File not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 

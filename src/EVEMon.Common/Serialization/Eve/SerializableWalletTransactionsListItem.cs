@@ -31,7 +31,7 @@ namespace EVEMon.Common.Serialization.Eve
         public string ClientNameXml
         {
             get { return ClientName; }
-            set { ClientName = value?.HtmlDecode() ?? String.Empty; }
+            set { ClientName = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlAttribute("stationID")]
@@ -41,7 +41,7 @@ namespace EVEMon.Common.Serialization.Eve
         public string StationNameXml
         {
             get { return StationName; }
-            set { StationName = value?.HtmlDecode() ?? String.Empty; }
+            set { StationName = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlAttribute("transactionType")]
@@ -56,7 +56,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return TransactionDate.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     TransactionDate = value.TimeStringToDateTime();
             }
         }

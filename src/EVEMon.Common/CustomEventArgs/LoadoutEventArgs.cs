@@ -10,8 +10,8 @@ namespace EVEMon.Common.CustomEventArgs
         /// <param name="errorMessage">The error message.</param>
         public LoadoutEventArgs(object loadout, string errorMessage)
         {
-            HasError = !String.IsNullOrEmpty(errorMessage);
-            Error = !String.IsNullOrEmpty(errorMessage) ? new Exception(errorMessage) : null;
+            HasError = !string.IsNullOrEmpty(errorMessage);
+            Error = !string.IsNullOrEmpty(errorMessage) ? new Exception(errorMessage) : null;
             Loadout = loadout;
         }
 

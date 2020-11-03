@@ -14,7 +14,7 @@ namespace EVEMon.Common.Notifications
         /// <param name="sender">The sender.</param>
         /// <param name="orders">The orders.</param>
         /// <exception cref="System.ArgumentNullException">orders</exception>
-        public MarketOrdersNotificationEventArgs(Object sender, IEnumerable<MarketOrder> orders)
+        public MarketOrdersNotificationEventArgs(object sender, IEnumerable<MarketOrder> orders)
             : base(sender, NotificationCategory.MarketOrdersEnding)
         {
             orders.ThrowIfNull(nameof(orders));
@@ -56,7 +56,7 @@ namespace EVEMon.Common.Notifications
         /// </summary>
         private void UpdateDescription()
         {
-            Description = $"{Orders.Count} market order{(Orders.Count > 1 ? "s" : String.Empty)} expired or fulfilled.";
+            Description = $"{Orders.Count} market order{(Orders.Count > 1 ? "s" : string.Empty)} expired or fulfilled.";
         }
     }
 }

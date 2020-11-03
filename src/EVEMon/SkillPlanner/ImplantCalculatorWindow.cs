@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -70,11 +71,17 @@ namespace EVEMon.SkillPlanner
             // based on character attributes value
             foreach (NumericUpDown nud in AtrributesPanel.Controls.OfType<NumericUpDown>())
             {
-                EveAttribute attrib = (EveAttribute)int.Parse((string)nud.Tag, CultureConstants.InvariantCulture);
-                nud.Minimum = m_character[attrib].EffectiveValue - m_character[attrib].ImplantBonus;
-                nud.Maximum = m_plan.ChosenImplantSet[attrib].Bonus > EveConstants.MaxImplantPoints
-                    ? nud.Minimum + m_plan.ChosenImplantSet[attrib].Bonus
-                    : nud.Minimum + EveConstants.MaxImplantPoints;
+                string tag = (nud.Tag as string) ?? string.Empty;
+                int attribIndex;
+                if (tag.TryParseInv(out attribIndex))
+                {
+                    var attrib = (EveAttribute)attribIndex;
+                    var charAttribute = m_character[attrib];
+                    long min = charAttribute.EffectiveValue - charAttribute.ImplantBonus;
+                    nud.Minimum = min;
+                    nud.Maximum = min + Math.Min(m_plan.ChosenImplantSet[attrib].Bonus,
+                        EveConstants. MaxImplantPoints);
+                }
             }
 
             EveMonClient.PlanNameChanged += EveMonClient_PlanNameChanged;
@@ -164,11 +171,11 @@ namespace EVEMon.SkillPlanner
         {
             CharacterScratchpad characterScratchpad = m_plan.Character.After(m_plan.ChosenImplantSet);
 
-            Int64 baseAttr = characterScratchpad[attrib].EffectiveValue - characterScratchpad[attrib].ImplantBonus;
-            Int64 adjust = myValue - baseAttr;
+            long baseAttr = characterScratchpad[attrib].EffectiveValue - characterScratchpad[attrib].ImplantBonus;
+            long adjust = myValue - baseAttr;
 
             lblAdjust.ForeColor = adjust >= 0 ? SystemColors.ControlText : Color.Red;
-            lblAdjust.Text = $"{(adjust >= 0 ? "+" : String.Empty)}{adjust}";
+            lblAdjust.Text = $"{(adjust >= 0 ? "+" : string.Empty)}{adjust}";
             lblEffectiveAttribute.Text = characterScratchpad[attrib].EffectiveValue.ToNumericString(0);
         }
 

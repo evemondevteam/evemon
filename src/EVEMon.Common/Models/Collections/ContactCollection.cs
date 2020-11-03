@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using EVEMon.Common.Collections;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models.Collections
 {
@@ -21,15 +21,13 @@ namespace EVEMon.Common.Models.Collections
         /// Imports an enumeration of API objects.
         /// </summary>
         /// <param name="src">The enumeration of serializable contacts from the API.</param>
-        internal void Import(IEnumerable<SerializableContactListItem> src)
+        internal void Import(IEnumerable<EsiContactListItem> src)
         {
             Items.Clear();
 
             // Import the contacts from the API
-            foreach (SerializableContactListItem srcContact in src)
-            {
+            foreach (EsiContactListItem srcContact in src)
                 Items.Add(new Contact(srcContact));
-            }
         }
     }
 }

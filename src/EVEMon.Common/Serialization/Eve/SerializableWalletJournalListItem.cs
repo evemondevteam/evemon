@@ -20,7 +20,7 @@ namespace EVEMon.Common.Serialization.Eve
         public string OwnerName1Xml
         {
             get { return OwnerName1; }
-            set { OwnerName1 = value?.HtmlDecode() ?? String.Empty; }
+            set { OwnerName1 = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlAttribute("ownerID2")]
@@ -30,7 +30,7 @@ namespace EVEMon.Common.Serialization.Eve
         public string OwnerName2Xml
         {
             get { return OwnerName2; }
-            set { OwnerName2 = value?.HtmlDecode() ?? String.Empty; }
+            set { OwnerName2 = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlAttribute("argID1")]
@@ -54,7 +54,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return TaxReceiverID.ToString(CultureConstants.InvariantCulture); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     TaxReceiverID = Convert.ToInt64(value, CultureConstants.InvariantCulture);
             }
         }
@@ -65,7 +65,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return TaxAmount.ToString(CultureConstants.InvariantCulture); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     TaxAmount = Convert.ToDecimal(value, CultureConstants.InvariantCulture);
             }
         }
@@ -76,7 +76,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return Date.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     Date = value.TimeStringToDateTime();
             }
         }

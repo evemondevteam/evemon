@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using EVEMon.Common.Collections;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models.Collections
 {
@@ -21,12 +21,12 @@ namespace EVEMon.Common.Models.Collections
         /// Imports an enumeration of API objects.
         /// </summary>
         /// <param name="src">The source.</param>
-        internal void Import(IEnumerable<SerializableMailingListsListItem> src)
+        internal void Import(IEnumerable<EsiMailingListsListItem> src)
         {
             Items.Clear();
 
             // Import the mail messages from the API
-            foreach (SerializableMailingListsListItem srcEVEMailingList in src)
+            foreach (EsiMailingListsListItem srcEVEMailingList in src)
             {
                 Items.Add(new EveMailingList(srcEVEMailingList));
             }

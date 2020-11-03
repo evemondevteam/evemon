@@ -84,7 +84,7 @@ namespace EVEMon.SettingsUI
             DeletePictureBox.Enabled = false;
             DeletePictureBox.Location = new Point(DeletePictureBox.Location.X,
                                                   height + (RowHeight - DeletePictureBox.Size.Height) / 2);
-            EveInstallationPathTextBox.Text = String.Empty;
+            EveInstallationPathTextBox.Text = string.Empty;
             int offset = (int)Math.Ceiling((double)(RowHeight - EveInstallationPathTextBox.Size.Height) / 2);
             EveInstallationPathTextBox.Location = new Point(EveInstallationPathTextBox.Location.X, height + offset);
             BrowseButton.Location = new Point(BrowseButton.Location.X, height + (RowHeight - BrowseButton.Size.Height) / 2);
@@ -186,7 +186,7 @@ namespace EVEMon.SettingsUI
         {
             Settings.PortableEveInstallations.EVEClients.Clear();
             Settings.PortableEveInstallations.EVEClients.AddRange(
-                Controls.OfType<TextBox>().Where(textBox => !String.IsNullOrEmpty(textBox.Text)).Select(
+                Controls.OfType<TextBox>().Where(textBox => !string.IsNullOrEmpty(textBox.Text)).Select(
                     textBox => new SerializablePortableEveInstallation
                                    {
                                        Path = textBox.Text

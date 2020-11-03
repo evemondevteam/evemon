@@ -216,7 +216,7 @@ namespace EVEMon.SkillPlanner
             }
             else if (m_skill.Character != null)
             {
-                sb.Append($"Not Trained - prereqs {(m_skill.ArePrerequisitesMet ? String.Empty : "not ")}met, " +
+                sb.Append($"Not Trained - prereqs {(m_skill.ArePrerequisitesMet ? string.Empty : "not ")}met, " +
                           $"skillbook is {(m_skill.IsOwned ? "owned" : $"not owned, book costs {m_skill.FormattedCost} ISK")}");
             }
             else
@@ -607,9 +607,9 @@ namespace EVEMon.SkillPlanner
         /// <param name="obj">The object.</param>
         /// <param name="prerequisites">The object's prerequisites.</param>
         /// <returns></returns>
-        private TreeNode CreateNode(Object obj, IList<SkillLevel> prerequisites)
+        private TreeNode CreateNode(object obj, IList<SkillLevel> prerequisites)
         {
-            TreeNode node = new TreeNode(obj.ToString()) { ToolTipText = String.Empty, Tag = obj };
+            TreeNode node = new TreeNode(obj.ToString()) { ToolTipText = string.Empty, Tag = obj };
 
             // When all prereqs satisifed, keep the default color
             if (prerequisites.All(x => x.IsTrained))
@@ -899,7 +899,7 @@ namespace EVEMon.SkillPlanner
             index++;
             sb
                 .Append($"{index}. {prereq} ")
-                .Append($"(Prereqs {(prereq.Skill.Prerequisites.AreTrained() ? String.Empty : "not ")}met, ")
+                .Append($"(Prereqs {(prereq.Skill.Prerequisites.AreTrained() ? string.Empty : "not ")}met, ")
                 .AppendLine($"skillbook {(prereq.Skill.IsOwned ? "owned)" : $"not owned, costs {prereq.Skill.FormattedCost} ISK)")}");
         }
 
@@ -922,7 +922,7 @@ namespace EVEMon.SkillPlanner
         private List<string> GetSelectedItemActivities(Item entity)
         {
             List<string> list =
-                tvEntity.SelectedNode.Text.Replace(entity.Name, String.Empty).Trim().Trim("()".ToCharArray()).Split(',').ToList();
+                tvEntity.SelectedNode.Text.Replace(entity.Name, string.Empty).Trim().Trim("()".ToCharArray()).Split(',').ToList();
 
             if (list.First().Length == 0)
                 list[0] = BlueprintActivity.None.GetDescription();
@@ -1191,7 +1191,7 @@ namespace EVEMon.SkillPlanner
                 return;
 
             // Quit if it's an "Unknown" skill
-            if (skill.ID == Int32.MaxValue)
+            if (skill.ID == int.MaxValue)
                 return;
 
             SetSkill(skill);

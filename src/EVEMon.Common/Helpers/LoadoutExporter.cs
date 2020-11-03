@@ -1,18 +1,25 @@
-﻿using System;
+﻿using EVEMon.Common.Data;
+using EVEMon.Common.Extensions;
+using EVEMon.Common.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using EVEMon.Common.Constants;
-using EVEMon.Common.Data;
-using EVEMon.Common.Interfaces;
 
 namespace EVEMon.Common.Helpers
 {
     public static class LoadoutExporter
     {
+        private static readonly string[] EMPTY_SLOTS =
+        {
+            "[empty high slot]", "[empty med slot]", "[empty low slot]", "[empty rig slot]", ""
+        };
+        private static readonly Regex NOT_DIGITS = new Regex(@"[^\d]");
+        private static readonly int[] SLOT_ORDER = { 2, 1, 0, 3, 4 };
+
         /// <summary>
         /// Exports to clipboard.
         /// </summary>
@@ -70,55 +77,18 @@ namespace EVEMon.Common.Helpers
             // Add "empty slot" mentions for every slot type
             foreach (EvePropertyValue prop in loadoutInfo.Ship.Properties.Where(prop => prop.Property != null))
             {
-                // High Slots
-                if (prop.Property.Name.Contains(LoadoutHelper.OrderedSlotNames[0]))
+                for (int i = 0; i < 5; i++)
                 {
-                    int highSlots = Int32.Parse(Regex.Replace(prop.Value, @"[^\d]", String.Empty),
-                        CultureConstants.InvariantCulture);
-
-                    while (items.ContainsKey(LoadoutHelper.OrderedSlotNames[0]) && items[LoadoutHelper.OrderedSlotNames[0]].Count < highSlots)
+                    string slotName = LoadoutHelper.OrderedSlotNames[i], empty;
+                    // Fill slots by type
+                    if (prop.Property.Name.Contains(slotName))
                     {
-                        items[LoadoutHelper.OrderedSlotNames[0]].Add("[empty high slot]");
-                    }
-                }
-                // Medium Slots
-                else if (prop.Property.Name.Contains(LoadoutHelper.OrderedSlotNames[1]))
-                {
-                    int medSlots = Int32.Parse(Regex.Replace(prop.Value, @"[^\d]", String.Empty),
-                        CultureConstants.InvariantCulture);
-                    while (items.ContainsKey(LoadoutHelper.OrderedSlotNames[1]) && items[LoadoutHelper.OrderedSlotNames[1]].Count < medSlots)
-                    {
-                        items[LoadoutHelper.OrderedSlotNames[1]].Add("[empty med slot]");
-                    }
-                }
-                // Low Slots
-                else if (prop.Property.Name.Contains(LoadoutHelper.OrderedSlotNames[2]))
-                {
-                    int lowSlots = Int32.Parse(Regex.Replace(prop.Value, @"[^\d]", String.Empty),
-                        CultureConstants.InvariantCulture);
-                    while (items.ContainsKey(LoadoutHelper.OrderedSlotNames[2]) && items[LoadoutHelper.OrderedSlotNames[2]].Count < lowSlots)
-                    {
-                        items[LoadoutHelper.OrderedSlotNames[2]].Add("[empty low slot]");
-                    }
-                }
-                // Rig Slots
-                else if (prop.Property.Name.Contains(LoadoutHelper.OrderedSlotNames[3]))
-                {
-                    int rigsSlots = Int32.Parse(Regex.Replace(prop.Value, @"[^\d]", String.Empty),
-                        CultureConstants.InvariantCulture);
-                    while (items.ContainsKey(LoadoutHelper.OrderedSlotNames[3]) && items[LoadoutHelper.OrderedSlotNames[3]].Count < rigsSlots)
-                    {
-                        items[LoadoutHelper.OrderedSlotNames[3]].Add("[empty rig slot]");
-                    }
-                }
-                // Subsystem Slots
-                else if (prop.Property.Name.Contains(LoadoutHelper.OrderedSlotNames[4]))
-                {
-                    int subSysSlots = Int32.Parse(Regex.Replace(prop.Value, @"[^\d]", String.Empty),
-                        CultureConstants.InvariantCulture);
-                    while (items.ContainsKey(LoadoutHelper.OrderedSlotNames[4]) && items[LoadoutHelper.OrderedSlotNames[4]].Count < subSysSlots)
-                    {
-                        items[LoadoutHelper.OrderedSlotNames[4]].Add(String.Empty);
+                        int slots;
+                        NOT_DIGITS.Replace(prop.Value, string.Empty).TryParseInv(out slots);
+                        empty = EMPTY_SLOTS[i];
+                        while (items.ContainsKey(slotName) && items[slotName].Count < slots)
+                            items[slotName].Add(empty);
+                        break;
                     }
                 }
             }
@@ -134,61 +104,29 @@ namespace EVEMon.Common.Helpers
         private static string SerializeToEFTFormat(ILoadoutInfo loadoutInfo, Loadout loadout,
             IDictionary<string, List<string>> items)
         {
+            string name;
             // Build the output format for EFT
             StringBuilder exportText = new StringBuilder();
-            exportText
-                .AppendLine($"[{loadoutInfo.Ship.Name}, {loadout.Name} (EVEMon)]");
+            exportText.AppendLine($"[{loadoutInfo.Ship.Name}, {loadout.Name} (EVEMon)]");
 
-            // Low Slots
-            if (items.ContainsKey(LoadoutHelper.OrderedSlotNames[2]))
+            // Slots in order: Low, Medium, High, Rig, Subsystem
+            foreach (int index in SLOT_ORDER)
             {
-                exportText
-                    .AppendLine(String.Join(Environment.NewLine, items[LoadoutHelper.OrderedSlotNames[2]].ToArray()))
-                    .AppendLine();
-            }
-
-            // Medium Slots
-            if (items.ContainsKey(LoadoutHelper.OrderedSlotNames[1]))
-            {
-                exportText
-                    .AppendLine(String.Join(Environment.NewLine, items[LoadoutHelper.OrderedSlotNames[1]].ToArray()))
-                    .AppendLine();
-            }
-
-            // High Slots
-            if (items.ContainsKey(LoadoutHelper.OrderedSlotNames[0]))
-            {
-                exportText
-                    .AppendLine(String.Join(Environment.NewLine, items[LoadoutHelper.OrderedSlotNames[0]].ToArray()))
-                    .AppendLine();
-            }
-
-            // Rig Slots
-            if (items.ContainsKey(LoadoutHelper.OrderedSlotNames[3]))
-            {
-                exportText
-                    .AppendLine(String.Join(Environment.NewLine, items[LoadoutHelper.OrderedSlotNames[3]].ToArray()))
-                    .AppendLine();
-            }
-
-            // Subsystem Slots
-            if (items.ContainsKey(LoadoutHelper.OrderedSlotNames[4]))
-            {
-                exportText
-                    .AppendLine(String.Join(Environment.NewLine, items[LoadoutHelper.OrderedSlotNames[4]].ToArray()))
-                    .AppendLine();
-            }
-
-            // Drones
-            if (items.ContainsKey(LoadoutHelper.OrderedSlotNames[6]))
-            {
-                foreach (IGrouping<string, string> itemName in items[LoadoutHelper.OrderedSlotNames[6]]
-                    .GroupBy(itemName => itemName))
+                name = LoadoutHelper.OrderedSlotNames[index];
+                if (items.ContainsKey(name))
                 {
-                    exportText
-                        .AppendLine($"{itemName.Key} x{itemName.Count()}");
+                    // Same function as appending the joined string, but faster
+                    foreach (string slotItem in items[name])
+                        exportText.AppendLine(slotItem);
+                    exportText.AppendLine();
                 }
             }
+
+            // Drones need quantity
+            name = LoadoutHelper.OrderedSlotNames[6];
+            if (items.ContainsKey(name))
+                foreach (var itemName in items[name].GroupBy(itemName => itemName))
+                    exportText.AppendLine($"{itemName.Key} x{itemName.Count()}");
 
             return exportText.ToString();
         }

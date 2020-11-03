@@ -187,8 +187,8 @@ namespace EVEMon.Common.Controls
             }
 
             base.OnDragOver(e);
-            String text = (String)e.Data.GetData(Reorder.GetType());
-            if (String.Compare(text, Reorder, StringComparison.CurrentCulture) == 0)
+            string text = (string)e.Data.GetData(Reorder.GetType());
+            if (string.Compare(text, Reorder, StringComparison.CurrentCulture) == 0)
             {
                 e.Effect = DragDropEffects.Move;
                 hoverItem.EnsureVisible();
@@ -230,8 +230,8 @@ namespace EVEMon.Common.Controls
             }
 
             base.OnDragEnter(e);
-            String text = (String)e.Data.GetData(Reorder.GetType());
-            if (String.Compare(text, Reorder, StringComparison.CurrentCulture) == 0)
+            string text = (string)e.Data.GetData(Reorder.GetType());
+            if (string.Compare(text, Reorder, StringComparison.CurrentCulture) == 0)
                 e.Effect = DragDropEffects.Move;
             else
             {

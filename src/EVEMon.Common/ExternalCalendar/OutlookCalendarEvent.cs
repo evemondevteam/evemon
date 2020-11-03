@@ -100,7 +100,7 @@ namespace EVEMon.Common.ExternalCalendar
                 eventItem.ReminderSet = ItemReminder || AlternateReminder;
                 eventItem.BusyStatus = OlBusyStatus.olBusy;
                 eventItem.AllDayEvent = false;
-                eventItem.Location = String.Empty;
+                eventItem.Location = string.Empty;
 
                 if (AlternateReminder)
                 {
@@ -197,7 +197,7 @@ namespace EVEMon.Common.ExternalCalendar
                 return s_mapiFolder != null;
             }
 
-            if (String.IsNullOrWhiteSpace(path))
+            if (string.IsNullOrWhiteSpace(path))
                 path = Settings.Calendar.OutlookCustomCalendarPath;
 
             if (!path.StartsWith(@"\\", StringComparison.Ordinal))
@@ -243,7 +243,7 @@ namespace EVEMon.Common.ExternalCalendar
             calendarItems.IncludeRecurrences = true;
 
             // Must use 'like' comparison for Find/FindNext
-            string subjectFilter = !String.IsNullOrEmpty(Subject)
+            string subjectFilter = !string.IsNullOrEmpty(Subject)
                 ? $"@SQL=\"urn:schemas:httpmail:subject\" like '%{Subject.Replace("'", "''")}%'"
                 : "@SQL=\"urn:schemas:httpmail:subject\" <> '!@#'";
 

@@ -14,25 +14,36 @@ namespace EVEMon.Common.Controls
         public const uint SWP_NOMOVE = 0x0002;
         private const uint SW_SHOWNOACTIVATE = 0x0004;
         private const uint SWP_NOACTIVATE = 0x0010;
-        internal const int WM_SETREDRAW = 11;
         private const uint SRCCOPY = 0x00CC0020;
         private const uint WS_VSCROLL = 0x200000;
         private const uint WS_HSCROLL = 0x100000;
+
+        internal const int WM_NULL = 0x0000;
+        internal const int WM_SETREDRAW = 0x000B;
+        internal const int WM_ERASEBKGND = 0x0014;
+        internal const int WM_POINTERDOWN = 0x0246;
+        internal const int WM_POINTERUP = 0x0247;
+
+        internal const int PT_POINTER = 0x00000001;
+        internal const int PT_TOUCH = 0x00000002;
+        internal const int PT_PEN = 0x00000003;
+        internal const int PT_MOUSE = 0x00000004;
+        internal const uint PT_POINTERID_MASK = 0x0000FFFF;
 
         [DllImport("psapi.dll", CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EmptyWorkingSet(IntPtr proc);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        internal static extern IntPtr SendMessage(IntPtr handle, Int32 messg, IntPtr wparam, IntPtr lparam);
+        internal static extern IntPtr SendMessage(IntPtr handle, int messg, IntPtr wparam, IntPtr lparam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr LoadCursorFromFile(string fileName);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetWindowPos(IntPtr hWnd, Int32 hWndInsertAfter, Int32 x, Int32 y,
-            Int32 cx, Int32 cy, uint uFlags);
+        private static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int y,
+            int cx, int cy, uint uFlags);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -45,6 +56,34 @@ namespace EVEMon.Common.Controls
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool BitBlt(IntPtr hObject, int nXDest, int nYDest, int nWidth,
             int nHeight, IntPtr hObjSource, int nXSrc, int nYSrc, uint dwRop);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool LockWindowUpdate(IntPtr hWndLock);
+
+        /// <summary>
+        /// Retrieves the (touch) pointer event type, given the pointer ID.
+        /// </summary>
+        /// <param name="pPointerID">The pointer ID from the window event.</param>
+        /// <param name="pPointerType">The location where the pointer event type will be placed.</param>
+        /// <returns>true if the event type was placed into pPointerType, or false otherwise</returns>
+        [DllImport("User32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetPointerType(uint pPointerID, out int pPointerType);
+
+        /// <summary>
+        /// Locks or unlocks updates on this control; used to avoid the window blinking problem
+        /// which occurs when Suspend/ResumeDrawing is called.
+        /// </summary>
+        /// <param name="form">The form to update.</param>
+        /// <param name="locked">true to lock window drawing updates, or false to enable them.</param>
+        public static void LockWindowUpdate(this Control form, bool locked)
+        {
+            if (locked)
+                LockWindowUpdate(form.Handle);
+            else
+                LockWindowUpdate(IntPtr.Zero);
+        }
 
         /// <summary>
         /// Show the given form on topmost without activating it.

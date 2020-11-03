@@ -1,9 +1,6 @@
 namespace EVEMon.XmlGenerator.Models
 {
-    using System;
     using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
 
     public partial class EveStaticData : DbContext
     {
@@ -35,7 +32,12 @@ namespace EVEMon.XmlGenerator.Models
         public virtual DbSet<eveGraphics> eveGraphics { get; set; }
         public virtual DbSet<eveIcons> eveIcons { get; set; }
         public virtual DbSet<eveUnits> eveUnits { get; set; }
-        public virtual DbSet<invBlueprintTypes> invBlueprintTypes { get; set; }
+        public virtual DbSet<industryActivity> industryActivity { get; set; }
+        public virtual DbSet<industryActivityMaterials> industryActivityMaterials { get; set; }
+        public virtual DbSet<industryActivityProbabilities> industryActivityProbabilities { get; set; }
+        public virtual DbSet<industryActivityProducts> industryActivityProducts { get; set; }
+        public virtual DbSet<industryActivitySkills> industryActivitySkills { get; set; }
+        public virtual DbSet<industryBlueprints> industryBlueprints { get; set; }
         public virtual DbSet<invCategories> invCategories { get; set; }
         public virtual DbSet<invContrabandTypes> invContrabandTypes { get; set; }
         public virtual DbSet<invControlTowerResourcePurposes> invControlTowerResourcePurposes { get; set; }
@@ -75,7 +77,6 @@ namespace EVEMon.XmlGenerator.Models
         public virtual DbSet<ramAssemblyLineTypeDetailPerGroup> ramAssemblyLineTypeDetailPerGroup { get; set; }
         public virtual DbSet<ramAssemblyLineTypes> ramAssemblyLineTypes { get; set; }
         public virtual DbSet<ramInstallationTypeContents> ramInstallationTypeContents { get; set; }
-        public virtual DbSet<ramTypeRequirements> ramTypeRequirements { get; set; }
         public virtual DbSet<sknLicenses> sknLicenses { get; set; }
         public virtual DbSet<sknMaterials> sknMaterials { get; set; }
         public virtual DbSet<sknSkins> sknSkins { get; set; }
@@ -232,8 +233,7 @@ namespace EVEMon.XmlGenerator.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<invTypes>()
-                .Property(e => e.basePrice)
-                .HasPrecision(19, 4);
+                .Property(e => e.basePrice);
 
             modelBuilder.Entity<mapCelestialStatistics>()
                 .Property(e => e.spectralClass)

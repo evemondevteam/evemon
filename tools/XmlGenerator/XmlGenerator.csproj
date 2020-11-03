@@ -15,6 +15,8 @@
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkProfile />
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -56,17 +58,32 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.108.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Data.SQLite.Core.1.0.108.0\lib\net46\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.108.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Data.SQLite.EF6.1.0.108.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.108.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Data.SQLite.Linq.1.0.108.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
@@ -74,6 +91,7 @@
   <ItemGroup>
     <Compile Include="Collections\BagCollection.cs" />
     <Compile Include="Interfaces\IHasLongId.cs" />
+    <Compile Include="Models\cloneStates.cs" />
     <Compile Include="Models\industryActivitySkills.cs" />
     <Compile Include="Models\industryActivityRaces.cs" />
     <Compile Include="Models\industryActivityProducts.cs" />
@@ -114,7 +132,6 @@
     <Compile Include="Models\eveIcons.cs" />
     <Compile Include="Models\EveStaticData.cs" />
     <Compile Include="Models\eveUnits.cs" />
-    <Compile Include="Models\invBlueprintTypes.cs" />
     <Compile Include="Models\invCategories.cs" />
     <Compile Include="Models\invContrabandTypes.cs" />
     <Compile Include="Models\invControlTowerResourcePurposes.cs" />
@@ -153,7 +170,6 @@
     <Compile Include="Models\ramAssemblyLineTypeDetailPerGroup.cs" />
     <Compile Include="Models\ramAssemblyLineTypes.cs" />
     <Compile Include="Models\ramInstallationTypeContents.cs" />
-    <Compile Include="Models\ramTypeRequirements.cs" />
     <Compile Include="Models\sknLicenses.cs" />
     <Compile Include="Models\sknMaterials.cs" />
     <Compile Include="Models\sknSkins.cs" />
@@ -168,11 +184,19 @@
     <Compile Include="Models\trnTranslations.cs" />
     <Compile Include="Models\warCombatZones.cs" />
     <Compile Include="Models\warCombatZoneSystems.cs" />
+    <Compile Include="Providers\HoboleaksAlphaSkills.cs" />
     <Compile Include="StaticData\ChrFactions.cs" />
     <Compile Include="StaticData\CrtCertificates.cs" />
     <Compile Include="StaticData\CrtRecommendations.cs" />
     <Compile Include="StaticData\CrtRelationships.cs" />
     <Compile Include="StaticData\DgmMasteries.cs" />
+    <Compile Include="StaticData\IndustryActivity.cs" />
+    <Compile Include="StaticData\IndustryActivityMaterials.cs" />
+    <Compile Include="StaticData\IndustryActivityProbabilities.cs" />
+    <Compile Include="StaticData\IndustryActivityProducts.cs" />
+    <Compile Include="StaticData\IndustryActivitySkills.cs" />
+    <Compile Include="StaticData\IndustryBlueprints.cs" />
+    <Compile Include="StaticData\InvItems.cs" />
     <Compile Include="StaticData\InvTraits.cs" />
     <Compile Include="StaticData\InvControlTowerResources.cs" />
     <Compile Include="StaticData\InvControlTowerResourcePurposes.cs" />
@@ -191,9 +215,7 @@
     <Compile Include="StaticData\CrpNPCDivisions.cs" />
     <Compile Include="StaticData\InvCategories.cs" />
     <Compile Include="StaticData\InvNames.cs" />
-    <Compile Include="StaticData\InvBlueprintTypes.cs" />
     <Compile Include="StaticData\InvTypeMaterials.cs" />
-    <Compile Include="StaticData\RamTypeRequirements.cs" />
     <Compile Include="Extensions\StringCleaning.cs" />
     <Compile Include="Utils\Util.cs" />
     <Compile Include="StaticData\DgmAttributeTypes.cs" />
@@ -232,6 +254,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="sqlite-latest.sqlite" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -244,10 +267,16 @@ del "$(TargetDir)"YamlDotNet*
 del "$(TargetDir)"Dropbox*
 del "$(TargetDir)"OneDrive*
 del "$(TargetDir)"Microsoft*
-del "$(TargetDir)"Newtonsoft*
 del "$(TargetDir)"Zlib*
 if exist "$(TargetDir)"stdole.dll del "$(TargetDir)"stdole.dll</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -31,7 +31,7 @@ namespace EVEMon.LogitechG15
         private readonly Graphics m_lcdCanvas;
         private readonly Graphics m_lcdOverlay;
         private readonly List<LcdLine> m_lcdLines = new List<LcdLine>();
-        private readonly Object m_lock = new Object();
+        private readonly object m_lock = new object();
         private readonly Timer m_buttonPressedCheckTimer;
         private readonly float m_defaultOffset;
 
@@ -484,7 +484,7 @@ namespace EVEMon.LogitechG15
 
             m_lcdLines.Add(skillCount == 0
                 ? new LcdLine("NO SKILLS IN QUEUE", m_defaultFont)
-                : new LcdLine($"{skillCount} more skill{(skillCount == 1 ? String.Empty : "s")} in queue", m_defaultFont));
+                : new LcdLine($"{skillCount} more skill{(skillCount == 1 ? string.Empty : "s")} in queue", m_defaultFont));
 
             RenderLines();
             UpdateLcdDisplay();
@@ -724,7 +724,7 @@ namespace EVEMon.LogitechG15
                         break;
                     // We have no room to show the wallet balance
                     default:
-                        balance = String.Empty;
+                        balance = string.Empty;
                         break;
                 }
 

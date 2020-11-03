@@ -1,14 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using EVEMon.Common.Collections;
 using EVEMon.Common.Constants;
+using EVEMon.Common.Data;
 using EVEMon.Common.Enumerations.CCPAPI;
-using EVEMon.Common.Helpers;
+using EVEMon.Common.Extensions;
+using EVEMon.Common.Models;
 using EVEMon.Common.Serialization;
+using EVEMon.Common.Serialization.Esi;
 using EVEMon.Common.Serialization.Eve;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using StringIDInfo = EVEMon.Common.Service.IDInformation<string, string>;
 
 namespace EVEMon.Common.Service
 {
@@ -16,12 +20,14 @@ namespace EVEMon.Common.Service
     {
         private const string Filename = "EveIDToName";
 
-        private static readonly Dictionary<long, string> s_cacheList = new Dictionary<long, string>();
-        private static readonly List<string> s_listOfNames = new List<string>();
-        private static readonly List<string> s_queriedIDs = new List<string>();
+        // Cache used to return all data, this is saved and loaded into the file
+        private static readonly Dictionary<long, StringIDInfo> s_cacheList =
+            new Dictionary<long, StringIDInfo>();
 
-        private static List<string> s_listOfIDs = new List<string>();
-        private static List<string> s_listOfIDsToQuery = new List<string>();
+        // Provider for characters, corps, and alliances
+        // Thank goodness for the consolidated names endpoint
+        private static readonly GenericIDToNameProvider s_lookup =
+            new GenericIDToNameProvider(s_cacheList);
 
         private static bool s_savePending;
         private static DateTime s_lastSaveTime;
@@ -34,6 +40,8 @@ namespace EVEMon.Common.Service
             EveMonClient.TimerTick += EveMonClient_TimerTick;
         }
 
+        #region Helpers
+
         /// <summary>
         /// Handles the TimerTick event of the EveMonClient control.
         /// </summary>
@@ -43,49 +51,33 @@ namespace EVEMon.Common.Service
         {
             await UpdateOnOneSecondTickAsync();
         }
-
+        
         /// <summary>
-        /// Gets the owner name from its ID.
+        /// Gets the character, corporation, or alliance name from its ID.
         /// </summary>
         /// <param name="id">The id.</param>
-        /// <returns></returns>
-        internal static string GetIDToName(long id) => GetIDToName(id.ToString(CultureConstants.InvariantCulture));
-
-        /// <summary>
-        /// Gets the owner name from its ID.
-        /// </summary>
-        /// <param name="id">The id.</param>
-        /// <returns></returns>
-        public static string GetIDToName(string id)
+        /// <param name="bypass">false (default) to allow local lookup optimizations, true
+        /// to force a query to ESI API (depending on local cache)</param>
+        /// <returns>The entity name, or EveMonConstants.UnknownText if it is being queried.</returns>
+        internal static string GetIDToName(long id, bool bypass = false)
         {
-            // If there is no ID to query return an empty string
-            if (String.IsNullOrEmpty(id))
-                return String.Empty;
-
-            // If it's a zero ID return "(None)"
-            if (id == "0")
-                return "(None)";
-
-            List<string> list = new List<string> { id };
-
-            return GetIDsToNames(list).First();
+            return s_lookup.LookupID(id, bypass) ?? EveMonConstants.UnknownText;
         }
 
         /// <summary>
-        /// Gets the owner name from its ID.
+        /// Gets character, corporation, or alliance names from their IDs.
         /// </summary>
-        /// <param name="ids">The ids.</param>
-        /// <returns></returns>
-        internal static IEnumerable<string> GetIDsToNames(IEnumerable<string> ids)
+        /// <param name="id">The id.</param>
+        /// <returns>The entity names, or null for each entry being queried.</returns>
+        internal static IEnumerable<string> GetIDsToNames(IEnumerable<long> ids)
         {
-            s_listOfIDs = ids.ToList();
-            s_listOfNames.Clear();
-            s_listOfIDsToQuery.Clear();
-
-            LookupForName();
-
-            return s_listOfNames;
+            return s_lookup.LookupAllID(ids);
         }
+
+        #endregion
+
+
+        #region Importation/Exportation
 
         /// <summary>
         /// Initializes the cache from file.
@@ -93,130 +85,28 @@ namespace EVEMon.Common.Service
         public static void InitializeFromFile()
         {
             // Quit if the client has been shut down
-            if (EveMonClient.Closed)
+            if (EveMonClient.Closed || s_cacheList.Any())
                 return;
-
-            string file = LocalXmlCache.GetFileInfo(Filename).FullName;
-
-            if (!File.Exists(file) || s_cacheList.Any())
-                return;
-
             // Deserialize the file
-            SerializableEveIDToName cache = Util.DeserializeXmlFromFile<SerializableEveIDToName>(file);
-
-            // Reset the cache if anything went wrong
-            if (cache == null || cache.Entities.Any(x => x.ID == 0) || cache.Entities.Any(x => x.Name.Length == 0))
-            {
-                EveMonClient.Trace("Deserializing failed. File may be corrupt. Deleting file.");
-                FileHelper.DeleteFile(file);
-                return;
-            }
-
-            // Add the data to the cache
-            Import(cache.Entities.Select(entity => new SerializableCharacterNameListItem { ID = entity.ID, Name = entity.Name }));
+            var cache = LocalXmlCache.Load<SerializableEveIDToName>(Filename, true);
+            if (cache != null)
+                // Add the data to the cache
+                Import(cache.Entities.Select(entity => new SerializableCharacterNameListItem {
+                    ID = entity.ID,
+                    Name = entity.Name
+                }));
+            // For blank corporations and alliances
+            s_lookup.Prefill(0L, "(None)");
         }
-
-        /// <summary>
-        /// Lookups for name.
-        /// </summary>
-        private static void LookupForName()
-        {
-            if (s_cacheList.Any())
-                QueryCacheList();
-            else
-                s_listOfIDsToQuery = s_listOfIDs;
-
-            // Avoid querying an already querying id
-            IList<string> idsToQuery = s_listOfIDsToQuery.Where(id => !s_queriedIDs.Contains(id)).ToList();
-            if (idsToQuery.Any())
-                QueryAPICharacterName(idsToQuery);
-
-            // Add an "Unknown" entry for every id we query
-            s_listOfIDsToQuery.ForEach(id => s_listOfNames.Add(EveMonConstants.UnknownText));
-        }
-
-        /// <summary>
-        /// Queries the cache list.
-        /// </summary>
-        private static void QueryCacheList()
-        {
-            foreach (string id in s_listOfIDs)
-            {
-                string name = s_cacheList.FirstOrDefault(x => x.Key.ToString(CultureConstants.InvariantCulture) == id).Value;
-
-                if (name == null)
-                    s_listOfIDsToQuery.Add(id);
-                else
-                    s_listOfNames.Add(name);
-            }
-        }
-
-        /// <summary>
-        /// Queries the API Character Name.
-        /// </summary>
-        /// <param name="idsToQuery">The ids to query.</param>
-        private static void QueryAPICharacterName(IList<string> idsToQuery)
-        {
-            string ids = string.Join(",", idsToQuery);
-
-            if (String.IsNullOrWhiteSpace(ids))
-                return;
-
-            // Add the ids to the queried list
-            s_queriedIDs.AddRange(idsToQuery);
-
-            EveMonClient.APIProviders.CurrentProvider.QueryMethodAsync<SerializableAPICharacterName>(
-                CCPAPIGenericMethods.CharacterName, ids, OnQueryAPICharacterNameUpdated);
-        }
-
-        /// <summary>
-        /// Called when the query updated.
-        /// </summary>
-        /// <param name="result">The result.</param>
-        private static void OnQueryAPICharacterNameUpdated(CCPAPIResult<SerializableAPICharacterName> result)
-        {
-            // Checks if EVE database is out of service
-            if (result.EVEDatabaseError)
-                return;
-
-            if (result.HasError)
-            {
-                EveMonClient.Notifications.NotifyCharacterNameError(result);
-                return;
-            }
-
-            EveMonClient.Notifications.InvalidateAPIError();
-
-            // Deserialize the result
-            Import(result.Result.Entities);
-
-            // Notify the subscribers
-            EveMonClient.OnEveIDToNameUpdated();
-
-            // We save the data to the disk
-            Save();
-        }
-
+        
         /// <summary>
         /// Imports the data from the query result.
         /// </summary>
         /// <param name="entities">The entities.</param>
         private static void Import(IEnumerable<SerializableCharacterNameListItem> entities)
         {
-            EveMonClient.Trace("begin");
-
-            foreach (SerializableCharacterNameListItem entity in entities)
-            {
-                // Remove the queried id from the queried list
-                if (s_queriedIDs.Contains(entity.ID.ToString(CultureConstants.InvariantCulture)))
-                    s_queriedIDs.Remove(entity.ID.ToString(CultureConstants.InvariantCulture));
-
-                // Add the query result to our cache list if it doesn't exist already
-                if (!s_cacheList.ContainsKey(entity.ID))
-                    s_cacheList.Add(entity.ID, entity.Name);
-            }
-
-            EveMonClient.Trace("done");
+            foreach (var entity in entities)
+                s_lookup.Prefill(entity.ID, entity.Name);
         }
 
         /// <summary>
@@ -230,19 +120,7 @@ namespace EVEMon.Common.Service
 
             return Task.CompletedTask;
         }
-
-        /// <summary>
-        /// Saves the list to disk.
-        /// </summary>
-        /// <remarks>
-        /// Saves will be cached for 10 seconds to avoid thrashing the disk when this method is called very rapidly.
-        /// If a save is currently pending, no action is needed. 
-        /// </remarks>
-        private static void Save()
-        {
-            s_savePending = true;
-        }
-
+        
         /// <summary>
         /// Saves this cache list to a file.
         /// </summary>
@@ -262,19 +140,192 @@ namespace EVEMon.Common.Service
         /// <returns></returns>
         private static SerializableEveIDToName Export()
         {
-            IEnumerable<SerializableEveIDToNameListItem> entitiesList = s_cacheList
-                .Select(
-                    item =>
-                        new SerializableEveIDToNameListItem
-                        {
-                            ID = item.Key,
-                            Name = item.Value,
-                        });
+            var serial = new SerializableEveIDToName();
 
-            SerializableEveIDToName serial = new SerializableEveIDToName();
-            serial.Entities.AddRange(entitiesList);
+            lock (s_cacheList)
+            {
+                serial.Entities.AddRange(s_cacheList.Select(item =>
+                    new SerializableEveIDToNameListItem
+                    {
+                        ID = item.Key,
+                        // Should never be null, but better than crashing...
+                        Name = item.Value?.Value ?? EveMonConstants.UnknownText,
+                    }));
+            }
 
             return serial;
+        }
+
+        #endregion
+
+
+        /// <summary>
+        /// Provides character, corp, or alliance ID to name conversion. Uses the combined
+        /// names endpoint.
+        /// </summary>
+        private sealed class GenericIDToNameProvider : IDToObjectProvider<string, string>
+        {
+            // Only this many IDs can be requested in one attempt
+            private const int MAX_IDS = 250;
+
+            public GenericIDToNameProvider(IDictionary<long, StringIDInfo> cacheList) :
+                base(cacheList) { }
+
+            protected override StringIDInfo CreateIDInfo(long id, string value)
+            {
+                return new GenericIDInformation(id, value);
+            }
+
+            protected override void FetchIDs()
+            {
+                var toDo = new LinkedList<long>();
+                lock (m_pendingIDs)
+                {
+                    // Take up to MAX_IDS of them, in sorted order
+                    var enumerator = m_pendingIDs.GetEnumerator();
+                    for (int i = 0; i < MAX_IDS && enumerator.MoveNext(); i++)
+                        toDo.AddLast(enumerator.Current.Key);
+                    foreach (long key in toDo)
+                    {
+                        m_pendingIDs.Remove(key);
+                        m_cache.TryGetValue(key, out StringIDInfo info);
+                        info?.OnRequestStart(null);
+                    }
+                }
+                string ids = "[ " + string.Join(",", toDo) + " ]";
+                // Given the number of IDs we are requesting, it is very unlikely that the
+                // eTag or expiration will be useful
+                EveMonClient.APIProviders.CurrentProvider.QueryEsi<EsiAPICharacterNames>(
+                    ESIAPIGenericMethods.CharacterName, OnQueryAPICharacterNameUpdated,
+                    new ESIParams()
+                    {
+                        PostData = ids
+                    });
+            }
+
+            private void OnQueryAPICharacterNameUpdated(EsiResult<EsiAPICharacterNames> result,
+                object ignore)
+            {
+                // Bail if there is an error
+                if (result.HasError)
+                    EveMonClient.Notifications.NotifyCharacterNameError(result);
+                else
+                {
+                    EveMonClient.Notifications.InvalidateAPIError();
+                    // This probably will never be false since we did not provide an etag
+                    if (result.HasData)
+                        lock (m_cache)
+                        {
+                            // Add resulting names to the cache; duplicates should not occur,
+                            // but guard against them defensively
+                            foreach (var namePair in result.Result)
+                            {
+                                m_cache.TryGetValue(namePair.ID, out StringIDInfo info);
+                                info?.OnRequestComplete(namePair.Name);
+                            }
+                        }
+                }
+                OnLookupComplete();
+            }
+
+            protected override string Prefetch(long id)
+            {
+                string name = null;
+
+                if (id == 0L)
+                    // Empty IDs are always "unknown"
+                    name = EveMonConstants.UnknownText;
+                else if (id < int.MaxValue && id > int.MinValue)
+                {
+                    int intId = (int)id;
+
+                    // Check NPC corporations
+                    var npcCorp = StaticGeography.GetCorporationByID(intId);
+                    if (npcCorp != null)
+                        name = npcCorp.Name;
+                    else
+                    {
+                        // Check NPC factions
+                        var npcFaction = StaticGeography.GetFactionByID(intId);
+                        if (npcFaction != null)
+                            name = npcFaction.Name;
+                    }
+                }
+                // Try filling with a current character identity or corporation/alliance
+                if (string.IsNullOrEmpty(name))
+                    foreach (var character in EveMonClient.Characters)
+                    {
+                        string corpName = character.CorporationName, allianceName = character.
+                            AllianceName;
+                        if (character.CharacterID == id)
+                        {
+                            name = character.Name;
+                            break;
+                        }
+                        if (character.CorporationID == id && !corpName.IsEmptyOrUnknown())
+                        {
+                            name = corpName;
+                            break;
+                        }
+                        if (character.AllianceID == id && !allianceName.IsEmptyOrUnknown())
+                        {
+                            name = allianceName;
+                            break;
+                        }
+                    }
+                return name;
+            }
+
+            protected override void TriggerEvent()
+            {
+                EveMonClient.OnEveIDToNameUpdated();
+                s_savePending = true;
+            }
+        }
+
+        /// <summary>
+        /// A simple implementation of IDInformation for maintaining ID state.
+        /// </summary>
+        private sealed class GenericIDInformation : IDInformation<string, string>
+        {
+            public long ID { get; }
+
+            public string Value { get; private set; }
+
+            /// <summary>
+            /// True if a request has been attempted, or false otherwise.
+            /// </summary>
+            private bool requested;
+
+            public GenericIDInformation(long id, string value)
+            {
+                ID = id;
+                Value = value;
+                requested = false;
+            }
+
+            public void OnRequestComplete(string result)
+            {
+                bool isBlank = string.IsNullOrWhiteSpace(result);
+                if (Value == null || !isBlank)
+                    // Avoid overwriting cached result with failed result
+                    Value = isBlank ? null : result;
+            }
+
+            public void OnRequestStart(string extra)
+            {
+                requested = true;
+            }
+
+            public bool RequestAttempted(string extra)
+            {
+                return requested;
+            }
+
+            public override string ToString()
+            {
+                return string.Format("{0:D} => {1}", ID, Value);
+            }
         }
     }
 }

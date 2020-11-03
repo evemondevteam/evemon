@@ -482,7 +482,7 @@ namespace EVEMon.SkillPlanner
                 int left = e.Bounds.Left + il.ImageSize.Width + 2;
                 Size line1Size = TextRenderer.MeasureText(e.Node.Text, m_boldFont);
 
-                if (!String.IsNullOrEmpty(line2))
+                if (!string.IsNullOrEmpty(line2))
                 {
                     Size line2Size = TextRenderer.MeasureText(line2, Font);
 
@@ -558,10 +558,10 @@ namespace EVEMon.SkillPlanner
 
             tsmExpandSelected.Text = node != null && node.GetNodeCount(true) > 0 && !node.IsExpanded
                 ? $"Expand \"{node.Text}\""
-                : String.Empty;
+                : string.Empty;
             tsmCollapseSelected.Text = node != null && node.GetNodeCount(true) > 0 && node.IsExpanded
                 ? $"Collapse \"{node.Text}\""
-                : String.Empty;
+                : string.Empty;
 
             toggleSeparator.Visible = node != null && node.GetNodeCount(true) > 0;
 
@@ -647,10 +647,12 @@ namespace EVEMon.SkillPlanner
         /// <param name="e"></param>
         private void showInBrowserMenu_Click(object sender, EventArgs e)
         {
-            Skill skill = ((SkillLevel)treeView.SelectedNode?.Tag)?.Skill;
+            var skillTag = treeView.SelectedNode?.Tag as SkillLevel;
 
-            // Open the skill browser
-            PlanWindow.ShowPlanWindow(m_character, m_plan).ShowSkillInBrowser(skill);
+            if (skillTag != null)
+                // Open the skill browser
+                PlanWindow.ShowPlanWindow(m_character, m_plan).ShowSkillInBrowser(skillTag.
+                    Skill);
         }
 
         /// <summary>
@@ -660,10 +662,12 @@ namespace EVEMon.SkillPlanner
         /// <param name="e"></param>
         private void showInExplorerMenu_Click(object sender, EventArgs e)
         {
-            Skill skill = ((SkillLevel)treeView.SelectedNode?.Tag)?.Skill;
+            var skillTag = treeView.SelectedNode?.Tag as SkillLevel;
 
-            // Open the skill explorer
-            SkillExplorerWindow.ShowSkillExplorerWindow(m_character, m_plan).ShowSkillInExplorer(skill);
+            if (skillTag != null)
+                // Open the skill explorer
+                SkillExplorerWindow.ShowSkillExplorerWindow(m_character, m_plan).
+                    ShowSkillInExplorer(skillTag.Skill);
         }
 
         #endregion

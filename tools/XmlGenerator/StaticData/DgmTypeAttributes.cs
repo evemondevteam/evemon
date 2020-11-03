@@ -24,7 +24,7 @@ namespace EVEMon.XmlGenerator.StaticData
         /// </summary>
         /// <returns></returns>
         [XmlIgnore]
-        internal Int64 GetInt64Value => ValueFloat.HasValue ? Convert.ToInt64(ValueFloat.Value) : ValueInt64.HasValue ? ValueInt64.Value : 0;
+        internal long GetInt64Value => ValueFloat.HasValue ? Convert.ToInt64(ValueFloat.Value) : ValueInt64.HasValue ? ValueInt64.Value : 0;
 
 
         #region IRelation Members

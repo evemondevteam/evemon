@@ -110,7 +110,7 @@ namespace EVEMon.SettingsUI
         /// <returns></returns>
         private static string TransformTooltipText(Match m)
         {
-            string value = String.Empty;
+            string value = string.Empty;
             char capture = m.Groups[1].Value[0];
 
             switch (capture)

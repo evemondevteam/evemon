@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using EVEMon.Common.Constants;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Models;
 using EVEMon.Common.Serialization.Eve;
@@ -21,7 +20,7 @@ namespace EVEMon.Common.Helpers
             try
             {
                 string killLogInfoText = ExportKillLogInfo(killLog);
-                if (String.IsNullOrEmpty(killLogInfoText))
+                if (string.IsNullOrEmpty(killLogInfoText))
                 {
                     MessageBox.Show(@"No kill info was available. Nothing has been copied to the clipboard.",
                         @"Copy", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -48,7 +47,7 @@ namespace EVEMon.Common.Helpers
         private static string ExportKillLogInfo(KillLog killLog)
         {
             if (killLog == null)
-                return String.Empty;
+                return string.Empty;
 
             StringBuilder sb = new StringBuilder();
             sb
@@ -70,7 +69,7 @@ namespace EVEMon.Common.Helpers
             foreach (SerializableKillLogAttackersListItem attacker in killLog.Attackers.OrderByDescending(x => x.DamageDone))
             {
                 // Append info for NPC or player entities
-                if (String.IsNullOrEmpty(attacker.Name))
+                if (string.IsNullOrEmpty(attacker.Name))
                     sb.Append($"Name: {attacker.ShipTypeName} / {attacker.CorporationName}");
                 else
                     sb.Append($"Name: {attacker.Name}");
@@ -81,22 +80,17 @@ namespace EVEMon.Common.Helpers
                 sb.AppendLine();
 
                 // Append info only for player entities
-                if (!String.IsNullOrEmpty(attacker.Name))
+                if (!string.IsNullOrEmpty(attacker.Name))
                 {
-                    sb
-                        .AppendLine(FormattableString.Invariant($"Security: {attacker.SecurityStatus:N1}"))
+                    sb.AppendLine(FormattableString.Invariant($"Security: {attacker.SecurityStatus:N1}"))
                         .AppendLine($"Corp: {attacker.CorporationName}")
-                        .AppendLine(
-                            $"Alliance: {(attacker.AllianceName == EveMonConstants.UnknownText ? "None" : attacker.AllianceName)}")
-                        .AppendLine(
-                            $"Faction: {(attacker.FactionName == EveMonConstants.UnknownText ? "None" : attacker.FactionName)}")
+                        .AppendLine($"Alliance: {(attacker.AllianceName.IsEmptyOrUnknown() ? "None" : attacker.AllianceName)}")
+                        .AppendLine($"Faction: {(attacker.FactionName.IsEmptyOrUnknown() ? "None" : attacker.FactionName)}")
                         .AppendLine($"Ship: {attacker.ShipTypeName}")
                         .AppendLine($"Weapon: {attacker.WeaponTypeName}");
                 }
 
-                sb
-                    .AppendLine(FormattableString.Invariant($"Damage Done: {attacker.DamageDone:N}"))
-                    .AppendLine();
+                sb.AppendLine(FormattableString.Invariant($"Damage Done: {attacker.DamageDone:N}")).AppendLine();
             }
 
             if (killLog.Items.Any(x => x.QtyDestroyed != 0))
@@ -137,7 +131,7 @@ namespace EVEMon.Common.Helpers
                 if (droppedItem.QtyDropped > 1)
                     sb.Append(FormattableString.Invariant($", Qty: {droppedItem.QtyDropped:N}"));
 
-                if (!String.IsNullOrEmpty(droppedItem.InventoryText))
+                if (!string.IsNullOrEmpty(droppedItem.InventoryText))
                     sb.Append($" ({droppedItem.InventoryText})");
 
                 if (droppedItem.IsInContainer)
@@ -168,7 +162,7 @@ namespace EVEMon.Common.Helpers
                 if (destroyedItem.QtyDestroyed > 1)
                     sb.Append(FormattableString.Invariant($", Qty: {destroyedItem.QtyDestroyed:N}"));
 
-                if (!String.IsNullOrEmpty(destroyedItem.InventoryText))
+                if (!string.IsNullOrEmpty(destroyedItem.InventoryText))
                     sb.Append($" ({destroyedItem.InventoryText})");
 
                 if (destroyedItem.IsInContainer)

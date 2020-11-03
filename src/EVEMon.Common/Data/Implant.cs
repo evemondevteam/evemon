@@ -58,7 +58,7 @@ namespace EVEMon.Common.Data
         /// <summary>
         /// For attributes implants, gets the amount of bonus points it grants.
         /// </summary>
-        public Int64 Bonus { get; private set; }
+        public long Bonus { get; private set; }
 
         #endregion
 

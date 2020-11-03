@@ -2,6 +2,7 @@ using System.Linq;
 using EVEMon.Common.Collections;
 using EVEMon.Common.Models;
 using EVEMon.Common.Serialization.Datafiles;
+using System.Collections.Generic;
 
 namespace EVEMon.Common.Data
 {
@@ -18,18 +19,16 @@ namespace EVEMon.Common.Data
         /// </summary>
         /// <param name="src">The source.</param>
         /// <param name="ship">The ship.</param>
-        internal MasteryShip(SerializableMasteryShip src, Ship ship)
-            : base(src?.Masteries.Count ?? 0)
+        internal MasteryShip(SerializableMasteryShip src, Ship ship) : base(src.Masteries.
+            Count)
         {
-            if (src == null)
-                return;
-
             Ship = ship;
-
-            foreach (SerializableMastery mastery in src.Masteries)
-            {
-                Items.Add(new Mastery(this, mastery));
-            }
+            // Add in sorted order 1-5
+            var masteriesSorted = new List<Mastery>(src.Masteries.Count);
+            foreach (var mastery in src.Masteries)
+                masteriesSorted.Add(new Mastery(this, mastery));
+            masteriesSorted.Sort();
+            Items.AddRange(masteriesSorted);
         }
 
         /// <summary>
@@ -37,19 +36,17 @@ namespace EVEMon.Common.Data
         /// </summary>
         /// <param name="character">The character.</param>
         /// <param name="masteryShip">The mastery ship.</param>
-        internal MasteryShip(Character character, MasteryShip masteryShip)
-            : base(masteryShip?.Count ?? 0)
+        internal MasteryShip(Character character, MasteryShip masteryShip) : base(masteryShip.
+            Count)
         {
-            if (masteryShip == null)
-                return;
-
             Character = character;
             Ship = masteryShip.Ship;
-
-            foreach (Mastery mastery in masteryShip)
-            {
-                Items.Add(new Mastery(character, mastery));
-            }
+            // Add in sorted order 1-5
+            var masteriesSorted = new List<Mastery>(masteryShip.Count);
+            foreach (var mastery in masteryShip)
+                masteriesSorted.Add(new Mastery(character, mastery));
+            masteriesSorted.Sort();
+            Items.AddRange(masteriesSorted);
         }
 
         #endregion
@@ -80,7 +77,8 @@ namespace EVEMon.Common.Data
         /// </summary>
         /// <param name="level">The level.</param>
         /// <returns></returns>
-        public Mastery GetLevel(int level) => Items.FirstOrDefault(mastery => mastery.Level == level);
+        public Mastery GetLevel(int level) => Items.FirstOrDefault(mastery => mastery.Level ==
+            level);
 
         /// <summary>
         /// Initializes the mastery.
@@ -88,15 +86,28 @@ namespace EVEMon.Common.Data
         /// <exception cref="System.ArgumentNullException">character</exception>
         internal void Initialize()
         {
-            while (true)
+            bool updatedAnything;
+            do
             {
-                bool updatedAnything = Items
-                    .Aggregate(false, (current, mastery) => current | mastery.TryUpdateMasteryStatus());
-
-                if (!updatedAnything)
-                    break;
-            }
+                updatedAnything = false;
+                bool previousUntrained = false;
+                // Iterate 1 to 5
+                // If a mastery is untrained, then we know that all levels above it are
+                // also untrained
+                foreach (var mastery in Items)
+                {
+                    if (!previousUntrained)
+                    {
+                        updatedAnything = updatedAnything | mastery.TryUpdateMasteryStatus();
+                        previousUntrained = mastery.Status == Enumerations.MasteryStatus.
+                            Untrained;
+                    }
+                    else
+                        // This method had side effects (setting m_updated to true) which are
+                        // also satisfied here
+                        updatedAnything = updatedAnything | mastery.SetAsUntrained();
+                }
+            } while (updatedAnything);
         }
-
     }
 }

@@ -76,7 +76,8 @@ namespace EVEMon.Common.Helpers
         /// if he didn't have the permissions to write the file;
         /// true otherwise.</returns>
         /// <exception cref="System.ArgumentNullException">destFileName or writeContentFunc</exception>
-        public static async Task OverwriteOrWarnTheUserAsync(string destFileName, Func<Stream, Task<bool>> writeContentFunc)
+        public static async Task OverwriteOrWarnTheUserAsync(string destFileName,
+            Func<Stream, Task<bool>> writeContentFunc)
         {
             destFileName.ThrowIfNull(nameof(destFileName));
 
@@ -135,9 +136,9 @@ namespace EVEMon.Common.Helpers
                     ExceptionHandler.LogException(exc, true);
 
                     string message = exc.Message;
-                    message += "\r\n\r\nEVEMon failed to save to a file. " +
-                               "You may have insufficient rights or a synchronization may be occuring. " +
-                               "Choosing to abort will make EVEMon quit.";
+                    message += "\r\n\r\nEVEMon failed to save to a file. You may have " +
+                        "insufficient rights or a synchronization may be active. " +
+                        "Choosing to abort will make EVEMon quit.";
 
                     DialogResult result = MessageBox.Show(message, @"Failed to write over a file",
                         MessageBoxButtons.AbortRetryIgnore,
@@ -165,7 +166,7 @@ namespace EVEMon.Common.Helpers
         /// <returns></returns>
         private static void CopyFile(string srcFileName, string destFileName)
         {
-            using (Stream sourceStream = Util.GetFileStream(srcFileName, FileMode.Open, FileAccess.Read))
+            using (Stream sourceStream = Util.GetFileStream(srcFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (Stream destStream = Util.GetFileStream(destFileName, FileMode.Create, FileAccess.Write))
                 sourceStream.CopyTo(destStream);
         }

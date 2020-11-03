@@ -1,5 +1,7 @@
 ﻿using System;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Serialization.Esi;
+using EVEMon.Common.Service;
+using EVEMon.Common.Extensions;
 
 namespace EVEMon.Common.Models
 {
@@ -11,19 +13,21 @@ namespace EVEMon.Common.Models
         /// Constructor from the API.
         /// </summary>
         /// <param name="src"></param>
-        internal FactionalWarfareStats(SerializableAPIFactionalWarfareStats src)
+        internal FactionalWarfareStats(EsiAPIFactionalWarfareStats src)
         {
+            src.ThrowIfNull(nameof(src));
+
             FactionID = src.FactionID;
-            FactionName = src.FactionName;
+            FactionName = EveIDToName.GetIDToName(FactionID);
             EnlistedDate = src.EnlistedDate;
             CurrentRank = src.CurrentRank;
             HighestRank = src.HighestRank;
-            KillsYesterday = src.KillsYesterday;
-            KillsLastWeek = src.KillsLastWeek;
-            KillsTotal = src.KillsTotal;
-            VictoryPointsYesterday = src.VictoryPointsYesterday;
-            VictoryPointsLastWeek = src.VictoryPointsLastWeek;
-            VictoryPointsTotal = src.VictoryPointsTotal;
+            KillsYesterday = src.Kills?.Yesterday ?? 0;
+            KillsLastWeek = src.Kills?.LastWeek ?? 0;
+            KillsTotal = src.Kills?.Total ?? 0;
+            VictoryPointsYesterday = src.VictoryPoints?.Yesterday ?? 0;
+            VictoryPointsLastWeek = src.VictoryPoints?.LastWeek ?? 0;
+            VictoryPointsTotal = src.VictoryPoints?.Total ?? 0;
         }
 
         #endregion

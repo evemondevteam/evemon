@@ -125,6 +125,10 @@
     <value>A file request to {0} failed because the file could not be written.</value>
     <comment>{0} - the host name of the request</comment>
   </data>
+  <data name="Forbidden" xml:space="preserve">
+    <value>A request to {0} was not permitted.</value>
+    <comment>{0} - the host name of the request</comment>
+  </data>
   <data name="ImageException" xml:space="preserve">
     <value>An Image request  to {0} failed because the server did not return a valid image.</value>
     <comment>{0} - the host name of the request</comment>

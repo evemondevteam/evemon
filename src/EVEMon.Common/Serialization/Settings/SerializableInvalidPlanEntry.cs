@@ -12,7 +12,7 @@ namespace EVEMon.Common.Serialization.Settings
         public string SkillName { get; set; }
 
         [XmlAttribute("level")]
-        public Int64 PlannedLevel { get; set; }
+        public long PlannedLevel { get; set; }
 
         [XmlAttribute("acknowledged")]
         public bool Acknowledged { get; set; }

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using EVEMon.Common.Enumerations;
+using EVEMon.Common.Extensions;
 
 namespace EVEMon.Common.Net
 {
@@ -14,46 +14,37 @@ namespace EVEMon.Common.Net
         /// Synchronously downloads a string from the specified url.
         /// </summary>
         /// <param name="url">The URL.</param>
-        /// <param name="method">The method.</param>
-        /// <param name="acceptEncoded">if set to <c>true</c> accept encoded response.</param>
-        /// <param name="postdata">The post data.</param>
-        /// <param name="dataCompression">The post data compression method.</param>
+        /// <param name="param">The request parameters. If null, defaults will be used.</param>
         /// <returns></returns>
-        public static DownloadResult<String> DownloadString(Uri url, HttpMethod method = null, bool acceptEncoded = false,
-            string postdata = null, DataCompression dataCompression = DataCompression.None)
-            => DownloadStringAsync(url, method, acceptEncoded, postdata, dataCompression).Result;
-        
+        public static DownloadResult<string> DownloadString(Uri url, RequestParams param = null)
+            => DownloadStringAsync(url, param).Result;
+
         /// <summary>
         /// Asynchronously downloads a string from the specified url.
         /// </summary>
         /// <param name="url">The URL.</param>
-        /// <param name="method">The method.</param>
-        /// <param name="acceptEncoded">if set to <c>true</c> accept encoded response.</param>
-        /// <param name="postdata">The post data.</param>
-        /// <param name="dataCompression">The post data compression method.</param>
-        public static async Task<DownloadResult<String>> DownloadStringAsync(Uri url, HttpMethod method = null, bool acceptEncoded = false,
-            string postdata = null, DataCompression dataCompression = DataCompression.None)
+        /// <param name="param">The request parameters. If null, defaults will be used.</param>
+        public static async Task<DownloadResult<string>> DownloadStringAsync(Uri url,
+            RequestParams param = null)
         {
             string urlValidationError;
             if (!IsValidURL(url, out urlValidationError))
                 throw new ArgumentException(urlValidationError);
-
-            HttpPostData postData = String.IsNullOrWhiteSpace(postdata) ? null : new HttpPostData(postdata, dataCompression);
-            HttpClientServiceRequest request = new HttpClientServiceRequest();
+            var request = new HttpClientServiceRequest();
             try
             {
-                HttpResponseMessage response =
-                    await request.SendAsync(url, method, postData, dataCompression, acceptEncoded, StringAccept).ConfigureAwait(false);
-
+                var response = await request.SendAsync(url, param, StringAccept).
+                    ConfigureAwait(false);
                 using (response)
                 {
-                    Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                    return GetString(request.BaseUrl, stream);
+                    Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(
+                        false);
+                    return GetString(request.BaseUrl, stream, response);
                 }
             }
             catch (HttpWebClientServiceException ex)
             {
-                return new DownloadResult<String>(String.Empty, ex);
+                return new DownloadResult<string>(string.Empty, ex);
             }
         }
 
@@ -62,18 +53,19 @@ namespace EVEMon.Common.Net
         /// </summary>
         /// <param name="requestBaseUrl">The request base URL.</param>
         /// <param name="stream">The stream.</param>
-        /// <returns></returns>
-        private static DownloadResult<String> GetString(Uri requestBaseUrl, Stream stream)
+        /// <param name="response">The response from the server.</param>
+        private static DownloadResult<string> GetString(Uri requestBaseUrl, Stream stream,
+            HttpResponseMessage response)
         {
-            String text = String.Empty;
+            string text = string.Empty;
             HttpWebClientServiceException error = null;
-
+            var param = new ResponseParams(response);
             if (stream == null)
             {
-                error = HttpWebClientServiceException.Exception(requestBaseUrl, new ArgumentNullException(nameof(stream)));
-                return new DownloadResult<String>(text, error);
+                error = HttpWebClientServiceException.Exception(requestBaseUrl, new
+                    ArgumentNullException(nameof(stream)));
+                return new DownloadResult<string>(text, error, param);
             }
-
             try
             {
                 using (StreamReader reader = new StreamReader(Util.ZlibUncompress(stream)))
@@ -83,8 +75,7 @@ namespace EVEMon.Common.Net
             {
                 error = HttpWebClientServiceException.Exception(requestBaseUrl, ex);
             }
-
-            return new DownloadResult<String>(text, error);
+            return new DownloadResult<string>(text, error, param);
         }
     }
 }

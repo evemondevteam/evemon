@@ -63,6 +63,8 @@ namespace EVEMon.XmlGenerator.Datafiles
         {
             List<SerializableSkill> listOfSkillsInGroup = new List<SerializableSkill>();
 
+            var alphaLimit = HoboleaksAlphaSkills.GetAlphaSkillLimits();
+
             foreach (InvTypes skill in Database.InvTypesTable.Where(x => x.GroupID == group.ID))
             {
                 Util.UpdatePercentDone(Database.SkillsTotalCount);
@@ -74,10 +76,11 @@ namespace EVEMon.XmlGenerator.Datafiles
                     Description = skill.Description,
                     Public = skill.Published,
                     Cost = (long)skill.BasePrice,
+                    AlphaLimit = (alphaLimit.ContainsKey(skill.ID)) ? alphaLimit[skill.ID] : 0,
                 };
 
                 // Export skill atributes
-                Dictionary<int, Int64> skillAttributes = Database.DgmTypeAttributesTable.Where(
+                Dictionary<int, long> skillAttributes = Database.DgmTypeAttributesTable.Where(
                     x => x.ItemID == skill.ID).ToDictionary(
                         attribute => attribute.AttributeID, attribute => attribute.GetInt64Value);
 
@@ -93,10 +96,8 @@ namespace EVEMon.XmlGenerator.Datafiles
                     ? IntToEveAttribute(
                         skillAttributes[DBConstants.SecondaryAttributePropertyID])
                     : EveAttribute.None;
-                singleSkill.CanTrainOnTrial = !skillAttributes.ContainsKey(DBConstants.CanNotBeTrainedOnTrialPropertyID) ||
-                                              skillAttributes[DBConstants.CanNotBeTrainedOnTrialPropertyID] == 0;
 
-                // Export prerequesities
+                // Export prerequisites
                 List<SerializableSkillPrerequisite> listOfPrerequisites = new List<SerializableSkillPrerequisite>();
 
                 for (int i = 0; i < DBConstants.RequiredSkillPropertyIDs.Count; i++)
@@ -131,7 +132,7 @@ namespace EVEMon.XmlGenerator.Datafiles
         /// <summary>
         /// Gets the Eve attribute.
         /// </summary>        
-        private static EveAttribute IntToEveAttribute(Int64 attributeValue)
+        private static EveAttribute IntToEveAttribute(long attributeValue)
         {
             switch (attributeValue)
             {

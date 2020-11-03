@@ -1,5 +1,6 @@
 using EVEMon.Common.Constants;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Enumerations;
+using EVEMon.Common.Serialization.Esi;
 using EVEMon.Common.Serialization.Settings;
 
 namespace EVEMon.Common.Models
@@ -12,9 +13,11 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Constructor from the API.
         /// </summary>
-        /// <param name="src"></param>
-        internal BuyOrder(SerializableOrderListItem src)
-            : base(src)
+        /// <param name="src">The source.</param>
+        /// <param name="issuedFor">Whether the order was issued for a corporation or a
+        /// character.</param>
+        internal BuyOrder(EsiOrderListItem src, IssuedFor issuedFor, CCPCharacter character)
+            : base(src, issuedFor, character)
         {
             Escrow = src.Escrow;
             Range = src.Range;
@@ -24,8 +27,8 @@ namespace EVEMon.Common.Models
         /// Constructor from an object deserialized from the settings file.
         /// </summary>
         /// <param name="src"></param>
-        internal BuyOrder(SerializableOrderBase src)
-            : base(src)
+        internal BuyOrder(SerializableOrderBase src, CCPCharacter character)
+            : base(src, character)
         {
         }
 

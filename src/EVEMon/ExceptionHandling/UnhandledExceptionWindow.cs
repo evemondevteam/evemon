@@ -73,27 +73,25 @@ namespace EVEMon.ExceptionHandling
         private void BuildExceptionMessage()
         {
             EveMonClient.StopTraceLogging();
-
             try
             {
                 StringBuilder exceptionReport = new StringBuilder();
-
-                exceptionReport
-                    .AppendLine($"EVEMon Version: {EveMonClient.FileVersionInfo.FileVersion}")
-                    .AppendLine($".NET Runtime Version: {Environment.Version}")
-                    .AppendLine($"Operating System: {Environment.OSVersion.VersionString}")
-                    .AppendLine($"Executable Path: {Environment.CommandLine}").AppendLine()
-                    .AppendLine(GetRecursiveStackTrace(m_exception)).AppendLine()
-                    .AppendLine(GetDatafileReport()).AppendLine()
-                    .AppendLine("Diagnostic Log:")
-                    .AppendLine(GetTraceLog().Trim());
-
+                exceptionReport.Append("EVEMon Version: ").AppendLine(EveMonClient.
+                    FileVersionInfo.FileVersion);
+                exceptionReport.Append(".NET Runtime Version: ").AppendLine(Environment.
+                    Version.ToString());
+                exceptionReport.Append("Operating System: ").AppendLine(Environment.OSVersion.
+                    VersionString.ToString());
+                exceptionReport.Append("Executable Path: ").AppendLine(Environment.CommandLine);
+                exceptionReport.AppendLine(GetRecursiveStackTrace(m_exception)).AppendLine();
+                exceptionReport.AppendLine(GetDatafileReport()).AppendLine();
+                exceptionReport.AppendLine("Diagnostic Log:").AppendLine(GetTraceLog().Trim());
                 TechnicalDetailsTextBox.Text = exceptionReport.ToString();
             }
             catch (InvalidOperationException ex)
             {
                 ExceptionHandler.LogException(ex, true);
-                TechnicalDetailsTextBox.Text = @"Error retrieving error data. Wow, things are *really* screwed up!";
+                TechnicalDetailsTextBox.Text = Properties.Resources.ErrorBuildingError;
             }
         }
 
@@ -107,8 +105,8 @@ namespace EVEMon.ExceptionHandling
             FileStream traceStream = null;
             try
             {
-                traceStream = Util.GetFileStream(EveMonClient.TraceFileNameFullPath, FileMode.Open, FileAccess.Read);
-
+                traceStream = Util.GetFileStream(EveMonClient.TraceFileNameFullPath,
+                    FileMode.Open, FileAccess.Read);
                 using (StreamReader traceReader = new StreamReader(traceStream))
                 {
                     traceStream = null;
@@ -118,12 +116,12 @@ namespace EVEMon.ExceptionHandling
             catch (IOException ex)
             {
                 ExceptionHandler.LogException(ex, true);
-                trace = "Unable to load trace file for inclusion in report";
+                trace = Properties.Resources.ErrorNoTraceFile;
             }
             catch (UnauthorizedAccessException ex)
             {
                 ExceptionHandler.LogException(ex, true);
-                trace = "Unable to load trace file for inclusion in report";
+                trace = Properties.Resources.ErrorNoTraceFile;
             }
             finally
             {
@@ -171,22 +169,19 @@ namespace EVEMon.ExceptionHandling
             {
                 datafileReport.AppendLine("Datafile report:");
 
-                foreach (string datafile in Datafile.GetFilesFrom(EveMonClient.EVEMonDataDir, Datafile.DatafilesExtension))
+                foreach (string datafile in Datafile.GetFilesFrom(EveMonClient.EVEMonDataDir,
+                    Datafile.DatafilesExtension))
                 {
                     FileInfo info = new FileInfo(datafile);
                     Datafile file = new Datafile(Path.GetFileName(datafile));
 
-                    datafileReport
-                        .Append($"  {info.Name} ({info.Length / 1024}KiB - {file.MD5Sum})")
-                        .AppendLine();
+                    datafileReport.AppendLine($"  {info.Name} ({info.Length / 1024}KiB - {file.MD5Sum})");
                 }
             }
             catch (UnauthorizedAccessException ex)
             {
                 ExceptionHandler.LogException(ex, true);
-                datafileReport
-                    .Append("Unable to create datafile report")
-                    .AppendLine();
+                datafileReport.AppendLine(Properties.Resources.ErrorNoDataFile);
             }
 
             return datafileReport.ToString();
@@ -240,15 +235,15 @@ namespace EVEMon.ExceptionHandling
             try
             {
                 Clipboard.SetText(TechnicalDetailsTextBox.Text, TextDataFormat.Text);
-                MessageBox.Show(@"The error details have been copied to the clipboard.", "Copy", MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
+                MessageBox.Show(Properties.Resources.MessageCopiedDetails, "Copy",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (ExternalException ex)
             {
                 // Occurs when another process is using the clipboard
                 ExceptionHandler.LogException(ex, true);
-                MessageBox.Show(@"Couldn't complete the operation, the clipboard is being used by another process. " +
-                                @"Wait a few moments and try again.");
+                MessageBox.Show(Properties.Resources.ErrorClipboardFailure, "Error copying",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -279,7 +274,7 @@ namespace EVEMon.ExceptionHandling
         /// <param name="e">The <see cref="LinkLabelLinkClickedEventArgs"/> instance containing the event data.</param>
         private void llblLatestBinaries_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Util.OpenURL(new Uri(NetworkConstants.BitBucketDownloadsBase));
+            Util.OpenURL(new Uri(NetworkConstants.GitHubDownloadsBase));
         }
 
         #endregion

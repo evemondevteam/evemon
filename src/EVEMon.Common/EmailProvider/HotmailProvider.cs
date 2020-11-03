@@ -7,13 +7,13 @@ namespace EVEMon.Common.EmailProvider
         /// Gets the name.
         /// </summary>
         /// <value>The name.</value>
-        public string Name => "Hotmail";
+        public string Name => "Hotmail / Live";
 
         /// <summary>
         /// Gets the server address.
         /// </summary>
         /// <value>The server address.</value>
-        public string ServerAddress => "smtp.live.com";
+        public string ServerAddress => "smtp-mail.outlook.com";
 
         /// <summary>
         /// Gets the server port.

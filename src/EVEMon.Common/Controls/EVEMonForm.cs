@@ -88,7 +88,7 @@ namespace EVEMon.Common.Controls
             if (!m_loaded)
                 return;
 
-            if (String.IsNullOrEmpty(RememberPositionKey))
+            if (string.IsNullOrEmpty(RememberPositionKey))
                 return;
 
             Rectangle r = new Rectangle(Location, Size);
@@ -101,7 +101,7 @@ namespace EVEMon.Common.Controls
         /// </summary>
         private void RestoreLocation()
         {
-            if (String.IsNullOrEmpty(RememberPositionKey))
+            if (string.IsNullOrEmpty(RememberPositionKey))
                 return;
 
             List<Form> formList = Application.OpenForms.Cast<Form>().Where(form => form.GetType() == GetType()).ToList();

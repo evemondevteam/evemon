@@ -21,8 +21,8 @@ namespace EVEMon.Common.Extensions
         /// <param name="character"></param>
         /// <returns></returns>
         public static IEnumerable<SkillLevel> ToCharacter(this IEnumerable<StaticSkillLevel> src, Character character)
-            => src.Where(item => item.Skill != null)
-                .Select(item => new SkillLevel(character?.Skills[item.Skill.ID] ?? SkillCollection.Skills[item.Skill.ID], item.Level));
+            => src.Where(item => item.Skill != null).Select(item => new SkillLevel(character?.
+            Skills[item.Skill.ID] ?? SkillCollection.Skills[item.Skill.ID], item.Level));
 
         /// <summary>
         /// Gets all the dependencies, in a way matching the hierachical order and without redudancies.
@@ -77,7 +77,7 @@ namespace EVEMon.Common.Extensions
             }
 
             // Add greater levels
-            Int64 max = includeRoots ? item.Level : item.Level - 1;
+            long max = includeRoots ? item.Level : item.Level - 1;
             for (int i = 2; i <= max; i++)
             {
                 if (set.Contains(skill, i))

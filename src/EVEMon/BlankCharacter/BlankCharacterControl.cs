@@ -5,11 +5,58 @@ using EVEMon.Common.Constants;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Factories;
 using EVEMon.Common.Helpers;
+using EVEMon.Common.Extensions;
 
 namespace EVEMon.BlankCharacter
 {
     public partial class BlankCharacterControl : UserControl
     {
+        /// <summary>
+        /// A list of all of the bloodlines sorted by the order they appear in the picture
+        /// control.
+        /// </summary>
+        private static readonly Bloodline[] BLOODLINES_BY_INDEX =
+        {
+            // Amarr 0-2
+            Bloodline.Amarr, Bloodline.Ni_Kunni, Bloodline.Khanid,
+            // Caldari 3-5
+            Bloodline.Deteis, Bloodline.Civire, Bloodline.Achura,
+            // Gallente 6-8
+            Bloodline.Gallente, Bloodline.Intaki, Bloodline.Jin_Mei,
+            // Minmatar 9-11
+            Bloodline.Sebiestor, Bloodline.Brutor, Bloodline.Vherokior
+        };
+        /// <summary>
+        /// A list of all the ancestries sorted by the bloodline which uses them.
+        /// </summary>
+        private static readonly Ancestry[] ANCESTRIES_BY_INDEX =
+        {
+            // Amarr
+            Ancestry.Liberal_Holders, Ancestry.Wealthy_Commoners, Ancestry.Religious_Reclaimers,
+            // Ni-Kunni
+            Ancestry.Free_Merchants, Ancestry.Border_Runners, Ancestry.Navy_Veterans,
+            // Khanid
+            Ancestry.Cyber_Knights, Ancestry.Unionists, Ancestry.Zealots,
+            // Deteis
+            Ancestry.Merchandisers, Ancestry.Scientists, Ancestry.Tube_Child,
+            // Civire
+            Ancestry.Entrepreneurs, Ancestry.Mercs, Ancestry.Dissenters,
+            // Achura
+            Ancestry.Inventors, Ancestry.Monks, Ancestry.Stargazers,
+            // Gallente
+            Ancestry.Activists, Ancestry.Miners, Ancestry.Immigrants,
+            // Intaki
+            Ancestry.Artists, Ancestry.Diplomats, Ancestry.Reborn,
+            // Jin-Mei
+            Ancestry.Sang_Do_Caste, Ancestry.Saan_Go_Caste, Ancestry.Jing_Ko_Caste,
+            // Sebiestor
+            Ancestry.Tinkerers, Ancestry.Traders, Ancestry.Rebels,
+            // Brutor
+            Ancestry.Workers, Ancestry.Tribal_Traditionalists, Ancestry.Slave_Child,
+            // Vherokior:
+            Ancestry.Drifters, Ancestry.Mystics, Ancestry.Retailers
+        };
+
         private Font m_amarrFont;
         private Font m_caldariFont;
         private Font m_gallenteFont;
@@ -51,7 +98,6 @@ namespace EVEMon.BlankCharacter
         private void UpdateBloodlineControl()
         {
             int index = 0;
-
             switch (BlankCharacterUIHelper.Race)
             {
                 case Race.Amarr:
@@ -73,19 +119,23 @@ namespace EVEMon.BlankCharacter
                     throw new NotImplementedException();
             }
 
+            // Calculate bloodlines based on image position (they used to match up in code,
+            // but the codes were remapped to match the SDE)
+            Bloodline bloodline1 = BLOODLINES_BY_INDEX[index], bloodline2 =
+                BLOODLINES_BY_INDEX[index + 1], bloodline3 = BLOODLINES_BY_INDEX[index + 2];
             pbBloodline1.Image = ilBloodline.Images[index];
             pbBloodline2.Image = ilBloodline.Images[index + 1];
             pbBloodline3.Image = ilBloodline.Images[index + 2];
-            pbBloodline1.Tag = (Bloodline)Enum.ToObject(typeof(Bloodline), index);
-            pbBloodline2.Tag = (Bloodline)Enum.ToObject(typeof(Bloodline), index + 1);
-            pbBloodline3.Tag = (Bloodline)Enum.ToObject(typeof(Bloodline), index + 2);
+            pbBloodline1.Tag = bloodline1;
+            pbBloodline2.Tag = bloodline2;
+            pbBloodline3.Tag = bloodline3;
 
             if (rbBloodline1.Checked)
-                BlankCharacterUIHelper.Bloodline = (Bloodline)pbBloodline1.Tag;
+                BlankCharacterUIHelper.Bloodline = bloodline1;
             if (rbBloodline2.Checked)
-                BlankCharacterUIHelper.Bloodline = (Bloodline)pbBloodline2.Tag;
+                BlankCharacterUIHelper.Bloodline = bloodline2;
             if (rbBloodline3.Checked)
-                BlankCharacterUIHelper.Bloodline = (Bloodline)pbBloodline3.Tag;
+                BlankCharacterUIHelper.Bloodline = bloodline3;
 
             UpdateAncestryControl();
         }
@@ -99,6 +149,7 @@ namespace EVEMon.BlankCharacter
 
             switch (BlankCharacterUIHelper.Bloodline)
             {
+                case Bloodline.Unknown:
                 case Bloodline.Amarr:
                     break;
                 case Bloodline.Ni_Kunni:
@@ -138,28 +189,29 @@ namespace EVEMon.BlankCharacter
                     throw new NotImplementedException();
             }
 
+            // Calculate bloodlines based on image position (they used to match up in code,
+            // but the codes were remapped to match the SDE)
+            Ancestry ancestry1 = ANCESTRIES_BY_INDEX[index], ancestry2 = ANCESTRIES_BY_INDEX[
+                index + 1], ancestry3 = ANCESTRIES_BY_INDEX[index + 2];
             pbAncestry1.Image = ilAncestry.Images[index];
             pbAncestry2.Image = ilAncestry.Images[index + 1];
             pbAncestry3.Image = ilAncestry.Images[index + 2];
-            lblAncestry1.Text =
-                ((Ancestry)Enum.ToObject(typeof(Ancestry), index)).ToString().ToUpper(CultureConstants.DefaultCulture).Replace(
-                    "_", " ");
-            lblAncestry2.Text =
-                ((Ancestry)Enum.ToObject(typeof(Ancestry), index + 1)).ToString().ToUpper(CultureConstants.DefaultCulture).Replace
-                    ("_", " ");
-            lblAncestry3.Text =
-                ((Ancestry)Enum.ToObject(typeof(Ancestry), index + 2)).ToString().ToUpper(CultureConstants.DefaultCulture).Replace
-                    ("_", " ");
-            lblAncestry1.Tag = (Ancestry)Enum.ToObject(typeof(Ancestry), index);
-            lblAncestry2.Tag = (Ancestry)Enum.ToObject(typeof(Ancestry), index + 1);
-            lblAncestry3.Tag = (Ancestry)Enum.ToObject(typeof(Ancestry), index + 2);
+            lblAncestry1.Text = ancestry1.ToString().ToUpper(CultureConstants.DefaultCulture).
+                UnderscoresToSpaces();
+            lblAncestry2.Text = ancestry2.ToString().ToUpper(CultureConstants.DefaultCulture).
+                UnderscoresToSpaces();
+            lblAncestry3.Text = ancestry3.ToString().ToUpper(CultureConstants.DefaultCulture).
+                UnderscoresToSpaces();
+            lblAncestry1.Tag = ancestry1;
+            lblAncestry2.Tag = ancestry2;
+            lblAncestry3.Tag = ancestry3;
 
             if (rbAncestry1.Checked)
-                BlankCharacterUIHelper.Ancestry = (Ancestry)lblAncestry1.Tag;
+                BlankCharacterUIHelper.Ancestry = ancestry1;
             if (rbAncestry2.Checked)
-                BlankCharacterUIHelper.Ancestry = (Ancestry)lblAncestry2.Tag;
+                BlankCharacterUIHelper.Ancestry = ancestry2;
             if (rbAncestry3.Checked)
-                BlankCharacterUIHelper.Ancestry = (Ancestry)lblAncestry3.Tag;
+                BlankCharacterUIHelper.Ancestry = ancestry3;
         }
 
         #endregion

@@ -61,7 +61,7 @@ namespace EVEMon.Common.Models.Comparers
             switch (m_column)
             {
                 case AssetColumn.ItemName:
-                    return String.Compare(x.Item.Name, y.Item.Name, StringComparison.CurrentCulture);
+                    return string.Compare(x.Item.Name, y.Item.Name, StringComparison.CurrentCulture);
                 case AssetColumn.Quantity:
                     return x.Quantity.CompareTo(y.Quantity);
                 case AssetColumn.UnitaryPrice:
@@ -71,17 +71,17 @@ namespace EVEMon.Common.Models.Comparers
                 case AssetColumn.Volume:
                     return x.TotalVolume.CompareTo(y.TotalVolume);
                 case AssetColumn.BlueprintType:
-                    return String.Compare(x.TypeOfBlueprint, y.TypeOfBlueprint, StringComparison.CurrentCulture);
+                    return string.Compare(x.TypeOfBlueprint, y.TypeOfBlueprint, StringComparison.CurrentCulture);
                 case AssetColumn.Group:
-                    return String.Compare(x.Item.GroupName, y.Item.GroupName, StringComparison.CurrentCulture);
+                    return string.Compare(x.Item.GroupName, y.Item.GroupName, StringComparison.CurrentCulture);
                 case AssetColumn.Category:
-                    return String.Compare(x.Item.CategoryName, y.Item.CategoryName, StringComparison.CurrentCulture);
+                    return string.Compare(x.Item.CategoryName, y.Item.CategoryName, StringComparison.CurrentCulture);
                 case AssetColumn.Container:
-                    return String.Compare(x.Container, y.Container, StringComparison.CurrentCulture);
+                    return string.Compare(x.Container, y.Container, StringComparison.CurrentCulture);
                 case AssetColumn.Flag:
-                    return String.Compare(x.Flag, y.Flag, StringComparison.CurrentCulture);
+                    return string.Compare(x.Flag, y.Flag, StringComparison.CurrentCulture);
                 case AssetColumn.Location:
-                    return String.Compare(x.Location, y.Location, StringComparison.CurrentCulture);
+                    return string.Compare(x.Location, y.Location, StringComparison.CurrentCulture);
                 case AssetColumn.FullLocation:
                     return x.SolarSystem.CompareTo(y.SolarSystem);
                 case AssetColumn.Region:

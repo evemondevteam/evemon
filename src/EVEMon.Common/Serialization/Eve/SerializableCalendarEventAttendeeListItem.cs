@@ -13,14 +13,14 @@ namespace EVEMon.Common.Serialization.Eve
         public string CharacterNameXml
         {
             get { return CharacterName; }
-            set { CharacterName = value?.HtmlDecode() ?? String.Empty; }
+            set { CharacterName = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlAttribute("response")]
         public string ResponseXml
         {
             get { return Response; }
-            set { Response = value?.HtmlDecode() ?? String.Empty; }
+            set { Response = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlIgnore]

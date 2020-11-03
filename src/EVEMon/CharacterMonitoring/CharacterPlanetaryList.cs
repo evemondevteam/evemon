@@ -34,7 +34,7 @@ namespace EVEMon.CharacterMonitoring
         private PlanetaryGrouping m_grouping;
         private PlanetaryColumn m_sortCriteria;
 
-        private string m_textFilter = String.Empty;
+        private string m_textFilter = string.Empty;
         private bool m_sortAscending = true;
         private bool m_columnsChanged;
         private bool m_isUpdatingColumns;
@@ -175,7 +175,7 @@ namespace EVEMon.CharacterMonitoring
         #endregion
 
 
-        # region Inherited Events
+        #region Inherited Events
 
         /// <summary>
         /// On load subscribe the events.
@@ -195,9 +195,7 @@ namespace EVEMon.CharacterMonitoring
 
             EveMonClient.TimerTick += EveMonClient_TimerTick;
             EveMonClient.CharacterPlanetaryColoniesUpdated += EveMonClient_CharacterPlanetaryColoniesUpdated;
-            EveMonClient.CharacterPlanetaryPinsUpdated += EveMonClient_CharacterPlanetaryPinsUpdated;
-            EveMonClient.CharacterPlanetaryRoutesUpdated += EveMonClient_CharacterPlanetaryRoutesUpdated;
-            EveMonClient.CharacterPlanetaryLinksUpdated += EveMonClient_CharacterPlanetaryLinksUpdated;
+            EveMonClient.CharacterPlanetaryLayoutUpdated += EveMonClient_CharacterPlanetaryLayoutUpdated;
             EveMonClient.CharacterPlaneteryPinsCompleted += EveMonClient_CharacterPlaneteryPinsCompleted;
             Disposed += OnDisposed;
         }
@@ -213,9 +211,7 @@ namespace EVEMon.CharacterMonitoring
 
             EveMonClient.TimerTick -= EveMonClient_TimerTick;
             EveMonClient.CharacterPlanetaryColoniesUpdated -= EveMonClient_CharacterPlanetaryColoniesUpdated;
-            EveMonClient.CharacterPlanetaryPinsUpdated -= EveMonClient_CharacterPlanetaryPinsUpdated;
-            EveMonClient.CharacterPlanetaryRoutesUpdated -= EveMonClient_CharacterPlanetaryRoutesUpdated;
-            EveMonClient.CharacterPlanetaryLinksUpdated -= EveMonClient_CharacterPlanetaryLinksUpdated;
+            EveMonClient.CharacterPlanetaryLayoutUpdated -= EveMonClient_CharacterPlanetaryLayoutUpdated;
             EveMonClient.CharacterPlaneteryPinsCompleted -= EveMonClient_CharacterPlaneteryPinsCompleted;
             Disposed -= OnDisposed;
         }
@@ -239,7 +235,7 @@ namespace EVEMon.CharacterMonitoring
             PlanetaryPins = Character?.PlanetaryColonies.SelectMany(x => x.Pins);
             Columns = Settings.UI.MainWindow.Planetary.Columns;
             Grouping = Character?.UISettings.PlanetaryGroupBy;
-            TextFilter = String.Empty;
+            TextFilter = string.Empty;
 
             UpdateColumns();
 
@@ -248,7 +244,7 @@ namespace EVEMon.CharacterMonitoring
             UpdateListVisibility();
         }
 
-        # endregion
+        #endregion
 
 
         #region Update Methods
@@ -464,7 +460,7 @@ namespace EVEMon.CharacterMonitoring
             {
                 string groupText;
                 if (group.Key is DateTime)
-                    groupText = ((DateTime)(Object)group.Key).ToShortDateString();
+                    groupText = ((DateTime)(object)group.Key).ToShortDateString();
                 else
                 {
                     PlanetaryColony colony = group.Key as PlanetaryColony;
@@ -508,7 +504,7 @@ namespace EVEMon.CharacterMonitoring
             // Add enough subitems to match the number of columns
             while (item.SubItems.Count < lvPlanetary.Columns.Count + 1)
             {
-                item.SubItems.Add(String.Empty);
+                item.SubItems.Add(string.Empty);
             }
 
             // Creates the subitems
@@ -609,11 +605,10 @@ namespace EVEMon.CharacterMonitoring
             switch (column)
             {
                 case PlanetaryColumn.State:
-                    item.Text = pin.State != PlanetaryPinState.None
-                        ? pin.State.GetDescription()
-                        : String.Empty;
-                        item.ForeColor = GetStateColor(pin);
-                break;
+                    item.Text = pin.State != PlanetaryPinState.None ? pin.State.GetDescription() :
+                        string.Empty;
+                    item.ForeColor = GetStateColor(pin);
+                    break;
                 case PlanetaryColumn.TTC:
                     item.Text = pin.TTC;
                     break;
@@ -624,10 +619,10 @@ namespace EVEMon.CharacterMonitoring
                     item.Text = pin.ContentTypeName;
                     break;
                 case PlanetaryColumn.InstallTime:
-                    item.Text = pin.InstallTime == DateTime.MinValue ? String.Empty : $"{pin.InstallTime.ToLocalTime()}";
+                    item.Text = pin.InstallTime == DateTime.MinValue ? string.Empty : $"{pin.InstallTime.ToLocalTime()}";
                     break;
                 case PlanetaryColumn.EndTime:
-                    item.Text = pin.ExpiryTime == DateTime.MinValue ? String.Empty : $"{pin.ExpiryTime.ToLocalTime()}";
+                    item.Text = pin.ExpiryTime == DateTime.MinValue ? string.Empty : $"{pin.ExpiryTime.ToLocalTime()}";
                     break;
                 case PlanetaryColumn.PlanetName:
                     item.Text = pin.Colony.PlanetName;
@@ -658,10 +653,10 @@ namespace EVEMon.CharacterMonitoring
                     item.Text = pin.ContentVolume.ToNumericString(2);
                     break;
                 case PlanetaryColumn.LinkedTo:
-                    item.Text = String.Join(", ", pin.LinkedTo.Select(x=> x.TypeName).Distinct());
+                    item.Text = string.Join(", ", pin.LinkedTo.Select(x=> x.TypeName).Distinct());
                     break;
                 case PlanetaryColumn.RoutedTo:
-                    item.Text = String.Join(", ", pin.RoutedTo.Select(x => x.TypeName).Distinct());
+                    item.Text = string.Join(", ", pin.RoutedTo.Select(x => x.TypeName).Distinct());
                     break;
                 case PlanetaryColumn.GroupName:
                     item.Text = pin.GroupName;
@@ -684,7 +679,7 @@ namespace EVEMon.CharacterMonitoring
         /// <returns>
         /// 	<c>true</c> if [is text matching] [the specified x]; otherwise, <c>false</c>.
         /// </returns>
-        private static bool IsTextMatching(PlanetaryPin x, string text) => String.IsNullOrEmpty(text)
+        private static bool IsTextMatching(PlanetaryPin x, string text) => string.IsNullOrEmpty(text)
        || x.Colony.PlanetName.ToUpperInvariant().Contains(text)
        || x.Colony.PlanetTypeName.ToUpperInvariant().Contains(text)
        || x.Colony.PlanetTypeName.ToUpperInvariant().Contains(text)
@@ -825,7 +820,7 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="e"></param>
         private void listView_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            PlanetaryColumn column = (PlanetaryColumn)lvPlanetary.Columns[e.Column].Tag;
+            var column = (PlanetaryColumn)lvPlanetary.Columns[e.Column].Tag;
             if (m_sortCriteria == column)
                 m_sortAscending = !m_sortAscending;
             else
@@ -875,12 +870,13 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="e">The <see cref="CancelEventArgs"/> instance containing the event data.</param>
         private void contextMenu_Opening(object sender, CancelEventArgs e)
         {
-            showInBrowserMenuItem.Visible =
-                showInBrowserMenuSeparator.Visible = lvPlanetary.SelectedItems.Count != 0;
-
-            PlanetaryPin pin = lvPlanetary.SelectedItems[0]?.Tag as PlanetaryPin;
-
-            showCommodityInBrowserMenuItem.Visible = pin != null && pin.ContentTypeID != 0;
+            bool visible = lvPlanetary.SelectedItems.Count != 0;
+            showInBrowserMenuItem.Visible = showInBrowserMenuSeparator.Visible = visible;
+            if (visible)
+            {
+                var pin = lvPlanetary.SelectedItems[0]?.Tag as PlanetaryPin;
+                showCommodityInBrowserMenuItem.Visible = pin != null && pin.ContentTypeID != 0;
+            }
         }
 
         /// <summary>
@@ -890,49 +886,50 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void showInBrowserMenuItem_Click(object sender, EventArgs e)
         {
-            ToolStripItem menuItem = sender as ToolStripItem;
+            var menuItem = sender as ToolStripItem;
+            var items = lvPlanetary.SelectedItems;
 
-            if (menuItem == null)
-                return;
-
-            PlanetaryPin pin = lvPlanetary.SelectedItems[0]?.Tag as PlanetaryPin;
-
-            // showInstallationInBrowserMenuItem
-            if (menuItem == showInstallationInBrowserMenuItem)
+            if (menuItem != null && items.Count > 0)
             {
-                if (pin?.TypeID == null)
+                var pin = items[0]?.Tag as PlanetaryPin;
+
+                // showInstallationInBrowserMenuItem
+                if (menuItem == showInstallationInBrowserMenuItem)
+                {
+                    if (pin?.TypeID == null)
+                        return;
+
+                    Item installation = StaticItems.GetItemByID(pin.TypeID);
+
+                    if (installation != null)
+                        PlanWindow.ShowPlanWindow(Character).ShowItemInBrowser(installation);
+
+                    return;
+                }
+
+                // showCommodityInBrowserMenuItem
+                if (menuItem == showCommodityInBrowserMenuItem)
+                {
+                    if (pin?.ContentTypeID == null)
+                        return;
+
+                    Item commmodity = StaticItems.GetItemByID(pin.ContentTypeID);
+
+                    if (commmodity != null)
+                        PlanWindow.ShowPlanWindow(Character).ShowItemInBrowser(commmodity);
+
+                    return;
+                }
+
+
+                if (pin?.Colony?.PlanetTypeID == null)
                     return;
 
-                Item installation = StaticItems.GetItemByID(pin.TypeID);
+                Item planet = StaticItems.GetItemByID(pin.Colony.PlanetTypeID);
 
-                if (installation != null)
-                    PlanWindow.ShowPlanWindow(Character).ShowItemInBrowser(installation);
-
-                return;
+                if (planet != null)
+                    PlanWindow.ShowPlanWindow(Character).ShowItemInBrowser(planet);
             }
-
-            // showCommodityInBrowserMenuItem
-            if (menuItem == showCommodityInBrowserMenuItem)
-            {
-                if (pin?.ContentTypeID == null)
-                    return;
-
-                Item commmodity = StaticItems.GetItemByID(pin.ContentTypeID);
-
-                if (commmodity != null)
-                    PlanWindow.ShowPlanWindow(Character).ShowItemInBrowser(commmodity);
-
-                return;
-            }
-
-
-            if (pin?.Colony?.PlanetTypeID == null)
-                return;
-
-            Item planet = StaticItems.GetItemByID(pin.Colony.PlanetTypeID);
-
-            if (planet != null)
-                PlanWindow.ShowPlanWindow(Character).ShowItemInBrowser(planet);
         }
 
         # endregion
@@ -992,7 +989,7 @@ namespace EVEMon.CharacterMonitoring
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void EveMonClient_CharacterPlanetaryPinsUpdated(object sender, CharacterChangedEventArgs e)
+        private void EveMonClient_CharacterPlanetaryLayoutUpdated(object sender, CharacterChangedEventArgs e)
         {
             if (Character == null || e.Character != Character)
                 return;
@@ -1000,33 +997,7 @@ namespace EVEMon.CharacterMonitoring
             PlanetaryPins = Character.PlanetaryColonies.SelectMany(x => x.Pins);
             UpdateColumns();
         }
-
-        /// <summary>
-        /// When the planetary routes change update the list.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void EveMonClient_CharacterPlanetaryRoutesUpdated(object sender, CharacterChangedEventArgs e)
-        {
-            if (Character == null || e.Character != Character)
-                return;
-
-            UpdateColumns();
-        }
-
-        /// <summary>
-        /// When the planetary links change update the list.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void EveMonClient_CharacterPlanetaryLinksUpdated(object sender, CharacterChangedEventArgs e)
-        {
-            if (Character == null || e.Character != Character)
-                return;
-
-            UpdateColumns();
-        }
-
+        
         /// <summary>
         /// Handles the PlanetaryPinsCompleted event of the EveMonClient control.
         /// </summary>

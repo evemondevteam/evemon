@@ -194,7 +194,7 @@ namespace EVEMon.SkillPlanner
         {
             cbSkillFilter.Items.Clear();
             cbSkillFilter.Items.AddRange(EnumExtensions.GetDescriptions<SkillFilter>()
-                .Where(description => !String.IsNullOrWhiteSpace((string)description))
+                .Where(description => !string.IsNullOrWhiteSpace((string)description))
                 .ToArray());
 
             // Skill Planner
@@ -217,7 +217,7 @@ namespace EVEMon.SkillPlanner
             {
                 cbSkillFilter.Items.RemoveAt(Index);
             }
-            cbSkillFilter.Items.Add(SkillFilter.TrialAccountFriendly.GetDescription());
+            cbSkillFilter.Items.Add(SkillFilter.AlphaFriendly.GetDescription());
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace EVEMon.SkillPlanner
         {
             cbSorting.Items.Clear();
             cbSorting.Items.AddRange(EnumExtensions.GetDescriptions<SkillSort>()
-                .Where(description => !String.IsNullOrWhiteSpace((string)description))
+                .Where(description => !string.IsNullOrWhiteSpace((string)description))
                 .ToArray());
 
             // Skill Planner or Data Browser (associated character)
@@ -272,7 +272,7 @@ namespace EVEMon.SkillPlanner
                         : SkillSort.None.GetDescription();
 
                 tbSearchText.Text = settings.TextSearch;
-                lbSearchTextHint.Visible = String.IsNullOrEmpty(tbSearchText.Text);
+                lbSearchTextHint.Visible = string.IsNullOrEmpty(tbSearchText.Text);
 
                 return;
             }
@@ -364,7 +364,7 @@ namespace EVEMon.SkillPlanner
         /// </summary>
         private void UpdateSearchTextHintVisibility()
         {
-            lbSearchTextHint.Visible = !tbSearchText.Focused && String.IsNullOrEmpty(tbSearchText.Text);
+            lbSearchTextHint.Visible = !tbSearchText.Focused && string.IsNullOrEmpty(tbSearchText.Text);
         }
 
         /// <summary>
@@ -398,7 +398,7 @@ namespace EVEMon.SkillPlanner
         /// <returns></returns>
         private ImageList GetIconSet(int index)
         {
-            string groupname = String.Empty;
+            string groupname = string.Empty;
 
             if (index > 0 && index < IconSettings.Default.Properties.Count)
             {
@@ -412,12 +412,12 @@ namespace EVEMon.SkillPlanner
             string groupResourcesPath = $"{groupDirectory}{index}\\{groupname}.resources";
 
             if (!File.Exists(defaultResourcesPath) ||
-                (!String.IsNullOrEmpty(groupname) && !File.Exists(groupResourcesPath)))
+                (!string.IsNullOrEmpty(groupname) && !File.Exists(groupResourcesPath)))
             {
-                groupname = String.Empty;
+                groupname = string.Empty;
             }
 
-            return String.IsNullOrEmpty(groupname) ? ilSkillIcons : GetIconSet(defaultResourcesPath, groupResourcesPath);
+            return string.IsNullOrEmpty(groupname) ? ilSkillIcons : GetIconSet(defaultResourcesPath, groupResourcesPath);
         }
 
         /// <summary>
@@ -518,7 +518,7 @@ namespace EVEMon.SkillPlanner
             }
 
             // Not sorted but there is a text filter
-            if (!String.IsNullOrEmpty(tbSearchText.Text))
+            if (!string.IsNullOrEmpty(tbSearchText.Text))
             {
                 lbSearchList.Show();
                 UpdateListBox(skills);
@@ -547,7 +547,7 @@ namespace EVEMon.SkillPlanner
             skills = skills.Where(predicate);
 
             // Text search
-            if (!String.IsNullOrEmpty(tbSearchText.Text))
+            if (!string.IsNullOrEmpty(tbSearchText.Text))
             {
                 skills = skills
                     .Where(skill => skill.Name.Contains(tbSearchText.Text, ignoreCase: true)
@@ -570,20 +570,19 @@ namespace EVEMon.SkillPlanner
         /// <returns></returns>
         private Func<Skill, bool> GetFilter()
         {
-            SkillFilter skillFilter =
-                (SkillFilter)
-                    (EnumExtensions.GetValueFromDescription<SkillFilter>((string)cbSkillFilter.SelectedItem) ??
-                     SkillFilter.All);
+            var skillFilter = (SkillFilter)(EnumExtensions.GetValueFromDescription<
+                SkillFilter>((string)cbSkillFilter.SelectedItem) ?? SkillFilter.All);
 
-            lblFilterBy.Enabled = cbFilterByAttributes.Enabled = skillFilter == SkillFilter.ByAttributes;
+            lblFilterBy.Enabled = cbFilterByAttributes.Enabled = (skillFilter ==
+                SkillFilter.ByAttributes);
 
             EveAttribute primary = EveAttribute.None;
             EveAttribute secondary = EveAttribute.None;
             if (cbFilterByAttributes.Enabled)
             {
                 string[] attributes = cbFilterByAttributes.SelectedItem.ToString().Split('-');
-                primary = (EveAttribute)Enum.Parse(typeof(EveAttribute), attributes.First().Trim());
-                secondary = (EveAttribute)Enum.Parse(typeof(EveAttribute), attributes.Last().Trim());
+                Enum.TryParse(attributes.First().Trim(), out primary);
+                Enum.TryParse(attributes.Last().Trim(), out secondary);
             }
 
             switch (skillFilter)
@@ -594,8 +593,8 @@ namespace EVEMon.SkillPlanner
                     return x => x.PrimaryAttribute == primary && x.SecondaryAttribute == secondary;
                 case SkillFilter.Known:
                     return x => x.IsKnown;
-                case SkillFilter.TrialAccountFriendly:
-                    return x => x.IsTrainableOnTrialAccount;
+                case SkillFilter.AlphaFriendly:
+                    return x => x.StaticData.AlphaFriendly;
                 case SkillFilter.Unknown:
                     return x => !x.IsKnown;
                 case SkillFilter.UnknownAndNotOwned:
@@ -869,7 +868,7 @@ namespace EVEMon.SkillPlanner
             {
                 // Sort by name, default, occurs on initialization
                 default:
-                    return String.Empty;
+                    return string.Empty;
 
                 // Time to next level
                 case SkillSort.TimeToNextLevel:
@@ -1310,10 +1309,10 @@ namespace EVEMon.SkillPlanner
 
             cmiExpandSelected.Text = m_selectedSkill == null && node != null && !node.IsExpanded
                 ? $"Expand \"{node.Text}\""
-                : String.Empty;
+                : string.Empty;
             cmiCollapseSelected.Text = m_selectedSkill == null && node != null && node.IsExpanded
                 ? $"Collapse \"{node.Text}\""
-                : String.Empty;
+                : string.Empty;
 
             expandCollapseSeparator.Visible = node != null;
 

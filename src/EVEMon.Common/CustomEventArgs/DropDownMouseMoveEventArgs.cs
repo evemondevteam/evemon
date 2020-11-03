@@ -10,7 +10,7 @@ namespace EVEMon.Common.CustomEventArgs
         /// </summary>
         /// <param name="item">The item.</param>
         /// <param name="location">The location.</param>
-        public DropDownMouseMoveEventArgs(Object item, Point location)
+        public DropDownMouseMoveEventArgs(object item, Point location)
         {
             Item = item;
             Location = location;
@@ -20,7 +20,7 @@ namespace EVEMon.Common.CustomEventArgs
         /// Gets the item.
         /// </summary>
         /// <value>The item.</value>
-        public Object Item { get; }
+        public object Item { get; }
 
         /// <summary>
         /// Gets the location.

@@ -15,9 +15,11 @@ namespace EVEMon.Common.Net
         {
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.DefaultConnectionLimit = 10;
-
+#if false
+            // To debug trust failure issues
             if (EveMonClient.IsDebugBuild)
                 ServicePointManager.ServerCertificateValidationCallback = DummyCertificateValidationCallback;
+#endif
         }
 
         /// <summary>
@@ -28,18 +30,17 @@ namespace EVEMon.Common.Net
         /// <param name="chain">The chain.</param>
         /// <param name="sslpolicyerrors">The sslpolicyerrors.</param>
         /// <returns></returns>
-        internal static bool DummyCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain,
-            SslPolicyErrors sslpolicyerrors) => true;
+        internal static bool DummyCertificateValidationCallback(object sender, X509Certificate
+            certificate, X509Chain chain, SslPolicyErrors sslpolicyerrors) => true;
 
         /// <summary>
         /// Gets the web client.
         /// </summary>
         /// <returns></returns>
-        public static WebClient GetWebClient()
-            => new WebClient
-            {
-                Proxy = HttpClientServiceRequest.GetWebProxy()
-            };
+        public static WebClient GetWebClient() => new WebClient
+        {
+            Proxy = HttpClientServiceRequest.GetWebProxy()
+        };
 
         /// <summary>
         /// Gets the HTTP client.
@@ -47,9 +48,7 @@ namespace EVEMon.Common.Net
         /// <param name="httpClientHandler">The HTTP client handler.</param>
         /// <returns></returns>
         public static HttpClient GetHttpClient(HttpClientHandler httpClientHandler = null) =>
-            httpClientHandler == null
-                ? new HttpClient()
-                : new HttpClient(httpClientHandler);
+            httpClientHandler == null ? new HttpClient() : new HttpClient(httpClientHandler);
 
         /// <summary>
         /// Validates a Url as acceptable for an HttpWebServiceRequest.
@@ -58,7 +57,7 @@ namespace EVEMon.Common.Net
         /// <param name="errorMsg">Is url is invalid, contains a descriptive message of the reason</param>
         public static bool IsValidURL(Uri url, out string errorMsg)
         {
-            if (String.IsNullOrWhiteSpace(url.AbsoluteUri))
+            if (string.IsNullOrWhiteSpace(url.AbsoluteUri))
             {
                 errorMsg = "Url may not be null or an empty string.";
                 return false;
@@ -87,7 +86,7 @@ namespace EVEMon.Common.Net
                 return false;
             }
 
-            errorMsg = String.Empty;
+            errorMsg = string.Empty;
             return true;
         }
     }

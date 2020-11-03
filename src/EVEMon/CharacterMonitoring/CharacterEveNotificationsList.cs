@@ -35,7 +35,7 @@ namespace EVEMon.CharacterMonitoring
         private EveNotificationColumn m_sortCriteria;
         private ReadingPanePositioning m_panePosition;
 
-        private string m_textFilter = String.Empty;
+        private string m_textFilter = string.Empty;
         private bool m_sortAscending;
         private bool m_columnsChanged;
         private bool m_isUpdatingColumns;
@@ -191,10 +191,8 @@ namespace EVEMon.CharacterMonitoring
 
             EveMonClient.TimerTick += EveMonClient_TimerTick;
             EveMonClient.CharacterEVENotificationsUpdated += EveMonClient_CharacterEVENotificationsUpdated;
-            EveMonClient.CharacterEVENotificationTextDownloaded += EveMonClient_CharacterEVENotificationTextDownloaded;
             EveMonClient.EveIDToNameUpdated += EveMonClient_EveIDToNameUpdated;
             EveMonClient.NotificationRefTypesUpdated += EveMonClient_NotificationRefTypesUpdated;
-            EveMonClient.NotificationSent += EveMonClient_NotificationSent;
             EveNotificationTextParser.NotificationTextParserUpdated += EveNotificationTextParser_NotificationTextParserUpdated;
             Disposed += OnDisposed;
         }
@@ -208,10 +206,8 @@ namespace EVEMon.CharacterMonitoring
         {
             EveMonClient.TimerTick -= EveMonClient_TimerTick;
             EveMonClient.CharacterEVENotificationsUpdated -= EveMonClient_CharacterEVENotificationsUpdated;
-            EveMonClient.CharacterEVENotificationTextDownloaded -= EveMonClient_CharacterEVENotificationTextDownloaded;
             EveMonClient.EveIDToNameUpdated -= EveMonClient_EveIDToNameUpdated;
             EveMonClient.NotificationRefTypesUpdated -= EveMonClient_NotificationRefTypesUpdated;
-            EveMonClient.NotificationSent -= EveMonClient_NotificationSent;
             EveNotificationTextParser.NotificationTextParserUpdated -= EveNotificationTextParser_NotificationTextParserUpdated;
             Disposed -= OnDisposed;
         }
@@ -237,7 +233,7 @@ namespace EVEMon.CharacterMonitoring
             Columns = Settings.UI.MainWindow.EVENotifications.Columns;
             Grouping = Character?.UISettings.EVENotificationsGroupBy;
             PanePosition = Settings.UI.MainWindow.EVENotifications.ReadingPanePosition;
-            TextFilter = String.Empty;
+            TextFilter = string.Empty;
 
             UpdateColumns();
             m_init = true;
@@ -310,17 +306,15 @@ namespace EVEMon.CharacterMonitoring
             int scrollBarPosition = lvNotifications.GetVerticalScrollBarPosition();
 
             // Store the selected item (if any) to restore it after the update
-            int selectedItem = lvNotifications.SelectedItems.Count > 0
-                ? lvNotifications.SelectedItems[0].Tag.GetHashCode()
-                : 0;
+            int selectedItem = lvNotifications.SelectedItems.Count > 0 ? lvNotifications.
+                SelectedItems[0].Tag.GetHashCode() : 0;
 
             lvNotifications.BeginUpdate();
             splitContainerNotifications.Visible = false;
             try
             {
-                IEnumerable<EveNotification> eveNotifications = m_list
-                    .Where(x => x.SentDate != DateTime.MinValue)
-                    .Where(x => IsTextMatching(x, m_textFilter));
+                IEnumerable<EveNotification> eveNotifications = m_list .Where(x => x.SentDate
+                    != DateTime.MinValue).Where(x => IsTextMatching(x, m_textFilter));
 
                 UpdateSort();
 
@@ -417,9 +411,9 @@ namespace EVEMon.CharacterMonitoring
             {
                 string groupText;
                 if (group.Key is EveMailState)
-                    groupText = ((EveMailState)(Object)group.Key).GetHeader();
+                    groupText = ((EveMailState)(object)group.Key).GetHeader();
                 else if (group.Key is DateTime)
-                    groupText = ((DateTime)(Object)group.Key).ToShortDateString();
+                    groupText = ((DateTime)(object)group.Key).ToShortDateString();
                 else
                     groupText = group.Key.ToString();
 
@@ -450,7 +444,7 @@ namespace EVEMon.CharacterMonitoring
             // Add enough subitems to match the number of columns
             while (item.SubItems.Count < lvNotifications.Columns.Count + 1)
             {
-                item.SubItems.Add(String.Empty);
+                item.SubItems.Add(string.Empty);
             }
 
             // Creates the subitems
@@ -587,7 +581,7 @@ namespace EVEMon.CharacterMonitoring
         /// <returns>
         /// 	<c>true</c> if [is text matching] [the specified x]; otherwise, <c>false</c>.
         /// </returns>
-        private static bool IsTextMatching(EveNotification x, string text) => String.IsNullOrEmpty(text)
+        private static bool IsTextMatching(EveNotification x, string text) => string.IsNullOrEmpty(text)
        || x.SenderName.ToUpperInvariant().Contains(text, ignoreCase: true)
        || x.Title.ToUpperInvariant().Contains(text, ignoreCase: true)
        || x.Text.ToUpperInvariant().Contains(text, ignoreCase: true);
@@ -609,14 +603,7 @@ namespace EVEMon.CharacterMonitoring
                 eveNotificationReadingPane.HidePane();
                 return;
             }
-
-            // If we haven't done it yet, download the notification text
-            if (selectedObject.EVENotificationText.NotificationID == 0)
-            {
-                selectedObject.GetNotificationText();
-                return;
-            }
-
+            
             eveNotificationReadingPane.SelectedObject = selectedObject;
         }
 
@@ -666,15 +653,17 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void lvNotifications_DoubleClick(object sender, EventArgs e)
         {
-            ListViewItem item = lvNotifications.SelectedItems[0];
-            EveNotification notification = (EveNotification)item.Tag;
+            var items = lvNotifications.SelectedItems;
+            if (items.Count > 0)
+            {
+                var item = items[0];
+                var notification = (EveNotification)item.Tag;
 
-            // Quit if we haven't downloaded the notification text yet
-            if (notification.EVENotificationText == null)
-                return;
-
-            // Show or bring to front if a window with the same EVE notification already exists
-            WindowsFactory.ShowByTag<EveMessageWindow, EveNotification>(notification);
+                // Quit if we haven't downloaded the notification text yet
+                if (notification.EVENotificationText != null)
+                    // Show or bring to front if a window with the same EVE notification already exists
+                    WindowsFactory.ShowByTag<EveMessageWindow, EveNotification>(notification);
+            }
         }
 
         /// <summary>
@@ -711,7 +700,7 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="e"></param>
         private void lvNotifications_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            EveNotificationColumn column = (EveNotificationColumn)lvNotifications.Columns[e.Column].Tag;
+            var column = (EveNotificationColumn)lvNotifications.Columns[e.Column].Tag;
             if (m_sortCriteria == column)
                 m_sortAscending = !m_sortAscending;
             else
@@ -790,20 +779,7 @@ namespace EVEMon.CharacterMonitoring
             EVENotifications = Character.EVENotifications;
             UpdateColumns();
         }
-
-        /// <summary>
-        /// When the notification text gets downloaded update the reading pane.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="CharacterChangedEventArgs"/> instance containing the event data.</param>
-        private void EveMonClient_CharacterEVENotificationTextDownloaded(object sender, CharacterChangedEventArgs e)
-        {
-            if (e.Character != Character)
-                return;
-
-            OnSelectionChanged();
-        }
-
+        
         /// <summary>
         /// When the EveIDToName list updates, update the list.
         /// </summary>
@@ -823,30 +799,7 @@ namespace EVEMon.CharacterMonitoring
         {
             UpdateColumns();
         }
-
-        /// <summary>
-        /// Handles the NotificationSent event of the EveMonClient control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EVEMon.Common.Notifications.NotificationEventArgs"/> instance containing the event data.</param>
-        private void EveMonClient_NotificationSent(object sender, NotificationEventArgs e)
-        {
-            if (Character == null)
-                return;
-
-            APIErrorNotificationEventArgs notification = e as APIErrorNotificationEventArgs;
-
-            CCPAPIResult<SerializableAPINotificationTexts> notificationResult =
-                notification?.Result as CCPAPIResult<SerializableAPINotificationTexts>;
-
-            if (notificationResult == null)
-                return;
-
-            // In case there was an error, hide the pane
-            if (notification.Result.HasError)
-                eveNotificationReadingPane.HidePane();
-        }
-
+        
         /// <summary>
         /// When the notification text parser updates, update the list.
         /// </summary>

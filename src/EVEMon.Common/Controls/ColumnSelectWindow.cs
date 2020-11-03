@@ -120,7 +120,7 @@ namespace EVEMon.Common.Controls
             UpdateContent();
         }
 
-        protected virtual string GetHeader(int key) => String.Empty;
+        protected virtual string GetHeader(int key) => string.Empty;
 
         protected virtual IEnumerable<int> AllKeys => Enumerable.Empty<int>();
 

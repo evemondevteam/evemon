@@ -5,7 +5,8 @@ namespace EVEMon.Common.Serialization.Osmium.Loadout
 {
     public sealed class SerializableOsmiumLoadoutFeed
     {
-        public long ID => Int64.Parse(Uri.Replace($"{NetworkConstants.OsmiumBaseUrl}/loadout/", String.Empty));
+        public long ID => long.Parse(Uri.Replace($"{NetworkConstants.OsmiumBaseUrl}/loadout/", string.Empty),
+            CultureConstants.InvariantCulture);
 
         public string Uri { get; set; }
 

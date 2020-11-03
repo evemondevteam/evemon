@@ -469,7 +469,7 @@ namespace EVEMon.SkillPlanner
                     // Add enough subitems to match the number of columns
                     while (lvi.SubItems.Count < lvSkills.Columns.Count)
                     {
-                        lvi.SubItems.Add(String.Empty);
+                        lvi.SubItems.Add(string.Empty);
                     }
 
                     // The item represents a skill level entry
@@ -540,7 +540,7 @@ namespace EVEMon.SkillPlanner
             }
 
             // Checks whether this entry will be blocked
-            string blockingEntry = String.Empty;
+            string blockingEntry = string.Empty;
             if (Settings.UI.PlanWindow.HighlightConflicts)
             {
                 bool isAutoBlocking;
@@ -571,6 +571,14 @@ namespace EVEMon.SkillPlanner
                 }
             }
 
+            if (entry.Character.EffectiveCharacterStatus == AccountStatus.Alpha)
+            {
+                if (entry.Level > entry.CharacterSkill.StaticData.AlphaLimit)
+                {
+                    lvi.BackColor = Color.Gold;
+                }
+            }
+
             // Update every column
             lvi.UseItemStyleForSubItems = m_pluggable == null;
             for (int columnIndex = 0; columnIndex < lvSkills.Columns.Count; columnIndex++)
@@ -588,7 +596,7 @@ namespace EVEMon.SkillPlanner
                 else
                 {
                     TimeSpan timeDifference;
-                    string result = String.Empty;
+                    string result = string.Empty;
                     if (entry.OldTrainingTime < entry.TrainingTime)
                     {
                         result = "+";
@@ -627,7 +635,7 @@ namespace EVEMon.SkillPlanner
             {
                 PlanColumnSettings columnSettings = (PlanColumnSettings)lvSkills.Columns[columnIndex].Tag;
 
-                lvi.SubItems[columnIndex].Text = String.Empty;
+                lvi.SubItems[columnIndex].Text = string.Empty;
                 lvi.SubItems[columnIndex].BackColor = m_remappingBackColor;
                 lvi.SubItems[columnIndex].ForeColor = m_remappingForeColor;
 
@@ -733,8 +741,8 @@ namespace EVEMon.SkillPlanner
                     return blockingEntry;
                 case PlanColumn.Notes:
                     {
-                        if (String.IsNullOrEmpty(entry.Notes))
-                            return String.Empty;
+                        if (string.IsNullOrEmpty(entry.Notes))
+                            return string.Empty;
 
                         string result = Regex.Replace(entry.Notes, @"(\r|\n)+", " ", RegexOptions.None);
                         if (result.Length <= MaxNotesLength)
@@ -745,11 +753,13 @@ namespace EVEMon.SkillPlanner
                 case PlanColumn.Cost:
                     {
                         if (entry.Level != 1 || entry.CharacterSkill.IsKnown)
-                            return String.Empty;
+                            return string.Empty;
                         return entry.CharacterSkill.IsOwned ? "Owned" : entry.Skill.FormattedCost;
                     }
                 case PlanColumn.SkillPointsRequired:
                     return entry.SkillPointsRequired.ToNumericString(0);
+                case PlanColumn.OmegaRequired:
+                    return entry.OmegaRequired ? "Omega Only" : "Alpha";
                 default:
                     throw new NotImplementedException();
             }
@@ -1202,18 +1212,19 @@ namespace EVEMon.SkillPlanner
         /// </summary>
         private void RemoveSelectedEntries()
         {
-            if (lvSkills.SelectedItems.Count == 0)
-                return;
-
-            IPlanOperation operation = PrepareSelectionRemoval();
-            if (operation == null)
-                return;
-
-            PlanWindow planWindow = ParentForm as PlanWindow;
-            if (planWindow == null)
-                return;
-
-            PlanHelper.SelectPerform(new PlanToOperationWindow(operation), planWindow, operation);
+            var items = lvSkills.SelectedItems;
+            if (items.Count == 1 && items[0].Tag is RemappingPoint)
+                // Right-click remove or delete on a remapping point only
+                tsbToggleRemapping_Click(null, null);
+            else if (items.Count > 0)
+            {
+                // Calculate the skill levels to remove
+                var operation = PrepareSelectionRemoval();
+                PlanWindow planWindow = ParentForm as PlanWindow;
+                if (operation != null && planWindow != null)
+                    PlanHelper.SelectPerform(new PlanToOperationWindow(operation), planWindow,
+                        operation);
+            }
         }
 
         /// <summary>
@@ -1222,10 +1233,9 @@ namespace EVEMon.SkillPlanner
         /// <returns></returns>
         private IPlanOperation PrepareSelectionRemoval()
         {
-            IEnumerable<PlanEntry> entriesToRemove = lvSkills.SelectedItems.Cast<ListViewItem>()
-                .Select(x => x.Tag).OfType<PlanEntry>();
-            IPlanOperation operation = m_plan.TryRemoveSet(entriesToRemove);
-            return operation;
+            var entriesToRemove = lvSkills.SelectedItems.Cast<ListViewItem>().Select(x => x.
+                Tag).OfType<PlanEntry>();
+            return m_plan.TryRemoveSet(entriesToRemove);
         }
 
         #endregion
@@ -1336,6 +1346,8 @@ namespace EVEMon.SkillPlanner
                     return PlanEntrySort.PlanType;
                 case PlanColumn.SkillPointsRequired:
                     return PlanEntrySort.SkillPointsRequired;
+                case PlanColumn.OmegaRequired:
+                    return PlanEntrySort.OmegaRequired;
                 default:
                     return PlanEntrySort.None;
             }
@@ -1615,12 +1627,7 @@ namespace EVEMon.SkillPlanner
         /// <param name="e"></param>
         private void miRemoveFromPlan_Click(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection items = lvSkills.SelectedItems;
-
-            if (items.Count == 1 && items[0].Tag is RemappingPoint)
-                tsbToggleRemapping_Click(null, null);
-            else
-                RemoveSelectedEntries();
+            RemoveSelectedEntries();
         }
 
         /// <summary>
@@ -1668,15 +1675,11 @@ namespace EVEMon.SkillPlanner
             // User wishes the dialog to be displayed
             if (showDialog)
             {
-                string text = String.Concat("This would result in a priority conflict.",
-                                            " (Either pre-requisites with a lower priority or dependant skills with a higher priority).\r\n\r\n",
-                                            "Click Yes if you wish to do this and adjust the other skills\r\nor No if you do not wish to change the priority.");
-                const string CaptionText = "Priority Conflict";
-                const string CbOptionText = "Do not show this dialog again";
-
                 // Shows the custom dialog box
-                DialogResult dialogResult = MessageBoxCustom.Show(this, text, CaptionText, CbOptionText, MessageBoxButtons.YesNo,
-                                                                  MessageBoxIcon.Exclamation);
+                DialogResult dialogResult = MessageBoxCustom.Show(this, Properties.Resources.
+                    MessagePriorityConflict, "Priority Conflict",
+                    "Do not show this dialog again", MessageBoxButtons.YesNo, MessageBoxIcon.
+                    Exclamation);
                 Settings.UI.PlanWindow.PrioritiesMsgBox.ShowDialogBox = !MessageBoxCustom.CheckBoxChecked;
 
                 // When the checkbox is checked we store the dialog result
@@ -1705,7 +1708,8 @@ namespace EVEMon.SkillPlanner
 
             // We get the current skill's note and call the note editor window with this initial value
             string noteText = entries.First().Notes;
-            string title = entries.Count() == 1 ? entries.First().Skill.ToString() : "Selected entries";
+            string title = entries.Count() == 1 ? entries.First().Skill.ToString() :
+                "Selected entries";
             using (PlanNotesEditorWindow f = new PlanNotesEditorWindow(title))
             {
                 f.NoteText = noteText;
@@ -1751,7 +1755,8 @@ namespace EVEMon.SkillPlanner
 
             // Create a new plan
             Plan newPlan = new Plan(m_character) { Name = planName, Description = planDescription };
-            IPlanOperation operation = newPlan.TryAddSet(entries, $"Exported from {m_plan.Name}");
+            IPlanOperation operation = newPlan.TryAddSet(entries, "Exported from " + m_plan.
+                Name);
             operation.Perform();
 
             // Add plan and save
@@ -1824,7 +1829,8 @@ namespace EVEMon.SkillPlanner
         {
             // Create a new plan
             Plan newPlan = new Plan(m_character);
-            IPlanOperation operation = newPlan.TryAddSet(SelectedEntries, $"Exported from {m_plan.Name}");
+            IPlanOperation operation = newPlan.TryAddSet(SelectedEntries, "Exported from " +
+                m_plan.Name);
             operation.Perform();
 
             // Prompt the user for settings. When null, the user cancelled
@@ -1840,19 +1846,15 @@ namespace EVEMon.SkillPlanner
                 Clipboard.Clear();
                 Clipboard.SetText(output);
 
-                MessageBox.Show(@"The selected entries have been copied to the clipboard.",
-                    @"Plan Copied",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                MessageBox.Show(Properties.Resources.MessageCopiedPlan, @"Plan Copied",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (ExternalException ex)
             {
                 ExceptionHandler.LogException(ex, true);
 
-                MessageBox.Show(@"The copy to clipboard has failed. You may retry later.",
-                    @"Plan Copy Failure",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                MessageBox.Show(Properties.Resources.ErrorClipboardFailure,
+                    "Plan Copy Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1991,7 +1993,7 @@ namespace EVEMon.SkillPlanner
         private ListViewItem CreatePlanItemForSkill(Skill skill)
         {
             // Gets the planned level of the skill.
-            Int64 newLevel = m_plan.GetPlannedLevel(skill) + 1;
+            long newLevel = m_plan.GetPlannedLevel(skill) + 1;
             if (skill.Level >= newLevel)
                 newLevel = skill.Level + 1;
 
@@ -2138,7 +2140,7 @@ namespace EVEMon.SkillPlanner
                     PlanEntry selectedEntry = lvSkills.SelectedItems[0].Tag as PlanEntry;
                     if (currentEntry != null && selectedEntry != null)
                     {
-                        Int64 neededLevel;
+                        long neededLevel;
                         if (currentEntry.Skill.HasAsImmediatePrereq(selectedEntry.Skill, out neededLevel))
                         {
                             if (currentEntry.Level == 1 && neededLevel >= selectedEntry.Level)

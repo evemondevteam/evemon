@@ -91,7 +91,7 @@ namespace EVEMon.SkillPlanner
         /// Gets or sets the usability predicate.
         /// </summary>
         /// <value>The usability predicate.</value>
-        protected Func<Item, Boolean> UsabilityPredicate { get; set; }
+        protected Func<Item, bool> UsabilityPredicate { get; set; }
 
         /// <summary>
         /// Gets or sets the activity filter.
@@ -126,6 +126,19 @@ namespace EVEMon.SkillPlanner
 
                 if (m_searchTextTimer != null)
                     m_searchTextTimer.Tick += searchTextTimer_Tick;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the search text.
+        /// </summary>
+        internal string SearchText
+        {
+            get { return tbSearchText.Text; }
+            set
+            {
+                tbSearchText.Text = value ?? string.Empty;
+                OnSearchTextChanged();
             }
         }
 
@@ -209,7 +222,7 @@ namespace EVEMon.SkillPlanner
         /// </summary>
         private void UpdateSearchTextHintVisibility()
         {
-            lbSearchTextHint.Visible = !tbSearchText.Focused && String.IsNullOrEmpty(tbSearchText.Text);
+            lbSearchTextHint.Visible = !tbSearchText.Focused && string.IsNullOrEmpty(tbSearchText.Text);
         }
 
         #endregion
@@ -353,7 +366,7 @@ namespace EVEMon.SkillPlanner
 
             lbSearchList.Items.Clear();
 
-            if (String.IsNullOrEmpty(tbSearchText.Text))
+            if (string.IsNullOrEmpty(tbSearchText.Text))
             {
                 tvItems.Show();
                 lbSearchList.Hide();
@@ -368,7 +381,7 @@ namespace EVEMon.SkillPlanner
                 SearchNode(n, tbSearchText.Text, filteredItems);
             }
 
-            filteredItems.Sort((x, y) => String.CompareOrdinal(x.Name, y.Name));
+            filteredItems.Sort((x, y) => string.CompareOrdinal(x.Name, y.Name));
 
             lbSearchList.BeginUpdate();
             try
@@ -649,10 +662,10 @@ namespace EVEMon.SkillPlanner
 
             cmiExpandSelected.Text = node != null && node.GetNodeCount(true) > 0 && !node.IsExpanded
                 ? $"Expand \"{node.Text.Replace("&", "&&")}\""
-                : String.Empty;
+                : string.Empty;
             cmiCollapseSelected.Text = node != null && node.GetNodeCount(true) > 0 && node.IsExpanded
                 ? $"Collapse \"{node.Text.Replace("&", "&&")}\""
-                : String.Empty;
+                : string.Empty;
 
             tsSeparatorExpandCollapse.Visible = tvItems.Visible && node != null && node.GetNodeCount(true) > 0;
 
@@ -787,7 +800,7 @@ namespace EVEMon.SkillPlanner
                 return true;
 
             // Is this the "Blueprint Browser" and the activity filter is set to "Any" ?
-            List<Boolean> prereqTrained = new List<Boolean>();
+            List<bool> prereqTrained = new List<bool>();
             if (blueprintSelectControl != null && ActivityFilter == ObjectActivityFilter.Any)
             {
                 List<BlueprintActivity> prereqActivity = new List<BlueprintActivity>();
@@ -857,7 +870,7 @@ namespace EVEMon.SkillPlanner
             List<StaticSkillLevel> prerequisites =
                 item.Prerequisites.Where(x => x.Activity != BlueprintActivity.ReverseEngineering).ToList();
 
-            IEnumerable<Boolean> prereqTrained = prerequisites
+            IEnumerable<bool> prereqTrained = prerequisites
                 .Where(prereq => prereq.Skill != null)
                 .Select(prereq => new
                 {

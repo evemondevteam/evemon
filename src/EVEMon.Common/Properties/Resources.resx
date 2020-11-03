@@ -238,4 +238,165 @@
   <data name="ContextMenuPointer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Cursors\ContextMenuPointer.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="RefTypes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Serialization\RefTypes.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CallbackFail" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\callback_fail.htm;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CallbackOK" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\callback_ok.htm;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="chrFactions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\chrFactions.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ErrorAccountBalance" xml:space="preserve">
+    <value>Error querying the wallet balance for {0}.</value>
+  </data>
+  <data name="ErrorAccountStatus" xml:space="preserve">
+    <value>Error querying the account status for API key {0}.</value>
+  </data>
+  <data name="ErrorAssets" xml:space="preserve">
+    <value>Error querying the assets of {0}.</value>
+  </data>
+  <data name="ErrorAttributes" xml:space="preserve">
+    <value>Error querying the learning attributes of {0}.</value>
+  </data>
+  <data name="ErrorCalendarAttendees" xml:space="preserve">
+    <value>Error obtaining calendar event attendees for {0}.</value>
+  </data>
+  <data name="ErrorCalendarDetails" xml:space="preserve">
+    <value>Error obtaining calendar event details for {0}.</value>
+  </data>
+  <data name="ErrorCalendarEvents" xml:space="preserve">
+    <value>Error querying calendar events for {0}.</value>
+  </data>
+  <data name="ErrorCharacterList" xml:space="preserve">
+    <value>Error retrieving character list for {0:D}.
+If you changed your password, you must log in again using File &gt; Add Character.</value>
+  </data>
+  <data name="ErrorCharacterSheet" xml:space="preserve">
+    <value>Error querying the character sheet for {0}.</value>
+  </data>
+  <data name="ErrorContacts" xml:space="preserve">
+    <value>Error querying contacts for {0}.</value>
+  </data>
+  <data name="ErrorContractBids" xml:space="preserve">
+    <value>Error obtaining contract bids for {0}.</value>
+  </data>
+  <data name="ErrorContractItems" xml:space="preserve">
+    <value>Error obtaining contract items for {0}.</value>
+  </data>
+  <data name="ErrorContracts" xml:space="preserve">
+    <value>Error querying the contracts of {0}.</value>
+  </data>
+  <data name="ErrorEmploymentHistory" xml:space="preserve">
+    <value>Error querying the employment history of {0}.</value>
+  </data>
+  <data name="ErrorEVEFacWarList" xml:space="preserve">
+    <value>Error querying the EVE faction war list.</value>
+  </data>
+  <data name="ErrorEVEFacWarStat" xml:space="preserve">
+    <value>Error querying EVE factional warfare statistics.</value>
+  </data>
+  <data name="ErrorEVEMail" xml:space="preserve">
+    <value>Error querying mail messages for {0}.</value>
+  </data>
+  <data name="ErrorEVEMailBody" xml:space="preserve">
+    <value>Error obtaining mail contents for {0}.</value>
+  </data>
+  <data name="ErrorEVEMailLists" xml:space="preserve">
+    <value>Error querying mailing lists for {0}.</value>
+  </data>
+  <data name="ErrorFacWarStat" xml:space="preserve">
+    <value>Error querying the faction warfare statistics of {0}.</value>
+  </data>
+  <data name="ErrorIDToName" xml:space="preserve">
+    <value>Error looking up character identities.</value>
+  </data>
+  <data name="ErrorImplants" xml:space="preserve">
+    <value>Error querying the implants of {0}.</value>
+  </data>
+  <data name="ErrorIndustryJobs" xml:space="preserve">
+    <value>Error querying industry jobs for {0}.</value>
+  </data>
+  <data name="ErrorJumpClones" xml:space="preserve">
+    <value>Error querying the jump clones of {0}.</value>
+  </data>
+  <data name="ErrorJumpFatigue" xml:space="preserve">
+    <value>Error querying the jump fatigue of {0}.</value>
+  </data>
+  <data name="ErrorKillLog" xml:space="preserve">
+    <value>Error querying kill log for {0}.</value>
+  </data>
+  <data name="ErrorKillMail" xml:space="preserve">
+    <value>Error obtaining kill mail {0} from the server.</value>
+  </data>
+  <data name="ErrorLocation" xml:space="preserve">
+    <value>Error querying the location of {0}.</value>
+  </data>
+  <data name="ErrorMarketOrders" xml:space="preserve">
+    <value>Error querying the market orders of {0}.</value>
+  </data>
+  <data name="ErrorMedals" xml:space="preserve">
+    <value>Error querying medals for {0}.</value>
+  </data>
+  <data name="ErrorNotifications" xml:space="preserve">
+    <value>Error querying EVE notifications for {0}.</value>
+  </data>
+  <data name="ErrorPlanetLayout" xml:space="preserve">
+    <value>Error obtaining planetary production layout for {0}.</value>
+  </data>
+  <data name="ErrorPlanets" xml:space="preserve">
+    <value>Error querying planetary production information.</value>
+  </data>
+  <data name="ErrorResearchPoints" xml:space="preserve">
+    <value>Error querying research points for {0}.</value>
+  </data>
+  <data name="ErrorShip" xml:space="preserve">
+    <value>Error querying the current ship of {0}.</value>
+  </data>
+  <data name="ErrorSkillQueue" xml:space="preserve">
+    <value>Erorr querying the skill queue of {0}.</value>
+  </data>
+  <data name="ErrorSkills" xml:space="preserve">
+    <value>Error querying the known skills of {0}.</value>
+  </data>
+  <data name="ErrorSSO" xml:space="preserve">
+    <value>Error logging in to EVE SSO.
+If you changed your password, you must log in again using File &gt; Add Character.</value>
+  </data>
+  <data name="ErrorStandings" xml:space="preserve">
+    <value>Error querying the standings of {0}.</value>
+  </data>
+  <data name="ErrorStation" xml:space="preserve">
+    <value>Error looking up station information.</value>
+  </data>
+  <data name="ErrorStatus" xml:space="preserve">
+    <value>Error querying the EVE server status. Check EVE server uptime on http://eve-offline.net/</value>
+  </data>
+  <data name="ErrorStructure" xml:space="preserve">
+    <value>Error looking up citadel information.</value>
+  </data>
+  <data name="ErrorWalletJournal" xml:space="preserve">
+    <value>Error querying wallet journal for {0}.</value>
+  </data>
+  <data name="ErrorWalletTransactions" xml:space="preserve">
+    <value>Error querying wallet transactions for {0}.</value>
+  </data>
+  <data name="MessageExpiration" xml:space="preserve">
+    <value>This account expires in {0}: {1}.</value>
+  </data>
+  <data name="MessageLessThanDay" xml:space="preserve">
+    <value>Character {0} has less than {1} day{2} of skills queued.</value>
+  </data>
+  <data name="MessageMarginTrading" xml:space="preserve">
+    <value>Character {0} has insufficient funds to fulfill all of its buy orders.</value>
+  </data>
+  <data name="MessageNewContracts" xml:space="preserve">
+    <value>{0} assigned contract{1}.</value>
+  </data>
+  <data name="ErrorLoyalty" xml:space="preserve">
+    <value>Error querying loyalty point balance of {0}.</value>
+  </data>
 </root>

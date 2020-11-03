@@ -1,6 +1,5 @@
 ﻿using System;
 using EVEMon.Common.Enumerations.UISettings;
-using EVEMon.Common.SettingsObjects;
 
 namespace EVEMon.Common.Attributes
 {
@@ -14,10 +13,9 @@ namespace EVEMon.Common.Attributes
         /// </summary>
         /// <param name="defaultPeriod">Default length of time between updates.</param>
         /// <param name="minimum">Minimum length of time between updates.</param>
-        /// <param name="cacheStyle">Cache style.</param>
-        public UpdateAttribute(UpdatePeriod defaultPeriod, UpdatePeriod minimum, CacheStyle cacheStyle)
+        public UpdateAttribute(UpdatePeriod defaultPeriod, UpdatePeriod minimum)
         {
-            CreateUpdateAttribute(defaultPeriod, minimum, UpdatePeriod.Week, cacheStyle);
+            CreateUpdateAttribute(defaultPeriod, minimum, UpdatePeriod.Week);
         }
 
         /// <summary>
@@ -26,10 +24,9 @@ namespace EVEMon.Common.Attributes
         /// <param name="defaultPeriod">Default length of time between updates.</param>
         /// <param name="minimum">Minimum length of time between updates.</param>
         /// <param name="maximum">Maximum length of time between updates.</param>
-        /// <param name="cacheStyle">Cache style.</param>
-        public UpdateAttribute(UpdatePeriod defaultPeriod, UpdatePeriod minimum, UpdatePeriod maximum, CacheStyle cacheStyle)
+        public UpdateAttribute(UpdatePeriod defaultPeriod, UpdatePeriod minimum, UpdatePeriod maximum)
         {
-            CreateUpdateAttribute(defaultPeriod, minimum, maximum, cacheStyle);
+            CreateUpdateAttribute(defaultPeriod, minimum, maximum);
         }
 
         /// <summary>
@@ -38,13 +35,11 @@ namespace EVEMon.Common.Attributes
         /// <param name="defaultPeriod">Default length of time between updates.</param>
         /// <param name="minimum">Minimum length of time between updates.</param>
         /// <param name="maximum">Maximum length of time between updates.</param>
-        /// <param name="cacheStyle">Cache style.</param>
-        private void CreateUpdateAttribute(UpdatePeriod defaultPeriod, UpdatePeriod minimum, UpdatePeriod maximum, CacheStyle cacheStyle)
+        private void CreateUpdateAttribute(UpdatePeriod defaultPeriod, UpdatePeriod minimum, UpdatePeriod maximum)
         {
             DefaultPeriod = defaultPeriod;
             Minimum = minimum;
             Maximum = maximum;
-            CacheStyle = cacheStyle;
         }
 
         #endregion
@@ -75,14 +70,6 @@ namespace EVEMon.Common.Attributes
         /// The maximum.
         /// </value>
         public UpdatePeriod Maximum { get; private set; }
-
-        /// <summary>
-        /// Gets the update period cache style.
-        /// </summary>
-        /// <value>
-        /// The cache style.
-        /// </value>
-        public CacheStyle CacheStyle { get; private set; }
 
         #endregion
     }

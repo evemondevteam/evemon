@@ -41,7 +41,7 @@ namespace EVEMon.Updater
             // btnUpdate
             // 
             this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdate.Location = new System.Drawing.Point(297, 310);
+            this.btnUpdate.Location = new System.Drawing.Point(297, 426);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(75, 23);
             this.btnUpdate.TabIndex = 0;
@@ -53,7 +53,7 @@ namespace EVEMon.Updater
             // 
             this.btnLater.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLater.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnLater.Location = new System.Drawing.Point(171, 310);
+            this.btnLater.Location = new System.Drawing.Point(171, 426);
             this.btnLater.Name = "btnLater";
             this.btnLater.Size = new System.Drawing.Size(120, 23);
             this.btnLater.TabIndex = 1;
@@ -64,7 +64,7 @@ namespace EVEMon.Updater
             // btnIgnore
             // 
             this.btnIgnore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnIgnore.Location = new System.Drawing.Point(50, 310);
+            this.btnIgnore.Location = new System.Drawing.Point(50, 426);
             this.btnIgnore.Name = "btnIgnore";
             this.btnIgnore.Size = new System.Drawing.Size(115, 23);
             this.btnIgnore.TabIndex = 2;
@@ -88,10 +88,10 @@ namespace EVEMon.Updater
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(360, 292);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(360, 408);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
-            // label1
+            // labelInfo
             // 
             this.labelInfo.AutoSize = true;
             this.labelInfo.Location = new System.Drawing.Point(3, 0);
@@ -105,15 +105,15 @@ namespace EVEMon.Updater
             // 
             this.updateNotesTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.updateNotesTextBox.Location = new System.Drawing.Point(3, 81);
-            this.updateNotesTextBox.Multiline = true;
             this.updateNotesTextBox.Name = "updateNotesTextBox";
-            this.updateNotesTextBox.Size = new System.Drawing.Size(354, 185);
+            this.updateNotesTextBox.Size = new System.Drawing.Size(354, 301);
             this.updateNotesTextBox.TabIndex = 1;
+            this.updateNotesTextBox.Text = "";
             // 
             // cbAutoInstall
             // 
             this.cbAutoInstall.AutoSize = true;
-            this.cbAutoInstall.Location = new System.Drawing.Point(3, 272);
+            this.cbAutoInstall.Location = new System.Drawing.Point(3, 388);
             this.cbAutoInstall.Name = "cbAutoInstall";
             this.cbAutoInstall.Size = new System.Drawing.Size(172, 17);
             this.cbAutoInstall.TabIndex = 2;
@@ -126,9 +126,8 @@ namespace EVEMon.Updater
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowOnly;
             this.CancelButton = this.btnLater;
-            this.ClientSize = new System.Drawing.Size(384, 345);
+            this.ClientSize = new System.Drawing.Size(384, 461);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.btnIgnore);
             this.Controls.Add(this.btnLater);

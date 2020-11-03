@@ -10,10 +10,10 @@ namespace EVEMon.Common.CustomEventArgs
         /// <param name="errorMessage">The error message.</param>
         public CloudStorageServiceProviderEventArgs(string errorMessage)
         {
-            if (errorMessage != null && String.IsNullOrWhiteSpace(errorMessage))
+            if (errorMessage != null && string.IsNullOrWhiteSpace(errorMessage))
                 errorMessage = @"An error occured.";
 
-            HasError = !String.IsNullOrWhiteSpace(errorMessage);
+            HasError = !string.IsNullOrWhiteSpace(errorMessage);
             ErrorMessage = errorMessage;
         }
 

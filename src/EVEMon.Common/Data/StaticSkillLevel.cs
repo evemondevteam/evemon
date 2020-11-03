@@ -19,7 +19,7 @@ namespace EVEMon.Common.Data
         /// </summary>
         /// <param name="id"></param>
         /// <param name="level"></param>
-        public StaticSkillLevel(Int64 id, Int64 level)
+        public StaticSkillLevel(long id, long level)
         {
             Skill = StaticSkills.GetSkillByID(id) ?? StaticSkill.UnknownStaticSkill;
             Level = level;
@@ -30,7 +30,7 @@ namespace EVEMon.Common.Data
         /// </summary>
         /// <param name="name"></param>
         /// <param name="level"></param>
-        public StaticSkillLevel(string name, Int64 level)
+        public StaticSkillLevel(string name, long level)
         {
             Skill = StaticSkills.GetSkillByName(name) ?? StaticSkill.UnknownStaticSkill;
             Level = level;
@@ -41,7 +41,7 @@ namespace EVEMon.Common.Data
         /// </summary>
         /// <param name="skill"></param>
         /// <param name="level"></param>
-        public StaticSkillLevel(StaticSkill skill, Int64 level)
+        public StaticSkillLevel(StaticSkill skill, long level)
         {
             Skill = skill;
             Level = level;
@@ -66,7 +66,7 @@ namespace EVEMon.Common.Data
         /// <param name="id"></param>
         /// <param name="level"></param>
         /// <param name="activityId"></param>
-        public StaticSkillLevel(Int64 id, Int64 level, int activityId)
+        public StaticSkillLevel(long id, long level, int activityId)
         {
             Skill = StaticSkills.GetSkillByID(id) ?? StaticSkill.UnknownStaticSkill;
             Level = level;
@@ -86,7 +86,7 @@ namespace EVEMon.Common.Data
         /// <summary>
         /// Gets or sets the skill level.
         /// </summary>
-        public Int64 Level { get; }
+        public long Level { get; }
 
         /// <summary>
         /// Gets or sets the activity for the skill.
@@ -132,7 +132,7 @@ namespace EVEMon.Common.Data
                 return Level > skillLevel.Level;
 
             // Prerequisite
-            Int64 neededLevel;
+            long neededLevel;
             Skill.HasAsPrerequisite(skillLevel.Skill, out neededLevel);
             return skillLevel.Level <= neededLevel;
         }

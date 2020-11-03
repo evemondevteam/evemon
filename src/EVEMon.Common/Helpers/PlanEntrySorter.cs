@@ -121,7 +121,7 @@ namespace EVEMon.Common.Helpers
         /// <returns></returns>
         public static int CompareByName(PlanEntry x, PlanEntry y)
         {
-            int nameDiff = String.CompareOrdinal(x.Skill.Name, y.Skill.Name);
+            int nameDiff = string.CompareOrdinal(x.Skill.Name, y.Skill.Name);
             return nameDiff != 0 ? nameDiff : Convert.ToInt32(x.Level - y.Level);
         }
 
@@ -196,7 +196,7 @@ namespace EVEMon.Common.Helpers
         /// <param name="y">The y.</param>
         /// <returns></returns>
         public static int CompareByPlanGroup(PlanEntry x, PlanEntry y)
-            => String.Compare(x.PlanGroupsDescription, y.PlanGroupsDescription, StringComparison.CurrentCulture);
+            => string.Compare(x.PlanGroupsDescription, y.PlanGroupsDescription, StringComparison.CurrentCulture);
 
         /// <summary>
         /// Compares by plan type.
@@ -213,7 +213,7 @@ namespace EVEMon.Common.Helpers
         /// <param name="y">The y.</param>
         /// <returns></returns>
         public static int CompareByNotes(PlanEntry x, PlanEntry y)
-            => String.Compare(x.Notes, y.Notes, StringComparison.CurrentCulture);
+            => string.Compare(x.Notes, y.Notes, StringComparison.CurrentCulture);
 
         /// <summary>
         /// Compares by time difference.
@@ -257,6 +257,15 @@ namespace EVEMon.Common.Helpers
         /// <returns></returns>
         public static int CompareBySkillPointsRequired(PlanEntry x, PlanEntry y)
             => x.SkillPointsRequired.CompareTo(y.SkillPointsRequired);
+
+        /// <summary>
+        /// Compares by clone state required.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <returns></returns>
+        public static int CompareByOmegaRequired(PlanEntry x, PlanEntry y)
+            => x.OmegaRequired.CompareTo(y.OmegaRequired);
 
         /// <summary>
         /// Compares by skill group duration.

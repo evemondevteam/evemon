@@ -12,14 +12,20 @@ namespace EVEMon.Common.Models
     public class SkillLevel : ISkillLevel
     {
         /// <summary>
+        /// The skill level bound to only the static skill.
+        /// </summary>
+        private readonly StaticSkillLevel ssl;
+
+        /// <summary>
         /// Constructor from the skill object.
         /// </summary>
         /// <param name="skill"></param>
         /// <param name="level"></param>
-        public SkillLevel(Skill skill, Int64 level)
+        public SkillLevel(Skill skill, long level)
         {
             Skill = skill;
             Level = level;
+            ssl = new StaticSkillLevel(this);
         }
 
         /// <summary>
@@ -35,7 +41,7 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets or sets the skill level.
         /// </summary>
-        public Int64 Level { get; }
+        public long Level { get; }
 
         /// <summary>
         /// Gets true if this skill level is already trained.
@@ -43,32 +49,38 @@ namespace EVEMon.Common.Models
         public bool IsTrained => Skill.Level >= Level;
 
         /// <summary>
-        /// Gets true if this skill level is, in any way, dependent of the provided skill level. Checks prerequisites but also same skill's lower levels.
+        /// Gets true if this skill level is, in any way, dependent of the provided skill
+        /// level. Checks prerequisites but also same skill's lower levels.
         /// </summary>
         /// <param name="level"></param>
-        /// <returns>True if the given item's skill is a prerequisite of this one or if it is a lower level of the same skill.</returns>
-        public bool IsDependentOf(ISkillLevel level) => new StaticSkillLevel(this).IsDependentOf(level);
+        /// <returns>True if the given item's skill is a prerequisite of this one or if it is a
+        /// lower level of the same skill.</returns>
+        public bool IsDependentOf(ISkillLevel level) => ssl.IsDependentOf(level);
 
         /// <summary>
-        /// Gets all the dependencies, in a way matching the hierarchical order and without redudancies.
-        /// I.e, for eidetic memory II, it will return <c>{ instant recall I, instant recall II, instant recall III, instant recall IV,  eidetic memory I, eidetic memory II }</c>.
+        /// Gets all the dependencies, in a way matching the hierarchical order and without
+        /// redundancies.
+        /// I.e, for eidetic memory II, it will return <c>{ instant recall I,
+        /// instant recall II, instant recall III, instant recall IV,  eidetic memory I,
+        /// eidetic memory II }</c>.
         /// </summary>
-        public IEnumerable<SkillLevel> AllDependencies => new StaticSkillLevel(this).AllDependencies.ToCharacter(Skill.Character);
+        public IEnumerable<SkillLevel> AllDependencies => ssl.AllDependencies.ToCharacter(
+            Skill.Character);
 
         /// <summary>
         /// Gets a hash code for this object.
         /// </summary>
         /// <returns></returns>
         // 3 bits for level (0 - 5) and the rest are for the skill name
-        public override int GetHashCode() => (Skill.Name.GetHashCode() << 3) | Convert.ToInt32(Level);
+        public override int GetHashCode() => (Skill.Name.GetHashCode() << 3) | (int)Level;
 
         /// <summary>
         /// Implicitly converts from a non-static training.
         /// </summary>
         /// <param name="training"></param>
         /// <returns></returns>
-        public static implicit operator StaticSkillLevel(SkillLevel training)
-            => training == null ? null : new StaticSkillLevel(training.Skill.StaticData, training.Level);
+        public static implicit operator StaticSkillLevel(SkillLevel training) => (training ==
+            null) ? null : new StaticSkillLevel(training.Skill.StaticData, training.Level);
 
         /// <summary>
         /// Gets a string representation of this prerequisite.

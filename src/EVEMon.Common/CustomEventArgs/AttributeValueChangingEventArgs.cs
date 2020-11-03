@@ -8,7 +8,7 @@ namespace EVEMon.Common.CustomEventArgs
         /// Initializes a new instance of the <see cref="AttributeValueChangingEventArgs"/> class.
         /// </summary>
         /// <param name="deltaValue">The delta value.</param>
-        public AttributeValueChangingEventArgs(Int64 deltaValue)
+        public AttributeValueChangingEventArgs(long deltaValue)
         {
             Value = deltaValue;
         }
@@ -17,6 +17,6 @@ namespace EVEMon.Common.CustomEventArgs
         /// Gets the value.
         /// </summary>
         /// <value>The value.</value>
-        public Int64 Value { get; }
+        public long Value { get; }
     }
 }

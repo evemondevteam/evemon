@@ -12,10 +12,10 @@ namespace EVEMon.Common.Serialization.Exportation
         public string Name { get; set; }
 
         [XmlElement("rank")]
-        public Int64 Rank { get; set; }
+        public long Rank { get; set; }
 
         [XmlElement("level")]
-        public Int64 Level { get; set; }
+        public long Level { get; set; }
 
         [XmlElement("romanLevel")]
         public string RomanLevel { get; set; }

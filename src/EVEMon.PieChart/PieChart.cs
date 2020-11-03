@@ -579,7 +579,7 @@ namespace EVEMon.PieChart
                     PointF[] points = new PointF[m_pieSlices.Length];
                     foreach (PieSlice slice in m_pieSlices)
                     {
-                        if (!String.IsNullOrEmpty(slice.Text))
+                        if (!string.IsNullOrEmpty(slice.Text))
                         {
                             PointF point = slice.GetTextPosition;
 

@@ -65,17 +65,17 @@ namespace EVEMon.Common.Models.Comparers
             switch (m_column)
             {
                 case EveMailMessageColumn.SenderName:
-                    return String.Compare(x.SenderName, y.SenderName, StringComparison.CurrentCulture);
+                    return string.Compare(x.SenderName, y.SenderName, StringComparison.CurrentCulture);
                 case EveMailMessageColumn.Title:
-                    return String.Compare(x.Title, y.Title, StringComparison.CurrentCulture);
+                    return string.Compare(x.Title, y.Title, StringComparison.CurrentCulture);
                 case EveMailMessageColumn.SentDate:
                     return x.SentDate.CompareTo(y.SentDate);
                 case EveMailMessageColumn.ToCharacters:
-                    return String.Compare(x.ToCharacters.First(), y.ToCharacters.First(), StringComparison.CurrentCulture);
+                    return string.Compare(x.ToCharacters.First(), y.ToCharacters.First(), StringComparison.CurrentCulture);
                 case EveMailMessageColumn.ToCorpOrAlliance:
-                    return String.Compare(x.ToCorpOrAlliance, y.ToCorpOrAlliance, StringComparison.CurrentCulture);
+                    return string.Compare(x.ToCorpOrAlliance, y.ToCorpOrAlliance, StringComparison.CurrentCulture);
                 case EveMailMessageColumn.ToMailingList:
-                    return String.Compare(x.ToMailingLists.First(), y.ToMailingLists.First(), StringComparison.CurrentCulture);
+                    return string.Compare(x.ToMailingLists.First(), y.ToMailingLists.First(), StringComparison.CurrentCulture);
                 default:
                     return 0;
             }

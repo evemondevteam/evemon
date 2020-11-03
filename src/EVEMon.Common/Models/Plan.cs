@@ -62,7 +62,7 @@ namespace EVEMon.Common.Models
 
             // Update name
             Name = serial.Name;
-            Description = serial.Description ?? String.Empty;
+            Description = serial.Description ?? string.Empty;
             SortingPreferences = serial.SortingPreferences;
 
             // Update entries
@@ -246,7 +246,7 @@ namespace EVEMon.Common.Models
         /// <param name="skill">The skill we want to plan</param>
         /// <param name="level">The level we want to train to</param>
         /// <exception cref="System.ArgumentNullException">skill</exception>
-        public void PlanTo(StaticSkill skill, Int64 level)
+        public void PlanTo(StaticSkill skill, long level)
         {
             skill.ThrowIfNull(nameof(skill));
 
@@ -262,7 +262,7 @@ namespace EVEMon.Common.Models
         /// <param name="level">The level we want to train to</param>
         /// <param name="priority">The priority.</param>
         /// <param name="noteForNewEntries">The reason we want to train this skill</param>
-        public void PlanTo(StaticSkill skill, Int64 level, int priority, string noteForNewEntries)
+        public void PlanTo(StaticSkill skill, long level, int priority, string noteForNewEntries)
         {
             int plannedLevel = GetPlannedLevel(skill);
             if (level == plannedLevel)
@@ -304,7 +304,7 @@ namespace EVEMon.Common.Models
         /// <param name="level">The level we want to train to</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">skill</exception>
-        public IPlanOperation TryPlanTo(Skill skill, Int64 level)
+        public IPlanOperation TryPlanTo(Skill skill, long level)
         {
             skill.ThrowIfNull(nameof(skill));
 
@@ -319,7 +319,7 @@ namespace EVEMon.Common.Models
         /// <param name="level">The level we want to train to</param>
         /// <param name="noteForNewEntries">The reason we want to train this skill</param>
         /// <returns></returns>
-        private IPlanOperation TryPlanTo(Skill skill, Int64 level, string noteForNewEntries)
+        private IPlanOperation TryPlanTo(Skill skill, long level, string noteForNewEntries)
         {
             int plannedLevel = GetPlannedLevel(skill);
             if (level == plannedLevel)
@@ -784,19 +784,19 @@ namespace EVEMon.Common.Models
                             // If existing entry's notes is null, we replace it
                             // else we catch the distinct notes                           
                             existingEntry.Notes = existingEntry.Notes != null
-                                ? String.Join(", ", existingEntry.Notes.Split(',')
+                                ? string.Join(", ", existingEntry.Notes.Split(',')
                                     .Select(note => note.Trim())
                                     .Distinct())
-                                : String.Empty;
+                                : string.Empty;
 
                             // If entry's notes is null, we replace it
-                            entry.Notes = entry.Notes ?? String.Empty;
+                            entry.Notes = entry.Notes ?? string.Empty;
 
                             // We concatenate the notes
-                            foreach (String note in entry.Notes.Split(',').Select(note => note.Trim()).Distinct()
+                            foreach (string note in entry.Notes.Split(',').Select(note => note.Trim()).Distinct()
                                 .Where(note => !existingEntry.Notes.Contains(note)))
                             {
-                                existingEntry.Notes = String.Join(", ", existingEntry.Notes, note);
+                                existingEntry.Notes = string.Join(", ", existingEntry.Notes, note);
                             }
 
                             // Update the priority

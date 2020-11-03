@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EVEMon.Common.Constants;
 using EVEMon.Common.Enumerations;
+using EVEMon.Common.Extensions;
 using EVEMon.Common.Serialization.Datafiles;
 
 namespace EVEMon.Common.Data
@@ -12,10 +13,6 @@ namespace EVEMon.Common.Data
     /// </summary>
     public sealed class StaticCertificate
     {
-        private readonly Dictionary<CertificateGrade, List<StaticSkillLevel>> m_prerequisiteSkills =
-            new Dictionary<CertificateGrade, List<StaticSkillLevel>>();
-
-
         #region Constructor
 
         /// <summary>
@@ -29,6 +26,7 @@ namespace EVEMon.Common.Data
             Description = src.Description;
             Class = certClass;
             Grades = new Dictionary<CertificateGrade, List<StaticSkillLevel>>();
+            PrerequisiteSkills = new Dictionary<CertificateGrade, List<StaticSkillLevel>>();
 
             // Recommendations
             Recommendations = new StaticRecommendations<Item>();
@@ -78,7 +76,7 @@ namespace EVEMon.Common.Data
         /// <summary>
         /// Gets the prerequisite skills.
         /// </summary>
-        public Dictionary<CertificateGrade, List<StaticSkillLevel>> PrerequisiteSkills => m_prerequisiteSkills;
+        public Dictionary<CertificateGrade, List<StaticSkillLevel>> PrerequisiteSkills { get; }
 
         /// <summary>
         /// Gets all the top-level prerequisite skills
@@ -87,11 +85,11 @@ namespace EVEMon.Common.Data
         {
             get
             {
-                Int64[] highestLevels = new Int64[StaticSkills.ArrayIndicesCount];
+                long[] highestLevels = new long[StaticSkills.ArrayIndicesCount];
                 List<StaticSkillLevel> list = new List<StaticSkillLevel>();
 
                 // Collect all prerequisites from skills
-                foreach (StaticSkillLevel skillPrereq in m_prerequisiteSkills.SelectMany(entry => entry.Value).Where(
+                foreach (StaticSkillLevel skillPrereq in PrerequisiteSkills.SelectMany(entry => entry.Value).Where(
                     skillPrereq => skillPrereq.Skill != null && highestLevels[skillPrereq.Skill.ArrayIndex] < skillPrereq.Level))
                 {
                     highestLevels[skillPrereq.Skill.ArrayIndex] = skillPrereq.Level;
@@ -120,9 +118,14 @@ namespace EVEMon.Common.Data
         {
             foreach (var prereqGrade in prereqs.GroupBy(x => x.Grade))
             {
-                m_prerequisiteSkills.Add(prereqGrade.Key, prereqGrade.Select(
-                    prereq => new StaticSkillLevel(prereq.ID, Int32.Parse(prereq.Level, CultureConstants.InvariantCulture)))
-                    .ToList());
+                var prereqList = new List<StaticSkillLevel>(32);
+                foreach (var prereq in prereqGrade)
+                {
+                    int level;
+                    if (prereq.Level.TryParseInv(out level))
+                        prereqList.Add(new StaticSkillLevel(prereq.ID, level));
+                }
+                PrerequisiteSkills.Add(prereqGrade.Key, prereqList);
             }
         }
 

@@ -1,7 +1,3 @@
-using System;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using EVEMon.Common.Constants;
 using EVEMon.Common.Controls;
 using EVEMon.Common.CustomEventArgs;
@@ -11,6 +7,10 @@ using EVEMon.Common.Extensions;
 using EVEMon.Common.Factories;
 using EVEMon.Common.Models;
 using EVEMon.Common.Serialization.Settings;
+using System;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace EVEMon.ImplantControls
 {
@@ -21,7 +21,7 @@ namespace EVEMon.ImplantControls
     {
         private const string PhantomSetName = "<New set>";
 
-        private readonly Int64 m_maxJumpClones;
+        private readonly long m_maxJumpClones;
         private readonly Character m_character;
         private readonly SerializableImplantSetCollection m_sets;
 
@@ -66,8 +66,8 @@ namespace EVEMon.ImplantControls
         private void ImpGroups_Load(object sender, EventArgs e)
         {
             // Header
-            headerLabel.Text = $"{m_character} has the skill for {m_maxJumpClones:D} " +
-                               @"Jump Clones (plus 1 for the implants in your active body)";
+            headerLabel.Text = string.Format(Properties.Resources.MessageJumpCloneSkills,
+                m_character, m_maxJumpClones);
 
             // Populate implants combo boxes
             foreach (Control control in Controls)
@@ -118,7 +118,7 @@ namespace EVEMon.ImplantControls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnDisposed(Object sender, EventArgs e)
+        private void OnDisposed(object sender, EventArgs e)
         {
             setsGrid.CellValidating -= setsGrid_CellValidating;
             setsGrid.RowsRemoved -= setsGrid_RowsRemoved;
@@ -149,8 +149,11 @@ namespace EVEMon.ImplantControls
             if (combo == null)
                 return;
 
-            int slotIndex = Int32.Parse(combo.Name.Replace("cbSlot", String.Empty), CultureConstants.InvariantCulture) - 1;
-            ImplantSlots slot = (ImplantSlots)slotIndex;
+            int slotIndex;
+            if (!combo.Name.Replace("cbSlot", string.Empty).TryParseInv(out slotIndex) ||
+                    slotIndex < 1)
+                return;
+            ImplantSlots slot = (ImplantSlots)(slotIndex - 1);
 
             combo.Tag = slot;
             combo.MouseMove += combo_MouseMove;
@@ -214,7 +217,7 @@ namespace EVEMon.ImplantControls
             SerializableSettingsImplantSet set = GetSelectedSet();
 
             // No set selected or row name empty?
-            if (set == null || String.IsNullOrEmpty(set.Name))
+            if (set == null || string.IsNullOrEmpty(set.Name))
             {
                 foreach (DropDownMouseMoveComboBox combo in Controls.OfType<DropDownMouseMoveComboBox>())
                 {
@@ -321,7 +324,7 @@ namespace EVEMon.ImplantControls
             // If cell is empty, replaces the content by <New set>
             DataGridViewRow row = setsGrid.Rows[e.RowIndex];
             object formattedValue = row.Cells[0].FormattedValue;
-            if (formattedValue != null && row.Tag == null && String.IsNullOrEmpty(formattedValue.ToString()))
+            if (formattedValue != null && row.Tag == null && string.IsNullOrEmpty(formattedValue.ToString()))
                 row.Cells[0].Value = PhantomSetName;
         }
 
@@ -347,17 +350,17 @@ namespace EVEMon.ImplantControls
         private void setsGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             DataGridViewRow row = setsGrid.Rows[e.RowIndex];
-            string text = e.FormattedValue?.ToString() ?? String.Empty;
+            string text = e.FormattedValue?.ToString() ?? string.Empty;
 
             // If the user forgets the edition and there is no bound set
             // or the given name exceeds 255 characters
             // or the name is empty,
             // we replace <New set> by an empty value
             if ((row.Tag == null && text == PhantomSetName) ||
-                text.Length > EveMonConstants.ImplantSetNameMaxLength || 
-                String.IsNullOrWhiteSpace(text))
+                text.Length > EveMonConstants.ImplantSetNameMaxLength ||
+                string.IsNullOrWhiteSpace(text))
             {
-                row.Cells[0].Value = String.Empty;
+                row.Cells[0].Value = string.Empty;
                 return;
             }
 
@@ -416,7 +419,7 @@ namespace EVEMon.ImplantControls
         private void btnOK_Click(object sender, EventArgs e)
         {
             SerializableSettingsImplantSet set = GetSelectedSet();
-            if (set != null && !String.IsNullOrWhiteSpace(set.Name))
+            if (set != null && !string.IsNullOrWhiteSpace(set.Name))
                 m_character.ImplantSets.Import(m_sets);
 
             Close();

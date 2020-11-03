@@ -180,6 +180,9 @@ namespace EVEMon.Common.Helpers
                 case PlanEntrySort.SkillPointsRequired:
                     Items.StableSort(PlanEntrySorter.CompareBySkillPointsRequired);
                     break;
+                case PlanEntrySort.OmegaRequired:
+                    Items.StableSort(PlanEntrySorter.CompareByOmegaRequired);
+                    break;
                 default:
                     throw new NotImplementedException();
             }

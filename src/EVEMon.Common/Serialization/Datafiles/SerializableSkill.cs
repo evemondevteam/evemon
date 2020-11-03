@@ -71,7 +71,7 @@ namespace EVEMon.Common.Serialization.Datafiles
         /// </summary>
         /// <value>The rank.</value>
         [XmlAttribute("rank")]
-        public Int64 Rank { get; set; }
+        public long Rank { get; set; }
 
         /// <summary>
         /// Gets or sets the cost.
@@ -81,19 +81,16 @@ namespace EVEMon.Common.Serialization.Datafiles
         public long Cost { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance can train on trial.
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance can train on trial; otherwise, <c>false</c>.
-        /// </value>
-        [XmlAttribute("canTrainOnTrial")]
-        public bool CanTrainOnTrial { get; set; }
-
-        /// <summary>
         /// Gets the skill prerequisites.
         /// </summary>
         /// <value>The skill prerequisites.</value>
         [XmlElement("prereq")]
         public Collection<SerializableSkillPrerequisite> SkillPrerequisites => m_skillPrereqs;
+
+        /// <summary>
+        /// The highest level the skill can be trained on an alpha clone.
+        /// </summary>
+        /// <value>The level.</value>
+        public int AlphaLimit { get; set; }
     }
 }

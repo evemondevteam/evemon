@@ -14,8 +14,16 @@ namespace EVEMon.Common.Data
     /// </summary>
     public sealed class SolarSystem : ReadonlyCollection<Station>, IComparable<SolarSystem>
     {
+        /// <summary>
+        /// The unknown solar system, with an empty location and ID of 0.
+        /// </summary>
+        public static readonly SolarSystem UNKNOWN = new SolarSystem();
+
         // Do not set this as readonly !
         private FastList<SolarSystem> m_jumps;
+
+        // The planets in this system.
+        private readonly FastList<Planet> m_planets;
 
         private readonly int m_x;
         private readonly int m_y;
@@ -34,7 +42,6 @@ namespace EVEMon.Common.Data
             : base(src?.Stations?.Count ?? 0)
         {
             owner.ThrowIfNull(nameof(owner));
-
             src.ThrowIfNull(nameof(src));
 
             ID = src.ID;
@@ -48,13 +55,19 @@ namespace EVEMon.Common.Data
             m_y = src.Y;
             m_z = src.Z;
 
-            if (src.Stations == null)
-                return;
+            if (src.Stations != null)
+                foreach (SerializableStation srcStation in src.Stations)
+                    Items.Add(new Station(this, srcStation));
 
-            foreach (SerializableStation srcStation in src.Stations)
+            if (src.Planets != null)
             {
-                Items.Add(new Station(this, srcStation));
+                // Add planets
+                m_planets = new FastList<Planet>(src.Planets.Count);
+                foreach (SerializablePlanet srcPlanet in src.Planets)
+                    m_planets.Add(new Planet(this, srcPlanet));
             }
+            else
+                m_planets = new FastList<Planet>(1);
         }
 
         public SolarSystem()
@@ -93,6 +106,14 @@ namespace EVEMon.Common.Data
         /// Gets something like Region > Constellation > Solar System.
         /// </summary>
         public string FullLocation { get; }
+
+        /// <summary>
+        /// Gets the planets in this solar system.
+        /// </summary>
+        public ICollection<Planet> Planets
+        {
+            get { return m_planets; }
+        }
 
         /// <summary>
         /// Gets or sets the color of the security level.
@@ -144,6 +165,24 @@ namespace EVEMon.Common.Data
 
 
         #region Public Methods
+
+        /// <summary>
+        /// Looks up a planet by its ID.
+        /// </summary>
+        /// <param name="planetID">The planet ID.</param>
+        /// <returns>The planet, or null if the planet is not in this system.</returns>
+        public Planet FindPlanetByID(int planetID)
+        {
+            Planet planet = null;
+            // May look slow but there are only a few planets per system
+            foreach (var srcPlanet in m_planets)
+                if (srcPlanet.ID == planetID)
+                {
+                    planet = srcPlanet;
+                    break;
+                }
+            return planet;
+        }
 
         /// <summary>
         /// Gets the square distance with the given system.
@@ -246,7 +285,7 @@ namespace EVEMon.Common.Data
 
             return Constellation != other.Constellation
                 ? Constellation.CompareTo(other.Constellation)
-                : String.Compare(Name, other.Name, StringComparison.CurrentCulture);
+                : string.Compare(Name, other.Name, StringComparison.CurrentCulture);
         }
 
         #endregion

@@ -22,7 +22,7 @@ using EVEMon.Common.SettingsObjects;
 namespace EVEMon.Common
 {
     /// <summary>
-    /// The settings class is bound 
+    /// Stores EVEMon's current settings and writes them to the settings file when necessary.
     /// </summary>
     [EnforceUIThreadAffinity]
     public static class Settings
@@ -37,6 +37,8 @@ namespace EVEMon.Common
         /// </summary>
         static Settings()
         {
+            SSOClientID = string.Empty;
+            SSOClientSecret = string.Empty;
             UI = new UISettings();
             G15 = new G15Settings();
             Proxy = new ProxySettings();
@@ -69,6 +71,16 @@ namespace EVEMon.Common
 
 
         #region The very settings
+
+        /// <summary>
+        /// Gets or sets the SSO client ID.
+        /// </summary>
+        public static string SSOClientID { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the SSO secret key.
+        /// </summary>
+        public static string SSOClientSecret { get; private set; }
 
         /// <summary>
         /// Gets or sets the compatibility mode.
@@ -178,8 +190,9 @@ namespace EVEMon.Common
 
             try
             {
-                // API providers
-                EveMonClient.APIProviders.Import(s_settings.APIProviders);
+                // API settings
+                SSOClientID = s_settings.SSOClientID ?? string.Empty;
+                SSOClientSecret = s_settings.SSOClientSecret ?? string.Empty;
 
                 // User settings
                 UI = s_settings.UI;
@@ -235,7 +248,7 @@ namespace EVEMon.Common
 
             EveMonClient.ResetCollections();
             EveMonClient.Characters.Import(s_settings.Characters);
-            EveMonClient.APIKeys.Import(s_settings.APIKeys);
+            EveMonClient.ESIKeys.Import(s_settings.ESIKeys);
             EveMonClient.Characters.ImportPlans(s_settings.Plans);
             EveMonClient.MonitoredCharacters.Import(s_settings.MonitoredCharacters);
 
@@ -259,17 +272,10 @@ namespace EVEMon.Common
                 Notifications.Categories[category] = new NotificationCategorySettings();
             }
 
-            // Add missing API methods update periods
-            foreach (Enum method in APIMethods.Methods.Where(method => method.GetUpdatePeriod() != null)
+            // Add missing ESI methods update periods
+            foreach (Enum method in ESIMethods.Methods.Where(method => method.GetUpdatePeriod() != null)
                 .Where(method => !Updates.Periods.ContainsKey(method.ToString())))
-            {
                 Updates.Periods.Add(method.ToString(), method.GetUpdatePeriod().DefaultPeriod);
-
-                // Bind the APIKeyInfo and CharacterList update period
-                if (method.Equals(CCPAPIGenericMethods.APIKeyInfo) &&
-                    Updates.Periods[CCPAPIGenericMethods.CharacterList.ToString()] != Updates.Periods[method.ToString()])
-                    Updates.Periods[method.ToString()] = Updates.Periods[CCPAPIGenericMethods.CharacterList.ToString()];
-            }
 
             // Initialize or add missing columns
             InitializeOrAddMissingColumns();
@@ -347,9 +353,10 @@ namespace EVEMon.Common
         {
             SerializableSettings serial = new SerializableSettings
             {
+                SSOClientID = SSOClientID,
+                SSOClientSecret = SSOClientSecret,
                 Revision = Revision,
                 Compatibility = Compatibility,
-                APIProviders = EveMonClient.APIProviders.Export(),
                 Scheduler = Scheduler.Export(),
                 Calendar = Calendar,
                 CloudStorageServiceProvider = CloudStorageServiceProvider,
@@ -365,7 +372,7 @@ namespace EVEMon.Common
             };
 
             serial.Characters.AddRange(EveMonClient.Characters.Export());
-            serial.APIKeys.AddRange(EveMonClient.APIKeys.Export());
+            serial.ESIKeys.AddRange(EveMonClient.ESIKeys.Export());
             serial.Plans.AddRange(EveMonClient.Characters.ExportPlans());
             serial.MonitoredCharacters.AddRange(EveMonClient.MonitoredCharacters.Export());
 
@@ -395,7 +402,7 @@ namespace EVEMon.Common
             // which cloud storage service provider should be used
             s_settings = TryDeserializeFromFile();
 
-            // Try to download the seetings file from the cloud
+            // Try to download the settings file from the cloud
             CloudStorageServiceAPIFile settingsFile = s_settings?.CloudStorageServiceProvider?.Provider?.DownloadSettingsFile();
 
             // If a settings file was downloaded try to deserialize it
@@ -419,7 +426,7 @@ namespace EVEMon.Common
         /// </returns>
         private static SerializableSettings TryDeserializeFromFileContent(string fileContent)
         {
-            if (String.IsNullOrWhiteSpace(fileContent))
+            if (string.IsNullOrWhiteSpace(fileContent))
                 return null;
 
             EveMonClient.Trace("begin");

@@ -32,6 +32,12 @@ namespace EVEMon.Common.Enumerations
         ReverseEngineering = 7,
 
         [Description("Invention")]
-        Invention = 8
+        Invention = 8,
+
+        [Description("Simple Reactions")]
+        SimpleReactions = 9,
+
+        [Description("Reactions")]
+        Reactions = 11
     }
 }

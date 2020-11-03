@@ -62,7 +62,7 @@ namespace EVEMon.Common.Scheduling
         /// <returns></returns>
         public static bool SkillIsBlockedAt(DateTime time, out string blockingEntry, out bool isAutoBlocking)
         {
-            blockingEntry = String.Empty;
+            blockingEntry = string.Empty;
             isAutoBlocking = false;
 
             // Checks schedule entries to see if they overlap the input time

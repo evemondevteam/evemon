@@ -21,7 +21,7 @@ namespace EVEMon.Common.Models
         private readonly Collection<string> m_planGroups = new Collection<string>();
         private readonly StaticSkill m_skill;
         private readonly BasePlan m_owner;
-        private readonly Int64 m_level;
+        private readonly long m_level;
 
         private RemappingPoint m_remapping;
         private PlanEntryType m_entryType;
@@ -34,14 +34,14 @@ namespace EVEMon.Common.Models
         /// <param name="owner">The owner.</param>
         /// <param name="skill">The skill.</param>
         /// <param name="level">The level.</param>
-        public PlanEntry(BasePlan owner, StaticSkill skill, Int64 level)
+        public PlanEntry(BasePlan owner, StaticSkill skill, long level)
         {
             m_owner = owner;
             m_skill = skill;
             m_level = level;
 
             m_priority = DefaultPriority;
-            m_notes = String.Empty;
+            m_notes = string.Empty;
 
             OldTrainingTime = TimeSpan.Zero;
             TrainingTime = TimeSpan.Zero;
@@ -52,7 +52,7 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="skill">The skill.</param>
         /// <param name="level">The level.</param>
-        public PlanEntry(StaticSkill skill, Int64 level)
+        public PlanEntry(StaticSkill skill, long level)
             : this(null, skill, level)
         {
         }
@@ -107,7 +107,7 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the skill level of this plan entry.
         /// </summary>
-        public Int64 Level => m_level;
+        public long Level => m_level;
 
         /// <summary>
         /// Gets the entry's priority.
@@ -214,6 +214,13 @@ namespace EVEMon.Common.Models
         /// <returns>True if the given item's skill is a prerequisite of this one or if it is a lower level of the same skill.</returns>
         public bool IsDependentOf(ISkillLevel level) => ((StaticSkillLevel)this).IsDependentOf(level);
 
+        public bool OmegaRequired
+        {
+            get
+            {
+                return m_level > m_skill.AlphaLimit;
+            }
+        }
 
         #region Computations done when UpdateTrainingTime is called
 
@@ -235,7 +242,7 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the skill points total at the end of the training, as computed the last time <see cref="PlanEntry.UpdateStatistics"/> was called.
         /// </summary>
-        public Int64 EstimatedTotalSkillPoints { get; private set; }
+        public long EstimatedTotalSkillPoints { get; private set; }
 
         /// <summary>
         /// Gets the SP/Hour, as computed the last time <see cref="PlanEntry.UpdateStatistics"/> was called.
@@ -264,7 +271,7 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// How many skill points are required to train this skill.
         /// </summary>
-        public Int64 SkillPointsRequired { get; private set; }
+        public long SkillPointsRequired { get; private set; }
 
         /// <summary>
         /// Updates the column statistics (with the exception of the <see cref="UpdateOldTrainingTime"/>) from the given scratchpad.

@@ -56,8 +56,8 @@ namespace EVEMon.Common
             // Network monitoring (connection availability changes)
             NetworkMonitor.Initialize();
 
-            // APIMethods collection initialization (always before members instatiation)
-            APIMethods.Initialize();
+            // ESIMethods collection initialization (always before members instatiation)
+            ESIMethods.Initialize();
 
             // Members instantiations
             APIProviders = new GlobalAPIProviderCollection();
@@ -66,7 +66,7 @@ namespace EVEMon.Common
             Notifications = new GlobalNotificationCollection();
             Characters = new GlobalCharacterCollection();
             Datafiles = new GlobalDatafileCollection();
-            APIKeys = new GlobalAPIKeyCollection();
+            ESIKeys = new GlobalAPIKeyCollection();
             EVEServer = new EveServer();
 
             Trace("done");
@@ -97,7 +97,7 @@ namespace EVEMon.Common
         /// </summary>
         internal static void ResetCollections()
         {
-            APIKeys = new GlobalAPIKeyCollection();
+            ESIKeys = new GlobalAPIKeyCollection();
             Characters = new GlobalCharacterCollection();
             Notifications = new GlobalNotificationCollection();
             CharacterIdentities = new GlobalCharacterIdentityCollection();
@@ -239,10 +239,10 @@ namespace EVEMon.Common
         public static void InitializeFileSystemPaths()
         {
             // Ensure it is made once only
-            if (!String.IsNullOrEmpty(SettingsFileName))
+            if (!string.IsNullOrEmpty(SettingsFileName))
                 return;
 
-            string debugAddition = IsDebugBuild ? "-debug" : String.Empty;
+            string debugAddition = IsDebugBuild ? "-debug" : string.Empty;
             SettingsFileName = $"settings{debugAddition}.xml";
             s_traceFile = $"trace{debugAddition}.txt";
 
@@ -418,7 +418,7 @@ namespace EVEMon.Common
         /// <summary>
         /// Gets the collection of all known API keys.
         /// </summary>
-        public static GlobalAPIKeyCollection APIKeys { get; private set; }
+        public static GlobalAPIKeyCollection ESIKeys { get; private set; }
 
         /// <summary>
         /// Gets the collection of all characters.
@@ -453,7 +453,7 @@ namespace EVEMon.Common
         /// <param name="args"></param>
         public static void Trace(string format, params object[] args)
         {
-            string message = String.Format(CultureConstants.DefaultCulture, format, args);
+            string message = string.Format(CultureConstants.DefaultCulture, format, args);
             Trace(message);
         }
 
@@ -464,7 +464,7 @@ namespace EVEMon.Common
         /// <param name="printMethod">if set to <c>true</c> [print method].</param>
         public static void Trace(string message = null, bool printMethod = true)
         {
-            string header = String.Empty;
+            string header = string.Empty;
 
             if (printMethod)
             {
@@ -480,7 +480,7 @@ namespace EVEMon.Common
 
             TimeSpan time = DateTime.UtcNow.Subtract(s_startTime);
             string timeStr = $"{time.Days:#0}d {time.Hours:#0}h {time.Minutes:00}m {time.Seconds:00}s > ";
-            message = String.IsNullOrWhiteSpace(message) || !printMethod ? message : $" - {message}";
+            message = string.IsNullOrWhiteSpace(message) || !printMethod ? message : $" - {message}";
             string msgStr = $"{header}{message}";
 
             System.Diagnostics.Trace.WriteLine($"{timeStr}{msgStr.TrimEnd(Environment.NewLine.ToCharArray())}");
@@ -496,7 +496,7 @@ namespace EVEMon.Common
             StackFrame frame = stackTrace.GetFrame(1);
             MethodBase method = frame.GetMethod();
             string parameters = FormatParameters(method.GetParameters());
-            string declaringType = method.DeclaringType?.ToString().Replace("EVEMon.", String.Empty);
+            string declaringType = method.DeclaringType?.ToString().Replace("EVEMon.", string.Empty);
 
             Trace($"{declaringType}.{method.Name}({parameters})");
         }

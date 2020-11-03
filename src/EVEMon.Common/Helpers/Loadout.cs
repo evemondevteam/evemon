@@ -12,9 +12,9 @@ namespace EVEMon.Common.Helpers
         public Loadout()
         {
             ID = 0;
-            Name = String.Empty;
-            Description = String.Empty;
-            Author = String.Empty;
+            Name = string.Empty;
+            Description = string.Empty;
+            Author = string.Empty;
             Rating = 0;
             SubmissionDate = DateTimeOffset.MinValue;
             Items = Enumerable.Empty<Item>();

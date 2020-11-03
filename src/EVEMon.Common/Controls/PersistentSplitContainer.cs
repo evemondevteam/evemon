@@ -27,7 +27,7 @@ namespace EVEMon.Common.Controls
                 // width will be reset to the default for the base SplitContainer
                 try
                 {
-                    if (String.IsNullOrEmpty(m_rememberDistanceKey))
+                    if (string.IsNullOrEmpty(m_rememberDistanceKey))
                         return;
 
                     if (Settings.UI.Splitters.ContainsKey(m_rememberDistanceKey))
@@ -62,7 +62,7 @@ namespace EVEMon.Common.Controls
         /// false to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
-            if (!String.IsNullOrEmpty(m_rememberDistanceKey))
+            if (!string.IsNullOrEmpty(m_rememberDistanceKey))
             {
                 int d = SplitterDistance;
                 if (VerifyValidSplitterDistance(d) == d)

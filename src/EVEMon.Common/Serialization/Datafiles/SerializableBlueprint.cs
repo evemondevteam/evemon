@@ -22,7 +22,7 @@ namespace EVEMon.Common.Serialization.Datafiles
         /// </summary>
         public SerializableBlueprint()
         {
-            InventionTypeIDs = new ModifiedSerializableDictionary<int, double>();
+            InventionTypeIDs = new ModifiedSerializableDictionary<int, decimal>();
             m_prereqSkills = new Collection<SerializablePrereqSkill>();
             m_requiredMaterials = new Collection<SerializableRequiredMaterial>();
         }
@@ -105,6 +105,13 @@ namespace EVEMon.Common.Serialization.Datafiles
         public int InventionTime { get; set; }
 
         /// <summary>
+        /// Gets or sets the reaction time.
+        /// </summary>
+        /// <value>The reaction time.</value>
+        [XmlAttribute("reactionTime")]
+        public int ReactionTime { get; set; }
+
+        /// <summary>
         /// Gets or sets the max production limit.
         /// </summary>
         /// <value>The max production limit.</value>
@@ -116,7 +123,14 @@ namespace EVEMon.Common.Serialization.Datafiles
         /// </summary>
         /// <value>The invention type ID.</value>
         [XmlElement("inventTypeIDs")]
-        public ModifiedSerializableDictionary<int, double> InventionTypeIDs { get; set; }
+        public ModifiedSerializableDictionary<int, decimal> InventionTypeIDs { get; set; }
+
+        /// <summary>
+        /// Gets or sets the reaction outcome.
+        /// </summary>
+        /// <value>The reaction outcome.</value>
+        [XmlElement("reactionOutcome")]
+        public SerializableMaterialQuantity ReactionOutcome { get; set; }
 
         /// <summary>
         /// Gets the prereq skill.

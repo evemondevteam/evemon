@@ -85,7 +85,7 @@ namespace EVEMon.Common.SettingsObjects
 
                         string attribute = reader.GetAttribute(0);
 
-                        if (String.IsNullOrEmpty(attribute))
+                        if (string.IsNullOrEmpty(attribute))
                             break;
 
                         // Assign the value
@@ -107,7 +107,7 @@ namespace EVEMon.Common.SettingsObjects
 
                             string attribute = reader.GetAttribute(propertyName);
 
-                            if (String.IsNullOrEmpty(attribute))
+                            if (string.IsNullOrEmpty(attribute))
                                 break;
 
                             object propertyValue = converter.ConvertFromInvariantString(attribute);
@@ -165,7 +165,7 @@ namespace EVEMon.Common.SettingsObjects
                     valueType.GetCustomAttributes(typeof(XmlRootAttribute), false).Cast<XmlRootAttribute>().FirstOrDefault();
 
                 // Get the name specified in XmlRootAttribute or use the type name
-                string elementName = rootAttribute != null && !String.IsNullOrWhiteSpace(rootAttribute.ElementName)
+                string elementName = rootAttribute != null && !string.IsNullOrWhiteSpace(rootAttribute.ElementName)
                     ? rootAttribute.ElementName
                     : TypeName;
 
@@ -198,9 +198,9 @@ namespace EVEMon.Common.SettingsObjects
 
                         // Get the name specified in XmlElement/XmlAttribute or use the property name
                         string attributeName;
-                        if (xmlElement != null && !String.IsNullOrWhiteSpace(xmlElement.ElementName))
+                        if (xmlElement != null && !string.IsNullOrWhiteSpace(xmlElement.ElementName))
                             attributeName = xmlElement.ElementName;
-                        else if (xmlAttribute != null && !String.IsNullOrWhiteSpace(xmlAttribute.AttributeName))
+                        else if (xmlAttribute != null && !string.IsNullOrWhiteSpace(xmlAttribute.AttributeName))
                             attributeName = xmlAttribute.AttributeName;
                         else
                             attributeName = property.Name;
@@ -208,7 +208,7 @@ namespace EVEMon.Common.SettingsObjects
                         object propertyValue = property.GetValue(this[key], null);
 
                         // Special condition for Boolean type (because "Boolean.ToString()" returns "True"/"False")
-                        string propertyValueString = propertyValue is Boolean
+                        string propertyValueString = propertyValue is bool
                             ? XmlConvert.ToString((bool)propertyValue)
                             : propertyValue.ToString();
 

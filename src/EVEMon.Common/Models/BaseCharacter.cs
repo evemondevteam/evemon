@@ -10,15 +10,80 @@ namespace EVEMon.Common.Models
 {
     public abstract class BaseCharacter
     {
+        private const long SKILL_INJECTOR_MULTIPLIER = 100000;
+        private const long SKILL_INJECTOR_SMALL_DIVIDER = 5;
+
+        /// <summary>
+        /// Overrides the automatically determined clone state if set to Alpha or Omega.
+        /// </summary>
+        protected AccountStatusMode m_cloneStateSetting;
+
+        public BaseCharacter()
+        {
+            CharacterStatus = AccountStatus.Unknown;
+            m_cloneStateSetting = AccountStatusMode.Auto;
+        }
+
         #region Abstract methods and properties
 
-        protected abstract Int64 TotalSkillPoints { get; }
+        protected abstract long TotalSkillPoints { get; }
         protected abstract ICharacterAttribute GetAttribute(EveAttribute attribute);
 
         internal abstract void Dispose();
 
-        public abstract Int64 GetSkillLevel(StaticSkill skill);
-        public abstract Int64 GetSkillPoints(StaticSkill skill);
+        public abstract long GetSkillLevel(StaticSkill skill);
+        public abstract long GetSkillPoints(StaticSkill skill);
+
+        #endregion
+
+
+        #region Account status
+
+        /// <summary>
+        /// Gets Alpha/Omega status for this character.
+        /// </summary>
+        public virtual AccountStatus CharacterStatus { get; protected set; }
+
+        /// <summary>
+        /// Retrieves whether this character is effectively Alpha, Omega, or unknown. If auto
+        /// status is set (the default), EVEMon tries to determine this value from the known
+        /// character information. Otherwise, the user override is used.
+        /// </summary>
+        public AccountStatus EffectiveCharacterStatus
+        {
+            get
+            {
+                AccountStatus cloneState;
+                switch (AccountStatusSettings)
+                {
+                case AccountStatusMode.Alpha:
+                    cloneState = AccountStatus.Alpha;
+                    break;
+                case AccountStatusMode.Omega:
+                    cloneState = AccountStatus.Omega;
+                    break;
+                case AccountStatusMode.Auto:
+                default:
+                    cloneState = CharacterStatus;
+                    break;
+                }
+                return cloneState;
+            }
+        }
+
+        /// <summary>
+        /// The method used to determine the character's clone state (or the override).
+        /// </summary>
+        public virtual AccountStatusMode AccountStatusSettings {
+            get
+            {
+                return m_cloneStateSetting;
+            }
+            set
+            {
+                m_cloneStateSetting = value;
+            }
+        }
 
         #endregion
 
@@ -28,15 +93,27 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the total skill points for this character.
         /// </summary>
-        public Int64 SkillPoints => TotalSkillPoints;
+        public long SkillPoints => TotalSkillPoints;
 
         /// <summary>
-        /// Computes the SP per hour for the given skill, without factoring out the newbies bonus.
+        /// Computes the SP per hour for the given skill, without factoring in the newbies bonus.
         /// </summary>
         /// <param name="skill">The skill.</param>
-        /// <returns></returns>
+        /// <returns>SP earned per hour.</returns>
         /// <exception cref="System.ArgumentNullException">skill</exception>
         public virtual float GetBaseSPPerHour(StaticSkill skill)
+        {
+            return GetOmegaSPPerHour(skill) * EffectiveCharacterStatus.GetTrainingRate();
+        }
+
+        /// <summary>
+        /// Computes the SP per hour for the given skill for an Omega clone, without factoring
+        /// in the newbies bonus.
+        /// </summary>
+        /// <param name="skill">The skill.</param>
+        /// <returns>SP earned per hour.</returns>
+        /// <exception cref="System.ArgumentNullException">skill</exception>
+        protected float GetOmegaSPPerHour(StaticSkill skill)
         {
             skill.ThrowIfNull(nameof(skill));
 
@@ -87,7 +164,7 @@ namespace EVEMon.Common.Models
         /// <param name="points">The points to calculate points.</param>
         /// <param name="skill">The skill to train.</param>
         /// <returns></returns>
-        public TimeSpan GetTimeSpanForPoints(StaticSkill skill, Int64 points) 
+        public TimeSpan GetTimeSpanForPoints(StaticSkill skill, long points) 
             => GetTrainingTime(points, GetBaseSPPerHour(skill));
 
         /// <summary>
@@ -95,40 +172,49 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="skillPoints">The skill points.</param>
         /// <returns></returns>
-        public int GetRequiredSkillInjectorsForSkillPoints(long skillPoints)
+        public SkillInjectorsRequired GetRequiredSkillInjectorsForSkillPoints(long skillPoints)
         {
-            long remainingSkillPoints = skillPoints;
-            int injectorsCount = 0;
+            long remainingSkillPoints = skillPoints, targetSP = SkillPoints + skillPoints;
+            int injectorsLarge = 0, injectorsSmall = 0;
 
             while (remainingSkillPoints > 0)
             {
-                long projectedSkillPoints = SkillPoints + skillPoints - remainingSkillPoints;
-                remainingSkillPoints -= GetSkillPointsGainedFromInjector(projectedSkillPoints);
-                injectorsCount++;
+                long projectedSkillPoints = targetSP - remainingSkillPoints;
+                long nextInjector = GetSkillPointsGainedFromLargeInjector(projectedSkillPoints);
+                // Can we use smalls instead?
+                if (remainingSkillPoints < nextInjector)
+                {
+                    long nextSmallInjector = nextInjector / SKILL_INJECTOR_SMALL_DIVIDER;
+                    remainingSkillPoints -= nextSmallInjector;
+                    injectorsSmall++;
+                }
+                else
+                {
+                    remainingSkillPoints -= nextInjector;
+                    injectorsLarge++;
+                }
             }
 
-            return injectorsCount;
+            return new SkillInjectorsRequired(injectorsLarge, injectorsSmall);
         }
 
         /// <summary>
-        /// Gets the skill points gained from injector.
+        /// Gets the skill points gained from a large injector.
         /// </summary>
         /// <param name="skillPoints">The start skill points.</param>
         /// <returns></returns>
-        private static int GetSkillPointsGainedFromInjector(long skillPoints)
+        private static long GetSkillPointsGainedFromLargeInjector(long skillPoints)
         {
             double sp = skillPoints / 1000000d;
-            const int Multiplier = 100000;
-
-            if (sp < 5)
-                return 5 * Multiplier;
-            if (sp < 50)
-                return 4 * Multiplier;
-            if (sp < 80)
-                return 3 * Multiplier;
-            return (int)(1.5 * Multiplier);
+            if (sp < 5.0)
+                return 5 * SKILL_INJECTOR_MULTIPLIER;
+            if (sp < 50.0)
+                return 4 * SKILL_INJECTOR_MULTIPLIER;
+            if (sp < 80.0)
+                return 3 * SKILL_INJECTOR_MULTIPLIER;
+            return (long)(1.5 * SKILL_INJECTOR_MULTIPLIER);
         }
-
+        
         #endregion
 
 
@@ -140,7 +226,7 @@ namespace EVEMon.Common.Models
         /// <param name="skillLevel">The skill level.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">skillLevel</exception>
-        public Int64 GetSPToTrain(ISkillLevel skillLevel)
+        public long GetSPToTrain(ISkillLevel skillLevel)
         {
             skillLevel.ThrowIfNull(nameof(skillLevel));
 
@@ -154,14 +240,14 @@ namespace EVEMon.Common.Models
         /// <param name="level"></param>
         /// <param name="origin"></param>
         /// <returns></returns>
-        private Int64 GetSPToTrain(StaticSkill skill, Int64 level, TrainingOrigin origin = TrainingOrigin.FromCurrent)
+        private long GetSPToTrain(StaticSkill skill, long level, TrainingOrigin origin = TrainingOrigin.FromCurrent)
         {
             if (level == 0)
                 return 0;
-            Int64 sp = skill.GetPointsRequiredForLevel(level);
+            long sp = skill.GetPointsRequiredForLevel(level);
 
             // Deals with the origin
-            Int64 result;
+            long result;
             switch (origin)
             {
                 // Include current SP
@@ -213,10 +299,10 @@ namespace EVEMon.Common.Models
         /// <param name="level"></param>
         /// <param name="origin"></param>
         /// <returns></returns>
-        public TimeSpan GetTrainingTime(StaticSkill skill, Int64 level, TrainingOrigin origin = TrainingOrigin.FromCurrent)
+        public TimeSpan GetTrainingTime(StaticSkill skill, long level, TrainingOrigin origin = TrainingOrigin.FromCurrent)
         {
             float spPerHour = GetBaseSPPerHour(skill);
-            Int64 sp = GetSPToTrain(skill, level, origin);
+            long sp = GetSPToTrain(skill, level, origin);
             return GetTrainingTime(sp, spPerHour);
         }
 
@@ -226,7 +312,7 @@ namespace EVEMon.Common.Models
         /// <param name="sp"></param>
         /// <param name="spPerHour"></param>
         /// <returns></returns>
-        private static TimeSpan GetTrainingTime(Int64 sp, float spPerHour)
+        private static TimeSpan GetTrainingTime(long sp, float spPerHour)
             => Math.Abs(spPerHour) < float.Epsilon ? TimeSpan.FromDays(999.0) : TimeSpan.FromHours(sp / spPerHour);
 
         /// <summary>
@@ -279,5 +365,51 @@ namespace EVEMon.Common.Models
         public ICharacterAttribute Memory => GetAttribute(EveAttribute.Memory);
 
         #endregion
+
+        /// <summary>
+        /// Reports how many skill injectors are required to receive the expected SP.
+        /// </summary>
+        public struct SkillInjectorsRequired
+        {
+            int Large { get; }
+
+            int Small { get; }
+
+            public int Total
+            {
+                get
+                {
+                    return Large + Small;
+                }
+            }
+
+            internal SkillInjectorsRequired(int large, int small)
+            {
+                Large = large;
+                Small = small;
+            }
+
+            public override string ToString()
+            {
+                string display;
+                if (Large > 0)
+                {
+                    if (Small == 1 && Large == 1)
+                        display = "1 Large and 1 Small Skill Injector";
+                    else if (Small > 0)
+                        // 2 Large and 2 Small Skill Injectors
+                        display = string.Format("{0:D} Large and {1:D} Small Skill Injectors",
+                            Large, Small);
+                    else
+                        // 1 Large Skill Injector(s)
+                        display = string.Format("{0:D} Large Skill Injector{1}", Large,
+                            Large.S());
+                }
+                else
+                    // 3 Small Skill Injector(s)
+                    display = string.Format("{0:D} Small Skill Injector{1}", Small, Small.S());
+                return display;
+            }
+        }
     }
 }

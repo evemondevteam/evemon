@@ -37,7 +37,7 @@ namespace EVEMon.CharacterMonitoring
         private AssetGrouping m_grouping;
         private AssetColumn m_sortCriteria;
 
-        private string m_textFilter = String.Empty;
+        private string m_textFilter = string.Empty;
         private string m_totalCostLabelDefaultText;
 
         private bool m_sortAscending = true;
@@ -242,7 +242,7 @@ namespace EVEMon.CharacterMonitoring
             Assets = Character?.Assets;
             Columns = Settings.UI.MainWindow.Assets.Columns;
             Grouping = Character?.UISettings.AssetsGroupBy;
-            TextFilter = String.Empty;
+            TextFilter = string.Empty;
 
             await UpdateColumnsAsync();
 
@@ -343,16 +343,14 @@ namespace EVEMon.CharacterMonitoring
             int scrollBarPosition = lvAssets.GetVerticalScrollBarPosition();
 
             // Store the selected item (if any) to restore it after the update
-            int selectedItem = lvAssets.SelectedItems.Count > 0
-                ? lvAssets.SelectedItems[0].Tag.GetHashCode()
-                : 0;
+            int selectedItem = lvAssets.SelectedItems.Count > 0 ? lvAssets.SelectedItems[0].
+                Tag.GetHashCode() : 0;
 
             lvAssets.BeginUpdate();
             try
             {
-                List<Asset> assets = m_list
-                    .Where(x => x.Item != null && x.SolarSystem != null)
-                    .Where(x => IsTextMatching(x, m_textFilter)).ToList();
+                var assets = m_list.Where(x => x.Item != null && x.SolarSystem != null).
+                    Where(x => IsTextMatching(x, m_textFilter)).ToList();
 
                 UpdateSort();
 
@@ -388,8 +386,9 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="assets">The assets.</param>
         private async Task UpdateItemsCostAsync(IList<Asset> assets)
         {
-            lblTotalCost.Text = String.Format(CultureConstants.DefaultCulture, m_totalCostLabelDefaultText,
-                await TaskHelper.RunCPUBoundTaskAsync(() => assets.Sum(asset => asset.Price * asset.Quantity)));
+            lblTotalCost.Text = string.Format(CultureConstants.DefaultCulture,
+                m_totalCostLabelDefaultText, await TaskHelper.RunCPUBoundTaskAsync(() =>
+                assets.Sum(asset => asset.Price * asset.Quantity)));
 
             if (!totalCostThrobber.Visible && !Settings.MarketPricer.Pricer.Queried)
             {
@@ -401,9 +400,9 @@ namespace EVEMon.CharacterMonitoring
 
             totalCostThrobber.State = ThrobberState.Stopped;
             totalCostThrobber.Hide();
-            noPricesFoundLabel.Visible = assets
-                .Where(asset => asset.TypeOfBlueprint != BlueprintType.Copy.ToString())
-                .Any(asset => Math.Abs(asset.Price) < double.Epsilon);
+            noPricesFoundLabel.Visible = await TaskHelper.RunCPUBoundTaskAsync(() =>
+                assets.Where(asset => asset.TypeOfBlueprint != BlueprintType.Copy.ToString()).
+                Any(asset => Math.Abs(asset.Price) < double.Epsilon));
         }
 
         /// <summary>
@@ -538,7 +537,7 @@ namespace EVEMon.CharacterMonitoring
                     if (@group.Key is int) // Really ugly way but couldn't figured another way
                         groupText = @group.First().JumpsText;
                     else
-                        groupText = @group.Key.ToString();
+                        groupText = @group.Key?.ToString() ?? string.Empty;
 
                     ListViewGroup listGroup = new ListViewGroup(groupText);
                     listOfGroups.Add(listGroup);
@@ -577,7 +576,7 @@ namespace EVEMon.CharacterMonitoring
             // Add enough subitems to match the number of columns
             while (item.SubItems.Count < lvAssets.Columns.Count + 1)
             {
-                item.SubItems.Add(String.Empty);
+                item.SubItems.Add(string.Empty);
             }
 
             // Creates the subitems
@@ -737,18 +736,18 @@ namespace EVEMon.CharacterMonitoring
         /// <returns>
         /// 	<c>true</c> if [is text matching] [the specified x]; otherwise, <c>false</c>.
         /// </returns>
-        private static bool IsTextMatching(Asset x, string text)
-            => String.IsNullOrEmpty(text) ||
-               x.Item.Name.ToUpperInvariant().Contains(text, ignoreCase: true) ||
-               x.Item.GroupName.ToUpperInvariant().Contains(text, ignoreCase: true) ||
-               x.Item.CategoryName.ToUpperInvariant().Contains(text, ignoreCase: true) ||
-               x.TypeOfBlueprint.ToUpperInvariant().Contains(text, ignoreCase: true) ||
-               x.Container.ToUpperInvariant().Contains(text, ignoreCase: true) ||
-               x.Flag.ToUpperInvariant().Contains(text, ignoreCase: true) ||
-               x.Location.ToUpperInvariant().Contains(text, ignoreCase: true) ||
-               x.SolarSystem.Name.ToUpperInvariant().Contains(text, ignoreCase: true) ||
-               x.SolarSystem.Constellation.Name.ToUpperInvariant().Contains(text, ignoreCase: true) ||
-               x.SolarSystem.Constellation.Region.Name.ToUpperInvariant().Contains(text, ignoreCase: true);
+        private static bool IsTextMatching(Asset x, string text) => string.IsNullOrEmpty(text) ||
+            ((x.Item?.ID ?? 0) != 0 && (x.Item.Name.Contains(text, true) ||
+            x.Item.GroupName.Contains(text, true) ||
+            x.Item.CategoryName.Contains(text, true) ||
+            x.TypeOfBlueprint.Contains(text, true))) ||
+            x.Container.Contains(text, true) ||
+            x.Flag.Contains(text, true) ||
+            x.Location.Contains(text, true) ||
+            ((x.SolarSystem?.ID ?? 0) != 0 &&
+                (x.SolarSystem.Name.Contains(text, true) ||
+                x.SolarSystem.Constellation.Name.Contains(text, true) ||
+                x.SolarSystem.Constellation.Region.Name.Contains(text, true)));
 
         /// <summary>
         /// Gets the tool tip text.
@@ -758,11 +757,11 @@ namespace EVEMon.CharacterMonitoring
         private string GetToolTipText(ListViewItem item)
         {
             if (!item.Selected || lvAssets.SelectedItems.Count < 2)
-                return String.Empty;
+                return string.Empty;
 
             List<ListViewItem> selectedItems = lvAssets.SelectedItems.Cast<ListViewItem>().ToList();
             if (selectedItems.Any(selectedItem => selectedItem.Text != item.Text))
-                return String.Empty;
+                return string.Empty;
 
             List<Asset> selectedAssets = selectedItems.Select(selectedItem => selectedItem.Tag).OfType<Asset>().ToList();
             long sumQuantity = selectedAssets.Sum(selectedAsset => selectedAsset.Quantity);
@@ -777,7 +776,7 @@ namespace EVEMon.CharacterMonitoring
             builder.Append($"{item.Text} ({selectedAssets.First().Volume:N2} m³)")
                 .AppendLine()
                 .Append($"Total Quantity: {sumQuantity:N0} in {uniqueLocations:N0} " +
-                        $"{(uniqueLocations > 1 ? "different " : String.Empty)}location{(uniqueLocations > 1 ? "s" : String.Empty)}")
+                        $"{(uniqueLocations > 1 ? "different " : string.Empty)}location{uniqueLocations.S()}")
                 .AppendLine()
                 .Append($"Total Volume: {sumVolume:N2} m³")
                 .AppendLine()

@@ -371,17 +371,17 @@ namespace EVEMon.SkillPlanner
                 sz = MeasureAndDrawText(g, currentLevelText.ToString(), Font, drawPoint, stdTextColor);
                 drawPoint.Y += sz.Height;
 
-                if (!String.IsNullOrEmpty(requiredLevel))
+                if (!string.IsNullOrEmpty(requiredLevel))
                 {
                     sz = MeasureAndDrawText(g, requiredLevel, Font, drawPoint, reqTextColor);
                     drawPoint.Y += sz.Height;
                 }
-                if (!String.IsNullOrEmpty(thisRequiredTime))
+                if (!string.IsNullOrEmpty(thisRequiredTime))
                 {
                     sz = MeasureAndDrawText(g, thisRequiredTime, Font, drawPoint, reqTextColor);
                     drawPoint.Y += sz.Height;
                 }
-                if (!String.IsNullOrEmpty(prereqTime))
+                if (!string.IsNullOrEmpty(prereqTime))
                 {
                     sz = MeasureAndDrawText(g, prereqTime, Font, drawPoint, prTextColor);
                     drawPoint.Y += sz.Height;
@@ -702,7 +702,7 @@ namespace EVEMon.SkillPlanner
             /// Gets or sets the required level.
             /// </summary>
             /// <value>The required level.</value>
-            public Int64 RequiredLevel { get; }
+            public long RequiredLevel { get; }
 
             /// <summary>
             /// Gets or sets the cells.

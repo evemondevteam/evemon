@@ -25,7 +25,7 @@ namespace EVEMon.Controls
         /// <value></value>
         /// <returns>true if the control can respond to user interaction; otherwise, false. The default is true.
         /// </returns>
-        public new Boolean Enabled
+        public new bool Enabled
         {
             get { return base.Enabled; }
             set

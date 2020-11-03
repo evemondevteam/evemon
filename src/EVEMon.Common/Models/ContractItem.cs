@@ -1,5 +1,5 @@
 using EVEMon.Common.Data;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models
 {
@@ -9,7 +9,7 @@ namespace EVEMon.Common.Models
         /// Constructor from the API.
         /// </summary>
         /// <param name="src">The source.</param>
-        internal ContractItem(SerializableContractItemsListItem src)
+        internal ContractItem(EsiContractItemsListItem src)
         {
             RecordID = src.RecordID;
             Item = StaticItems.GetItemByID(src.TypeID);

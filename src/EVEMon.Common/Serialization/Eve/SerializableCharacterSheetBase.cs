@@ -10,16 +10,12 @@ namespace EVEMon.Common.Serialization.Eve
     /// </summary>
     public class SerializableCharacterSheetBase : ISerializableCharacterIdentity
     {
-        private readonly Collection<SerializableCharacterSkill> m_skills;
-        private readonly Collection<SerializableEmploymentHistory> m_employmentHistory;
-        private readonly Collection<SerializableCharacterCertificate> m_certificates;
-
         protected SerializableCharacterSheetBase()
         {
             Attributes = new SerializableCharacterAttributes();
-            m_skills = new Collection<SerializableCharacterSkill>();
-            m_certificates = new Collection<SerializableCharacterCertificate>();
-            m_employmentHistory = new Collection<SerializableEmploymentHistory>();
+            Skills = new Collection<SerializableCharacterSkill>();
+            Certificates = new Collection<SerializableCharacterCertificate>();
+            EmploymentHistory = new Collection<SerializableEmploymentHistory>();
         }
 
         [XmlElement("characterID")]
@@ -29,7 +25,7 @@ namespace EVEMon.Common.Serialization.Eve
         public string NameXml
         {
             get { return Name; }
-            set { Name = value?.HtmlDecode() ?? String.Empty; }
+            set { Name = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlElement("homeStationID")]
@@ -41,7 +37,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return Birthday.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     Birthday = value.TimeStringToDateTime();
             }
         }
@@ -62,7 +58,7 @@ namespace EVEMon.Common.Serialization.Eve
         public string CorporationNameXml
         {
             get { return CorporationName; }
-            set { CorporationName = value?.HtmlDecode() ?? String.Empty; }
+            set { CorporationName = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlElement("corporationID")]
@@ -72,7 +68,7 @@ namespace EVEMon.Common.Serialization.Eve
         public string AllianceNameXml
         {
             get { return AllianceName; }
-            set { AllianceName = value?.HtmlDecode() ?? String.Empty; }
+            set { AllianceName = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlElement("allianceID")]
@@ -96,7 +92,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return CloneJumpDate.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     CloneJumpDate = value.TimeStringToDateTime();
             }
         }
@@ -107,7 +103,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return LastRespecDate.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     LastRespecDate = value.TimeStringToDateTime();
             }
         }
@@ -118,7 +114,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return LastTimedRespec.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     LastTimedRespec = value.TimeStringToDateTime();
             }
         }
@@ -129,7 +125,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return RemoteStationDate.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     RemoteStationDate = value.TimeStringToDateTime();
             }
         }
@@ -140,7 +136,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return JumpActivationDate.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     JumpActivationDate = value.TimeStringToDateTime();
             }
         }
@@ -151,7 +147,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return JumpFatigueDate.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     JumpFatigueDate = value.TimeStringToDateTime();
             }
         }
@@ -162,17 +158,17 @@ namespace EVEMon.Common.Serialization.Eve
             get { return JumpLastUpdateDate.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     JumpLastUpdateDate = value.TimeStringToDateTime();
             }
         }
 
-        [XmlArray("certificates")]
-        [XmlArrayItem("certificate")]
-        public Collection<SerializableCharacterCertificate> Certificates => m_certificates;
+		[XmlArray("certificates")]
+		[XmlArrayItem("certificate")]
+		public Collection<SerializableCharacterCertificate> Certificates { get; }
 
-        [XmlElement("balance")]
-        public Decimal Balance { get; set; }
+		[XmlElement("balance")]
+        public decimal Balance { get; set; }
 
         [XmlElement("shipName")]
         public string ShipName { get; set; }
@@ -181,26 +177,29 @@ namespace EVEMon.Common.Serialization.Eve
         public string ShipTypeName { get; set; }
 
         [XmlElement("lastKnownLocation")]
-        public string LastKnownLocation { get; set; }
+        public SerializableLocation LastKnownLocation { get; set; }
 
         [XmlElement("securityStatus")]
         public double SecurityStatus { get; set; }
 
-        [XmlArray("employmentHistory")]
-        [XmlArrayItem("record")]
-        public Collection<SerializableEmploymentHistory> EmploymentHistory => m_employmentHistory;
+        [XmlElement("cloneStateOverride")]
+        public string CloneState { get; set; }
 
-        [XmlElement("attributes")]
+        [XmlArray("employmentHistory")]
+		[XmlArrayItem("record")]
+		public Collection<SerializableEmploymentHistory> EmploymentHistory { get; }
+
+		[XmlElement("attributes")]
         public SerializableCharacterAttributes Attributes { get; set; }
 
-        [XmlArray("skills")]
-        [XmlArrayItem("skill")]
-        public Collection<SerializableCharacterSkill> Skills => m_skills;
+		[XmlArray("skills")]
+		[XmlArrayItem("skill")]
+		public Collection<SerializableCharacterSkill> Skills { get; }
 
-        /// <summary>
-        /// Gets or sets the name.
-        /// </summary>
-        [XmlIgnore]
+		/// <summary>
+		/// Gets or sets the name.
+		/// </summary>
+		[XmlIgnore]
         public string Name { get; set; }
 
         /// <summary>
@@ -234,7 +233,7 @@ namespace EVEMon.Common.Serialization.Eve
         public DateTime LastRespecDate { get; set; }
 
         /// <summary>
-        /// The date and time of the last remap.
+        /// The date and time of the last timed remap.
         /// </summary>
         [XmlIgnore]
         public DateTime LastTimedRespec { get; set; }

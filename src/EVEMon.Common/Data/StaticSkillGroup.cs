@@ -22,7 +22,7 @@ namespace EVEMon.Common.Data
         /// </summary>
         private StaticSkillGroup()
         {
-            ID = Int32.MaxValue;
+            ID = int.MaxValue;
             Name = EveMonConstants.UnknownText;
         }
 

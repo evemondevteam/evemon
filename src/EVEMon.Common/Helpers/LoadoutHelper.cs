@@ -81,7 +81,7 @@ namespace EVEMon.Common.Helpers
 
             // Error on first line ?
             string line = lines.First();
-            if (String.IsNullOrEmpty(line) || !line.StartsWith("[", StringComparison.CurrentCulture) || !line.Contains(","))
+            if (string.IsNullOrEmpty(line) || !line.StartsWith("[", StringComparison.CurrentCulture) || !line.Contains(","))
                 return false;
 
             // Retrieve the ship
@@ -134,7 +134,7 @@ namespace EVEMon.Common.Helpers
             // Error on first line ?
             int shipID;
             string line = lines.First();
-            if (String.IsNullOrEmpty(line) || !Int32.TryParse(line, out shipID))
+            if (string.IsNullOrEmpty(line) || !line.TryParseInv(out shipID))
                 return false;
 
             return StaticItems.ShipsMarketGroup.AllItems.Any(x => x.ID == shipID);
@@ -171,48 +171,44 @@ namespace EVEMon.Common.Helpers
             var listOfItems = new List<Item>();
             Loadout loadout = null;
 
-            foreach (
-                string line in
-                    lines.Where(line => !String.IsNullOrEmpty(line) && !line.Contains("empty") && !line.Contains("slot")))
+            foreach (string line in lines.Where(line => !string.IsNullOrEmpty(line) &&
+                !line.Contains("empty") && !line.Contains("slot")))
             {
                 // Retrieve the ship
                 if (line == lines.First())
                 {
                     // Retrieve the loadout name
                     int commaIndex = line.IndexOf(',');
-                    loadoutInfo.Ship = StaticItems.GetItemByName(line.Substring(1, commaIndex - 1));
-
+                    loadoutInfo.Ship = StaticItems.GetItemByName(line.Substring(1,
+                        commaIndex - 1));
                     if (loadoutInfo.Ship == null)
                         return loadoutInfo;
-
-                    loadout = new Loadout(line.Substring(commaIndex + 1, line.Length - commaIndex - 2).Trim(), String.Empty);
-
+                    loadout = new Loadout(line.Substring(commaIndex + 1, line.Length -
+                        commaIndex - 2).Trim(), string.Empty);
                     continue;
                 }
 
                 // Retrieve the item (might be a drone)
-                string itemName = line.Contains(",")
-                    ? line.Substring(0, line.LastIndexOf(','))
-                    : line.Contains(" x")
-                        ? line.Substring(0, line.LastIndexOf(" x", StringComparison.CurrentCulture))
-                        : line;
+                int lastX = line.LastIndexOf(" x", StringComparison.CurrentCulture);
+                int lastComma = line.LastIndexOf(',');
+                string itemName = lastComma >= 0 ? line.Substring(0, lastComma) : (lastX >= 0 ?
+                    line.Substring(0, lastX) : line);
 
-                int quantity = line.Contains(" x")
-                    ? Int32.Parse(line.Substring(line.LastIndexOf(" x", StringComparison.CurrentCulture) + 2,
-                        line.Length - (line.LastIndexOf(" x", StringComparison.CurrentCulture) + 2)))
-                    : 1;
+                int quantity = lastX >= 0 ? int.Parse(line.Substring(lastX + 2, line.Length -
+                    (lastX + 2))) : 1;
 
                 Item item = StaticItems.GetItemByName(itemName) ?? Item.UnknownItem;
 
-                for (int i = 0; i < quantity; i++)
+                for (int i = 0; i < Math.Min(quantity, 100); i++)
                 {
                     listOfItems.Add(item);
                 }
 
                 // Retrieve the charge
-                string chargeName = line.Contains(",") ? line.Substring(line.LastIndexOf(',') + 2) : null;
+                string chargeName = lastComma >= 0 ? line.Substring(lastComma + 1).Trim() :
+                    null;
 
-                if (String.IsNullOrEmpty(chargeName))
+                if (string.IsNullOrEmpty(chargeName))
                     continue;
 
                 Item charge = StaticItems.GetItemByName(chargeName) ?? Item.UnknownItem;
@@ -252,7 +248,7 @@ namespace EVEMon.Common.Helpers
 
             // Special case to avoid displaying gzCLF block from Osmium
             if (fittings.Fitting.Description.Text.StartsWith("BEGIN gzCLF BLOCK", StringComparison.InvariantCultureIgnoreCase))
-                fittings.Fitting.Description.Text = String.Empty;
+                fittings.Fitting.Description.Text = string.Empty;
 
             Loadout loadout = new Loadout(fittings.Fitting.Name, fittings.Fitting.Description.Text);
 
@@ -298,30 +294,30 @@ namespace EVEMon.Common.Helpers
             var listOfItems = new List<Item>();
             Loadout loadout = null;
 
-            foreach (string line in lines.Where(line => !String.IsNullOrEmpty(line)))
+            foreach (string line in lines.Where(line => !string.IsNullOrEmpty(line)))
             {
                 // Retrieve the ship
                 if (line == lines.First())
                 {
-                    int shipID = Int32.Parse(line, CultureConstants.InvariantCulture);
-                    loadoutInfo.Ship = StaticItems.GetItemByID(shipID);
-
-                    if (loadoutInfo.Ship == null)
-                        return loadoutInfo;
-
-                    loadout = new Loadout(loadoutInfo.Ship.Name, String.Empty);
-
-                    continue;
+                    int shipID;
+                    if (line.TryParseInv(out shipID))
+                    {
+                        loadoutInfo.Ship = StaticItems.GetItemByID(shipID);
+                        if (loadoutInfo.Ship == null)
+                            return loadoutInfo;
+                        loadout = new Loadout(loadoutInfo.Ship.Name, string.Empty);
+                        continue;
+                    }
                 }
 
                 // Retrieve the item
                 int itemID;
-                Item item = Int32.TryParse(line.Substring(0, line.LastIndexOf(';')), out itemID)
-                    ? StaticItems.GetItemByID(itemID) ?? Item.UnknownItem
-                    : Item.UnknownItem;
+                Item item = line.Substring(0, line.LastIndexOf(';')).TryParseInv(out itemID) ?
+                    (StaticItems.GetItemByID(itemID) ?? Item.UnknownItem) : Item.UnknownItem;
 
                 // Retrieve the quantity
-                int quantity = Int32.Parse(line.Substring(line.LastIndexOf(';') + 1), CultureConstants.InvariantCulture);
+                int quantity;
+                line.Substring(line.LastIndexOf(';') + 1).TryParseInv(out quantity);
 
                 // Trim excess ammo & charges, no need to display more than the max number of modules
                 if (item.MarketGroup.BelongsIn(DBConstants.AmmosAndChargesMarketGroupID) && quantity > 8)

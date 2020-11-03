@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows.Forms;
-using EVEMon.Common;
+﻿using EVEMon.Common;
 using EVEMon.Common.Constants;
 using EVEMon.Common.EmailProvider;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Service;
 using EVEMon.Common.SettingsObjects;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace EVEMon.SettingsUI
 {
@@ -58,12 +58,12 @@ namespace EVEMon.SettingsUI
             providers.RemoveAt(index);
             providers.Insert(providers.Count, m_defaultProvider);
 
-            cbbEMailServerProvider.Items.AddRange(providers.Select(provider => provider.Name).ToArray<Object>());
+            cbbEMailServerProvider.Items.AddRange(providers.Select(provider => provider.Name).ToArray<object>());
             tlpEmailAuthTable.Enabled = false;
 
             IEmailProvider emailProvider;
             // Backwards compatibility condition
-            if (String.IsNullOrEmpty(m_settings.EmailSmtpServerProvider) && EmailProviders.Providers.Any(
+            if (string.IsNullOrEmpty(m_settings.EmailSmtpServerProvider) && EmailProviders.Providers.Any(
                 provider => provider.ServerAddress == m_settings.EmailSmtpServerAddress))
             {
                 emailProvider = EmailProviders.Providers.First(
@@ -71,7 +71,7 @@ namespace EVEMon.SettingsUI
                 cbbEMailServerProvider.SelectedIndex = cbbEMailServerProvider.Items.IndexOf(emailProvider.Name);
             }
                 // Backwards compatibility condition
-            else if (String.IsNullOrEmpty(m_settings.EmailSmtpServerProvider))
+            else if (string.IsNullOrEmpty(m_settings.EmailSmtpServerProvider))
                 cbbEMailServerProvider.SelectedIndex = cbbEMailServerProvider.Items.IndexOf(m_defaultProvider.Name);
                 // Regular condition
             else
@@ -88,14 +88,13 @@ namespace EVEMon.SettingsUI
         internal void PopulateSettingsFromControls()
         {
             m_settings.UseEmailShortFormat = cbEmailUseShortFormat.Checked;
-            m_settings.EmailSmtpServerProvider = (String)cbbEMailServerProvider.SelectedItem;
+            m_settings.EmailSmtpServerProvider = (string)cbbEMailServerProvider.SelectedItem;
             m_settings.EmailSmtpServerAddress = tbEmailServerAddress.Text.Trim();
 
             // Try and get a usable number out of the text box
             int emailPortNumber;
-            m_settings.EmailPortNumber = Int32.TryParse(tbEmailPort.Text.Trim(), out emailPortNumber)
-                                             ? emailPortNumber
-                                             : 25;
+            m_settings.EmailPortNumber = (tbEmailPort.Text.Trim().TryParseInv(out
+                emailPortNumber) && emailPortNumber > 0) ? emailPortNumber : 25;
 
             m_settings.EmailServerRequiresSsl = cbEmailServerRequireSsl.Checked;
             m_settings.EmailAuthenticationRequired = cbEmailAuthRequired.Checked;
@@ -110,7 +109,7 @@ namespace EVEMon.SettingsUI
         /// </summary>
         private void SetControls()
         {
-            IEmailProvider provider = EmailProviders.GetByKey((String)cbbEMailServerProvider.SelectedItem);
+            IEmailProvider provider = EmailProviders.GetByKey((string)cbbEMailServerProvider.SelectedItem);
 
             if (provider != null && provider != m_defaultProvider)
             {
@@ -203,7 +202,7 @@ namespace EVEMon.SettingsUI
         /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
         private void tbEmailServerAddress_Validating(object sender, CancelEventArgs e)
         {
-            e.Cancel = String.IsNullOrWhiteSpace(tbEmailServerAddress.Text.Trim());
+            e.Cancel = string.IsNullOrWhiteSpace(tbEmailServerAddress.Text.Trim());
 
             if (e.Cancel)
                 errorProvider.SetError(tbEmailServerAddress, "Server Address can not be blank");
@@ -216,12 +215,13 @@ namespace EVEMon.SettingsUI
         /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
         private void tbEmailPort_Validating(object sender, CancelEventArgs e)
         {
-            e.Cancel = !SettingsForm.IsValidPort(tbEmailPort.Text, "Email Server port");
+            int ignore;
+            e.Cancel = !SettingsForm.IsValidPort(tbEmailPort.Text, "Email Server port", out ignore);
         }
 
         private void tbEmailUsername_Validating(object sender, CancelEventArgs e)
         {
-            e.Cancel = cbEmailAuthRequired.Checked && String.IsNullOrWhiteSpace(tbEmailUsername.Text.Trim());
+            e.Cancel = cbEmailAuthRequired.Checked && string.IsNullOrWhiteSpace(tbEmailUsername.Text.Trim());
 
             if (e.Cancel)
                 errorProvider.SetError(tbEmailUsername, "Username can not be blank");
@@ -234,7 +234,7 @@ namespace EVEMon.SettingsUI
         /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
         private void tbEmailPassword_Validating(object sender, CancelEventArgs e)
         {
-            e.Cancel = cbEmailAuthRequired.Checked && String.IsNullOrWhiteSpace(tbEmailPassword.Text.Trim());
+            e.Cancel = cbEmailAuthRequired.Checked && string.IsNullOrWhiteSpace(tbEmailPassword.Text.Trim());
 
             if (e.Cancel)
                 errorProvider.SetError(tbEmailPassword, "Password can not be blank");
@@ -247,7 +247,7 @@ namespace EVEMon.SettingsUI
         /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
         private void tbFromAddress_Validating(object sender, CancelEventArgs e)
         {
-            e.Cancel = !String.IsNullOrEmpty(tbFromAddress.Text.Trim()) && !tbFromAddress.Text.Trim().IsValidEmail();
+            e.Cancel = !string.IsNullOrEmpty(tbFromAddress.Text.Trim()) && !tbFromAddress.Text.Trim().IsValidEmail();
 
             if (!e.Cancel)
                 return;
@@ -269,7 +269,7 @@ namespace EVEMon.SettingsUI
 
             IEnumerable<string> invalidToAddresses = toAddresses.Where(address => !address.IsValidEmail());
 
-            e.Cancel = String.IsNullOrEmpty(tbToAddress.Text.Trim()) || !toAddresses.Any() || invalidToAddresses.Any();
+            e.Cancel = string.IsNullOrEmpty(tbToAddress.Text.Trim()) || !toAddresses.Any() || invalidToAddresses.Any();
 
             // Receivers are not of valid email format
             if (!e.Cancel)
@@ -290,7 +290,7 @@ namespace EVEMon.SettingsUI
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void tbEmailServerAddress_Validated(object sender, EventArgs e)
         {
-            errorProvider.SetError(tbEmailServerAddress, String.Empty);
+            errorProvider.SetError(tbEmailServerAddress, string.Empty);
         }
 
         /// <summary>
@@ -300,7 +300,7 @@ namespace EVEMon.SettingsUI
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void tbEmailUsername_Validated(object sender, EventArgs e)
         {
-            errorProvider.SetError(tbEmailUsername, String.Empty);
+            errorProvider.SetError(tbEmailUsername, string.Empty);
         }
 
         /// <summary>
@@ -310,7 +310,7 @@ namespace EVEMon.SettingsUI
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void tbEmailPassword_Validated(object sender, EventArgs e)
         {
-            errorProvider.SetError(tbEmailPassword, String.Empty);
+            errorProvider.SetError(tbEmailPassword, string.Empty);
         }
 
         /// <summary>
@@ -320,7 +320,7 @@ namespace EVEMon.SettingsUI
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void tbFromAddress_Validated(object sender, EventArgs e)
         {
-            errorProvider.SetError(tbFromAddress, String.Empty);
+            errorProvider.SetError(tbFromAddress, string.Empty);
         }
 
         /// <summary>
@@ -330,7 +330,7 @@ namespace EVEMon.SettingsUI
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void tbToAddress_Validated(object sender, EventArgs e)
         {
-            errorProvider.SetError(tbToAddress, String.Empty);
+            errorProvider.SetError(tbToAddress, string.Empty);
         }
     }
 }

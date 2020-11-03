@@ -63,7 +63,7 @@ namespace EVEMon.Common.Data
         {
             other.ThrowIfNull(nameof(other));
 
-            return String.Compare(Name, other.Name, StringComparison.CurrentCulture);
+            return string.Compare(Name, other.Name, StringComparison.CurrentCulture);
         }
 
         #endregion

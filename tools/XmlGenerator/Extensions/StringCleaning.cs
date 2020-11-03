@@ -18,8 +18,8 @@ namespace EVEMon.XmlGenerator.Extensions
         /// <returns>cleaned <c>string</c></returns>
         public static string Clean(this string input)
         {
-            if (String.IsNullOrEmpty(input))
-                return String.Empty;
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
 
             string output = input.TrimWhitespace();
             output = output.ReplaceTabs();
@@ -56,7 +56,7 @@ namespace EVEMon.XmlGenerator.Extensions
         // Remove markup
         private static string CleanXmlTags(this string input)
             => Regex.Replace(input, "<.+?>",
-                m => String.Empty, RegexOptions.Singleline | RegexOptions.Compiled);
+                m => string.Empty, RegexOptions.Singleline | RegexOptions.Compiled);
 
         /// <summary>
         /// Switches any occurance of a tab with a single space.

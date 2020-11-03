@@ -50,8 +50,8 @@ namespace EVEMon.Common.Helpers
 
             // Initialize constants
             string lineFeed = Environment.NewLine;
-            string boldStart = String.Empty;
-            string boldEnd = String.Empty;
+            string boldStart = string.Empty;
+            string boldEnd = string.Empty;
 
             switch (settings.Markup)
             {
@@ -236,8 +236,8 @@ namespace EVEMon.Common.Helpers
             {
                 builder
                     .Append($"{boldStart}{plan.GetUniqueSkillsCount()}{boldEnd} " +
-                            $"unique skill{(plan.GetUniqueSkillsCount() == 1 ? String.Empty : "s")}, ")
-                    .Append($"{boldStart}{index}{boldEnd} skill level{(index == 1 ? String.Empty : "s")}");
+                            $"unique skill{(plan.GetUniqueSkillsCount() == 1 ? string.Empty : "s")}, ")
+                    .Append($"{boldStart}{index}{boldEnd} skill level{(index == 1 ? string.Empty : "s")}");
 
                 needComma = true;
             }
@@ -377,7 +377,7 @@ namespace EVEMon.Common.Helpers
         /// <param name="filename">The filename.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">filename</exception>
-        public static IEnumerable<SerializablePlan> ImportPlansFromXML(String filename)
+        public static IEnumerable<SerializablePlan> ImportPlansFromXML(string filename)
         {
             filename.ThrowIfNull(nameof(filename));
 

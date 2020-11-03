@@ -48,7 +48,7 @@ namespace EVEMon.Common.Controls
 
             // Keeps track of whether checked item(s) changed, hence the value of the CheckedComboBox as a whole changed.
             // This is simply done via maintaining the old string-representation of the value(s) and the new one and comparing them!
-            private string oldStrValue = String.Empty;
+            private string oldStrValue = string.Empty;
 
             public bool ValueChanged
             {

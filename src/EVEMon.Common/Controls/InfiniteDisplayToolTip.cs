@@ -36,6 +36,7 @@ namespace EVEMon.Common.Controls
         {
             m_initialDelayTimer.Tick -= m_initialDelayTimer_Tick;
             m_initialDelayTimer.Dispose();
+            Disposed -= OnDisposed;
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace EVEMon.Common.Controls
         public void Hide()
         {
             Hide(m_owner);
-            m_text = String.Empty;
+            m_text = string.Empty;
             m_initialDelayTimer.Stop();
         }
     }

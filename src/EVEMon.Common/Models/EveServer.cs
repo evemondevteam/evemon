@@ -4,6 +4,7 @@ using EVEMon.Common.Enumerations.CCPAPI;
 using EVEMon.Common.Interfaces;
 using EVEMon.Common.QueryMonitor;
 using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models
 {
@@ -14,7 +15,7 @@ namespace EVEMon.Common.Models
     {
         private int m_users;
         private ServerStatus m_status;
-        private readonly QueryMonitor<SerializableAPIServerStatus> m_serverStatusMonitor;
+        private readonly QueryMonitor<EsiAPIServerStatus> m_serverStatusMonitor;
         private DateTime m_serverDateTime = DateTime.UtcNow;
 
         /// <summary>
@@ -24,8 +25,8 @@ namespace EVEMon.Common.Models
         {
             m_status = ServerStatus.Online;
 
-            m_serverStatusMonitor = new QueryMonitor<SerializableAPIServerStatus>(CCPAPIGenericMethods.ServerStatus,
-                                                                                  OnServerStatusMonitorUpdated) { Enabled = true };
+            m_serverStatusMonitor = new QueryMonitor<EsiAPIServerStatus>(ESIAPIGenericMethods.ServerStatus,
+                 OnServerStatusMonitorUpdated) { Enabled = true };
 
             EveMonClient.TimerTick += EveMonClient_TimerTick;
         }
@@ -33,9 +34,8 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the server's name.
         /// </summary>
-        private static string Name => EveMonClient.APIProviders.CurrentProvider.Url.Host != APIProvider.TestProvider.Url.Host
-            ? "Tranquility"
-            : "Sinqularity";
+        private static string Name => EveMonClient.APIProviders.CurrentProvider.Url.Host !=
+            APIProvider.TestProvider.Url.Host ? "Tranquility" : "Singularity";
 
         /// <summary>
         /// Gets the server status message.
@@ -75,46 +75,39 @@ namespace EVEMon.Common.Models
         /// Occurs when CCP returns new data.
         /// </summary>
         /// <param name="result"></param>
-        private void OnServerStatusMonitorUpdated(CCPAPIResult<SerializableAPIServerStatus> result)
+        private void OnServerStatusMonitorUpdated(EsiResult<EsiAPIServerStatus> result)
         {
             ServerStatus lastStatus = m_status;
-
-            // Update the server date and time (in case of API server total failure use UTC time)
-            m_serverDateTime = result.CurrentTime != DateTime.MinValue ? result.CurrentTime : DateTime.UtcNow;
-
-            // Checks if EVE database is out of service
-            if (result.EVEDatabaseError)
-                return;
-
-            // Was there an error ?
+            DateTime? serverTime = result.CurrentTime;
+            // Update the server date and time (in case of ESI server failure, use local UTC
+            // time)
+            m_serverDateTime = (serverTime != null && serverTime != DateTime.MinValue) ?
+                (DateTime)serverTime : DateTime.UtcNow;
             if (result.HasError)
             {
                 m_status = ServerStatus.Unknown;
                 EveMonClient.Notifications.NotifyServerStatusError(result);
-
-                // Notify subscribers about update
                 EveMonClient.OnServerStatusUpdated(this, lastStatus, m_status);
-                return;
             }
-
-            // Update status and users
-            m_users = result.Result.Players;
-            m_status = result.Result.Open ? ServerStatus.Online : ServerStatus.Offline;
-
-            // Invalidate any error notifications
-            EveMonClient.Notifications.InvalidateAPIError();
-
-            // Notify subscribers about update
-            EveMonClient.OnServerStatusUpdated(this, lastStatus, m_status);
-
-            // Send a notification
-            if (lastStatus != m_status)
+            else
             {
-                EveMonClient.Notifications.NotifyServerStatusChanged(Name, m_status);
-                return;
+                // Invalidate ESI error notifications
+                EveMonClient.Notifications.InvalidateAPIError();
+                if (result.HasData)
+                {
+                    // Update status and users
+                    m_users = result.Result.Players;
+                    m_status = (m_users < 1 || result.Result.VIP) ? ServerStatus.Offline :
+                        ServerStatus.Online;
+                    // Notify subscribers about update
+                    EveMonClient.OnServerStatusUpdated(this, lastStatus, m_status);
+                }
+                // Send a notification if the server went up/down
+                if (lastStatus != m_status)
+                    EveMonClient.Notifications.NotifyServerStatusChanged(Name, m_status);
+                else
+                    EveMonClient.Notifications.InvalidateServerStatusChange();
             }
-
-            EveMonClient.Notifications.InvalidateServerStatusChange();
         }
 
         /// <summary>

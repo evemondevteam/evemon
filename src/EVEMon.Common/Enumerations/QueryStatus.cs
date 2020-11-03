@@ -32,7 +32,7 @@ namespace EVEMon.Common.Enumerations
         /// The character is not on any API key.
         /// </summary>
         [Description("No associated API key.")]
-        NoAPIKey,
+        NoESIKey,
 
         /// <summary>
         /// The API key has no access to query the call.

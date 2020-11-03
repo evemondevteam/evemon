@@ -1,3 +1,5 @@
+using System;
+
 namespace EVEMon.Common.Net
 {
     /// <summary>
@@ -10,11 +12,20 @@ namespace EVEMon.Common.Net
         /// </summary>
         /// <param name="result">The result.</param>
         /// <param name="error">The error.</param>
-        public DownloadResult(T result, HttpWebClientServiceException error)
+        /// <param name="response">The server response data.</param>
+        public DownloadResult(T result, HttpWebClientServiceException error,
+            ResponseParams response = null)
         {
             Error = error;
             Result = result;
+            Response = response ?? new ResponseParams(0);
         }
+
+        /// <summary>
+        /// Gets the response data.
+        /// </summary>
+        /// <value>The response data.</value>
+        public ResponseParams Response { get; }
 
         /// <summary>
         /// Gets or sets the result.

@@ -16,10 +16,10 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="character">The character for this training</param>
         /// <param name="serial">The serialization object for this training</param>
-        /// <param name="isPaused">When true, the training is currently paused.</param>
         /// <param name="startTimeWhenPaused">Training starttime when the queue is actually paused.
         /// Indeed, in such case, CCP returns empty start and end time, so we compute a "what if we start now" scenario.</param>
-        internal QueuedSkill(Character character, SerializableQueuedSkill serial, bool isPaused, ref DateTime startTimeWhenPaused)
+        internal QueuedSkill(Character character, SerializableQueuedSkill serial,
+            ref DateTime startTimeWhenPaused)
         {
             Owner = character;
             StartSP = serial.StartSP;
@@ -27,7 +27,7 @@ namespace EVEMon.Common.Models
             Level = serial.Level;
             Skill = character.Skills[serial.ID];
 
-            if (!isPaused)
+            if (!serial.IsPaused)
             {
                 // Not paused, we should trust CCP
                 StartTime = serial.StartTime;
@@ -40,7 +40,8 @@ namespace EVEMon.Common.Models
                 StartTime = startTimeWhenPaused;
                 if (Skill != null)
                 {
-                    Skill.SkillPoints = StartSP;
+                    if (serial.Level <= Skill.Level + 1)
+                        Skill.SkillPoints = StartSP;
                     startTimeWhenPaused += Skill.GetLeftTrainingTimeForLevelOnly(Level);
                 }
                 EndTime = startTimeWhenPaused;
@@ -91,13 +92,26 @@ namespace EVEMon.Common.Models
         /// Gets the fraction completed, between 0 and 1.
         /// </summary>
         public float FractionCompleted
-            => Skill == null
-                ? 0
-                : Skill == Skill.UnknownSkill
-                    ? (float)
-                        (1 -
-                         EndTime.Subtract(DateTime.UtcNow).TotalMilliseconds / EndTime.Subtract(StartTime).TotalMilliseconds)
-                    : Skill.FractionCompleted;
+        {
+            get
+            {
+                float fraction = 0.0f;
+                if (Skill != null)
+                {
+                    if (Skill == Skill.UnknownSkill)
+                    {
+                        // Based on estimated end time - start time
+                        double time = EndTime.Subtract(StartTime).TotalMilliseconds;
+                        if (time > 0.0)
+                            fraction = (float)(1.0 - EndTime.Subtract(DateTime.UtcNow).
+                                TotalMilliseconds / time);
+                    }
+                    else
+                        fraction = Skill.FractionCompleted;
+                }
+                return fraction;
+            }
+        }
 
         /// <summary>
         /// Computes an estimation of the current SP.
@@ -106,7 +120,8 @@ namespace EVEMon.Common.Models
         {
             get
             {
-                int estimatedSP = (int)(EndSP - EndTime.Subtract(DateTime.UtcNow).TotalHours * SkillPointsPerHour);
+                int estimatedSP = (int)(EndSP - EndTime.Subtract(DateTime.UtcNow).TotalHours *
+                    SkillPointsPerHour);
                 return IsTraining ? Math.Max(estimatedSP, StartSP) : StartSP;
             }
         }
@@ -135,7 +150,7 @@ namespace EVEMon.Common.Models
                     case 3:
                         return EndSP / 8000;
                     case 4:
-                        return EndSP / Convert.ToInt32(Math.Ceiling(Math.Pow(2, 2.5 * Level - 2.5) * 250));
+                        return EndSP / 45255;
                     case 5:
                         return EndSP / 256000;
                 }
@@ -147,9 +162,26 @@ namespace EVEMon.Common.Models
         /// Gets the training speed.
         /// </summary>
         /// <returns></returns>
-        public double SkillPointsPerHour => Skill == Skill.UnknownSkill
-            ? Math.Ceiling((EndSP - StartSP) / EndTime.Subtract(StartTime).TotalHours)
-            : Skill.SkillPointsPerHour;
+        public double SkillPointsPerHour
+        {
+            get
+            {
+                double rate;
+                if (Skill == Skill.UnknownSkill)
+                {
+                    // Based on estimated end time - start time
+                    double time = EndTime.Subtract(StartTime).TotalHours;
+                    if (time <= 0.0)
+                        // Do not divide by zero
+                        rate = 0.0;
+                    else
+                        rate = Math.Ceiling((EndSP - StartSP) / time);
+                }
+                else
+                    rate = Skill.SkillPointsPerHour;
+                return rate;
+            }
+        }
 
         /// <summary>
         /// Computes the remaining time.
@@ -176,8 +208,8 @@ namespace EVEMon.Common.Models
             get
             {
                 var ccpCharacter = Owner as CCPCharacter;
-                return Skill.IsTraining ||
-                       (ccpCharacter != null && ccpCharacter.SkillQueue.IsTraining && ccpCharacter.SkillQueue.First() == this);
+                return Skill.IsTraining || (ccpCharacter != null && ccpCharacter.SkillQueue.
+                    IsTraining && ccpCharacter.SkillQueue.First() == this);
             }
         }
 
@@ -185,6 +217,19 @@ namespace EVEMon.Common.Models
         /// Gets true if the training has been completed, false otherwise.
         /// </summary>
         public bool IsCompleted => EndTime <= DateTime.UtcNow;
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as QueuedSkill;
+            string otherName = other?.SkillName;
+            return otherName != null && otherName.Equals(SkillName, StringComparison.
+                InvariantCulture) && StartSP == other.StartSP && EndSP == other.EndSP;
+        }
+
+        public override int GetHashCode()
+        {
+            return SkillName?.GetHashCode() ?? 0;
+        }
 
         /// <summary>
         /// Generates a deserialization object.

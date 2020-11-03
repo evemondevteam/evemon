@@ -77,7 +77,7 @@ namespace EVEMon.Controls
             // Parce the mail body text to the web browser
             // so for the text to be formatted accordingly
             wbMailBody.DocumentText = TidyUpHTML();
-
+            
             // We need to wait for the Document to be loaded
             do
             {
@@ -85,9 +85,15 @@ namespace EVEMon.Controls
             } while (wbMailBody.IsBusy);
 
             // Show the controls
-            Visible = (m_selectedObject is EveMailMessage && ((EveMailMessage)m_selectedObject).EVEMailBody.MessageID != 0)
-                      || (m_selectedObject is EveNotification &&
-                          ((EveNotification)m_selectedObject).EVENotificationText.NotificationID != 0);
+            bool visible = ((m_selectedObject as EveMailMessage)?.EVEMailBody?.MessageID ?? 0L) !=
+                0L || ((m_selectedObject as EveNotification)?.EVENotificationText?.
+                NotificationID ?? 0L) != 0L;
+            Visible = visible;
+
+            // WebBrowser errata sometimes causes a COMException to be thrown if this is set
+            // in the designer before the window is visible
+            if (visible)
+                wbMailBody.AllowWebBrowserDrop = false;
         }
 
         /// <summary>
@@ -96,17 +102,14 @@ namespace EVEMon.Controls
         /// <returns></returns>
         private string TidyUpHTML()
         {
-            Dictionary<string, string> replacements = new Dictionary<string, string>();
+            var replacements = new Dictionary<string, string>();
 
             FormatLinks(replacements);
-
             FormatHTMLColorToRGB(replacements);
-
             FixFontSize(replacements);
 
-            return replacements.Aggregate(m_selectedObject.Text,
-                                          (specialFormattedText, replacement) =>
-                                          specialFormattedText.Replace(replacement.Key, replacement.Value));
+            return replacements.Aggregate(m_selectedObject.Text, (formatted, replacement) =>
+                formatted.Replace(replacement.Key, replacement.Value));
         }
 
         #endregion
@@ -133,7 +136,7 @@ namespace EVEMon.Controls
             {
                 string matchValue = match.Groups[1].Value;
                 string matchText = match.Groups[2].Value.TrimEnd("<br>".ToCharArray());
-                string url = String.Empty;
+                string url = string.Empty;
                 Match showInfoMatch = regexShowInfo.Match(matchValue);
                 bool igbOnly = false;
 
@@ -146,7 +149,7 @@ namespace EVEMon.Controls
 
                     if (typeID >= DBConstants.CharacterAmarrID && typeID <= DBConstants.CharacterVherokiorID)
                     {
-                        string path = String.Format(CultureConstants.InvariantCulture,
+                        string path = string.Format(CultureConstants.InvariantCulture,
                             NetworkConstants.EVEGateCharacterProfile, escapedUriText);
                         url = $"{NetworkConstants.EVEGateBase}{path}";
                     }
@@ -155,12 +158,12 @@ namespace EVEMon.Controls
                         switch (typeID)
                         {
                             case DBConstants.AllianceID:
-                                string path = String.Format(CultureConstants.InvariantCulture,
+                                string path = string.Format(CultureConstants.InvariantCulture,
                                     NetworkConstants.EVEGateAllianceProfile, escapedUriText);
                                 url = $"{NetworkConstants.EVEGateBase}{path}";
                                 break;
                             case DBConstants.CorporationID:
-                                path = String.Format(CultureConstants.InvariantCulture,
+                                path = string.Format(CultureConstants.InvariantCulture,
                                     NetworkConstants.EVEGateCorporationProfile, escapedUriText);
                                 url = $"{NetworkConstants.EVEGateBase}{path}";
                                 break;

@@ -21,6 +21,7 @@ namespace EVEMon.Common.Enumerations
         TimeDifference,
         PlanType,
         Notes,
-        SkillPointsRequired
+        SkillPointsRequired,
+        OmegaRequired
     }
 }

@@ -69,21 +69,21 @@ namespace EVEMon.Common.Models.Comparers
                 case PlanetaryColumn.TTC:
                     return x.ExpiryTime.CompareTo(y.ExpiryTime);
                 case PlanetaryColumn.TypeName:
-                    return String.Compare(x.TypeName, y.TypeName, StringComparison.CurrentCulture);
+                    return string.Compare(x.TypeName, y.TypeName, StringComparison.CurrentCulture);
                 case PlanetaryColumn.ContentTypeName:
-                    return String.Compare(x.ContentTypeName, y.ContentTypeName, StringComparison.CurrentCulture);
+                    return string.Compare(x.ContentTypeName, y.ContentTypeName, StringComparison.CurrentCulture);
                 case PlanetaryColumn.InstallTime:
                     return x.InstallTime.CompareTo(y.InstallTime);
                 case PlanetaryColumn.EndTime:
                     return x.ExpiryTime.CompareTo(y.ExpiryTime);
                 case PlanetaryColumn.PlanetName:
-                    return String.Compare(x.Colony.PlanetName, y.Colony.PlanetName, StringComparison.CurrentCulture);
+                    return string.Compare(x.Colony.PlanetName, y.Colony.PlanetName, StringComparison.CurrentCulture);
                 case PlanetaryColumn.PlanetTypeName:
-                    return String.Compare(x.Colony.PlanetTypeName, y.Colony.PlanetTypeName, StringComparison.CurrentCulture);
+                    return string.Compare(x.Colony.PlanetTypeName, y.Colony.PlanetTypeName, StringComparison.CurrentCulture);
                 case PlanetaryColumn.SolarSystem:
                     return x.Colony.SolarSystem.CompareTo(y.Colony.SolarSystem);
                 case PlanetaryColumn.Location:
-                    return String.Compare(x.Colony.FullLocation, y.Colony.FullLocation, StringComparison.CurrentCulture);
+                    return string.Compare(x.Colony.FullLocation, y.Colony.FullLocation, StringComparison.CurrentCulture);
                 case PlanetaryColumn.Region:
                     return x.Colony.SolarSystem.Constellation.Region.CompareTo(y.Colony.SolarSystem.Constellation.Region);
                 case PlanetaryColumn.Quantity:
@@ -95,13 +95,13 @@ namespace EVEMon.Common.Models.Comparers
                 case PlanetaryColumn.Volume:
                     return x.ContentVolume.CompareTo(y.ContentVolume);
                 case PlanetaryColumn.LinkedTo:
-                    return String.Compare(String.Join(", ", x.LinkedTo.Select(z => z.TypeName).Distinct()),
-                        String.Join(", ", y.LinkedTo.Select(z => z.TypeName).Distinct()), StringComparison.CurrentCulture);
+                    return string.Compare(string.Join(", ", x.LinkedTo.Select(z => z.TypeName).Distinct()),
+                        string.Join(", ", y.LinkedTo.Select(z => z.TypeName).Distinct()), StringComparison.CurrentCulture);
                 case PlanetaryColumn.RoutedTo:
-                    return String.Compare(String.Join(", ", x.RoutedTo.Select(z => z.TypeName).Distinct()),
-                        String.Join(", ", y.RoutedTo.Select(z => z.TypeName).Distinct()), StringComparison.CurrentCulture);
+                    return string.Compare(string.Join(", ", x.RoutedTo.Select(z => z.TypeName).Distinct()),
+                        string.Join(", ", y.RoutedTo.Select(z => z.TypeName).Distinct()), StringComparison.CurrentCulture);
                 case PlanetaryColumn.GroupName:
-                    return String.Compare(x.GroupName, y.GroupName, StringComparison.CurrentCulture);
+                    return string.Compare(x.GroupName, y.GroupName, StringComparison.CurrentCulture);
                 default:
                     return 0;
             }

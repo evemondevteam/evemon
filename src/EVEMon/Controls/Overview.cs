@@ -74,10 +74,8 @@ namespace EVEMon.Controls
         {
             base.OnVisibleChanged(e);
 
-            if (DesignMode || this.IsDesignModeHosted() || !Visible)
-                return;
-
-            UpdateContent();
+            if (!DesignMode && !this.IsDesignModeHosted() && Visible)
+                UpdateContent();
         }
 
         /// <summary>
@@ -117,11 +115,12 @@ namespace EVEMon.Controls
             if (!Settings.UI.MainWindow.ShowOverview || EveMonClient.MonitoredCharacters == null)
                 return;
 
+            List<OverviewItem> overviewItems = Controls.OfType<OverviewItem>().ToList();
             // Updates the visibility of the label for when no characters are loaded
             if (!EveMonClient.MonitoredCharacters.Any())
             {
-                if (Controls.OfType<OverviewItem>().Any())
-                    CleanUp(Controls.OfType<OverviewItem>());
+                if (overviewItems.Count > 0)
+                    CleanUp(overviewItems);
 
                 labelNoCharacters.Show();
 
@@ -129,7 +128,7 @@ namespace EVEMon.Controls
             }
 
             // Collect the existing overview items
-            Dictionary<Character, OverviewItem> items = Controls.OfType<OverviewItem>().ToDictionary(page => (Character)page.Tag);
+            var items = overviewItems.ToDictionary(page => (Character)page.Tag);
 
             // Create the order we will layout the controls
             List<Character> characters = new List<Character>();
@@ -143,7 +142,7 @@ namespace EVEMon.Controls
                 characters.AddRange(EveMonClient.MonitoredCharacters);
 
             int index = 0;
-            List<OverviewItem> overviewItems = Controls.OfType<OverviewItem>().ToList();
+            
             foreach (Character character in characters)
             {
                 // Retrieve the current overview item, or null if we're past the limits
@@ -258,7 +257,8 @@ namespace EVEMon.Controls
         /// </remarks>
         private void PerformCustomLayout()
         {
-            if (!Visible)
+            int clientWidth = ClientSize.Width, clientHeight = ClientSize.Height;
+            if (!Visible || clientWidth < 1 || clientHeight < 1)
                 return;
 
             IList<OverviewItem> overviewItems = Controls.OfType<OverviewItem>().ToList();
@@ -284,11 +284,11 @@ namespace EVEMon.Controls
                 int itemWidth = overviewItems.Max(item => item.PreferredSize.Width);
 
                 // Computes the number of columns and rows we need
-                int numColumns = Math.Max(1, Math.Min(numControls, ClientSize.Width / itemWidth));
+                int numColumns = Math.Max(1, Math.Min(numControls, clientWidth / itemWidth));
 
                 // Computes the horizontal margin
                 int neededWidth = numColumns * (itemWidth + Pad) - Pad;
-                int marginH = Math.Max(0, (ClientSize.Width - neededWidth) / 2);
+                int marginH = Math.Max(0, (clientWidth - neededWidth) / 2);
 
                 // Measure the total height
                 int rowIndex = 0;
@@ -313,7 +313,7 @@ namespace EVEMon.Controls
                 height -= Pad;
                 
                 // We put 1/3 at the top, 2/3 at the bottom
-                int marginV = Math.Max(0, (ClientSize.Height - height) / 3); 
+                int marginV = Math.Max(0, (clientHeight - height) / 3); 
 
                 // Adjust the controls bounds
                 rowIndex = 0;
@@ -321,10 +321,11 @@ namespace EVEMon.Controls
                 height = marginV;
                 foreach (OverviewItem overviewItem in overviewItems)
                 {
+                    var size = overviewItem.PreferredSize;
                     // Set the control bound
-                    overviewItem.SetBounds(marginH + rowIndex * (itemWidth + Pad), height, overviewItem.PreferredSize.Width,
-                        overviewItem.PreferredSize.Height);
-                    rowHeight = Math.Max(rowHeight, overviewItem.PreferredSize.Height);
+                    overviewItem.SetBounds(marginH + rowIndex * (itemWidth + Pad), height, size.Width,
+                        size.Height);
+                    rowHeight = Math.Max(rowHeight, size.Height);
                     rowIndex++;
 
                     // Skip if row not complete yet
@@ -337,6 +338,8 @@ namespace EVEMon.Controls
                 }
 
                 labelNoCharacters.Visible = !EveMonClient.MonitoredCharacters.Any();
+
+                base.AdjustFormScrollbars(true);
             }
             finally
             {
@@ -345,7 +348,7 @@ namespace EVEMon.Controls
                 this.ResumeDrawing();
 
                 // Restore the scroll bar position
-                VerticalScroll.Value = scrollBarPosition;
+                VerticalScroll.Value = Math.Min(scrollBarPosition, VerticalScroll.Maximum);
             }
         }
 

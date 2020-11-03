@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using EVEMon.Common.Extensions;
 using EVEMon.XmlGenerator.Interfaces;
 
@@ -14,7 +13,7 @@ namespace EVEMon.XmlGenerator.Collections
     public sealed class BagCollection<T> : IEnumerable<T>
         where T : IHasID
     {
-        private readonly Dictionary<Int64, T> m_items;
+        private readonly Dictionary<long, T> m_items;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BagCollection{T}" /> class.
@@ -25,7 +24,7 @@ namespace EVEMon.XmlGenerator.Collections
         {
             collection.ThrowIfNull(nameof(collection));
 
-            m_items = new Dictionary<Int64, T>();
+            m_items = new Dictionary<long, T>();
 
             foreach (T item in collection.Items)
             {
@@ -40,13 +39,13 @@ namespace EVEMon.XmlGenerator.Collections
         /// <returns>
         /// 	<c>true</c> if the specified id has value; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasValue(Int64 id) => m_items.ContainsKey(id);
+        public bool HasValue(long id) => m_items.ContainsKey(id);
 
         /// <summary>
         /// Gets or sets the <see cref="T"/> with the specified id.
         /// </summary>
         /// <value></value>
-        public T this[Int64 id] => m_items[id];
+        public T this[long id] => m_items[id];
 
         /// <summary>
         /// Gets the enumerator.
@@ -71,7 +70,7 @@ namespace EVEMon.XmlGenerator.Collections
 	public sealed class LongBagCollection<T> : IEnumerable<T>
 		where T : IHasLongID
 	{
-		private readonly Dictionary<Int64, T> m_items;
+		private readonly Dictionary<long, T> m_items;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BagCollection{T}" /> class.
@@ -82,7 +81,7 @@ namespace EVEMon.XmlGenerator.Collections
 		{
 			collection.ThrowIfNull(nameof(collection));
 
-			m_items = new Dictionary<Int64, T>();
+			m_items = new Dictionary<long, T>();
 
 			foreach (T item in collection.Items)
 			{
@@ -97,13 +96,13 @@ namespace EVEMon.XmlGenerator.Collections
 		/// <returns>
 		/// 	<c>true</c> if the specified id has value; otherwise, <c>false</c>.
 		/// </returns>
-		public bool HasValue(Int64 id) => m_items.ContainsKey(id);
+		public bool HasValue(long id) => m_items.ContainsKey(id);
 
 		/// <summary>
 		/// Gets or sets the <see cref="T"/> with the specified id.
 		/// </summary>
 		/// <value></value>
-		public T this[Int64 id] => m_items[id];
+		public T this[long id] => m_items[id];
 
 		/// <summary>
 		/// Gets the enumerator.

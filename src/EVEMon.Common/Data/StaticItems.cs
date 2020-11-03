@@ -122,6 +122,16 @@ namespace EVEMon.Common.Data
         }
 
         /// <summary>
+        /// Shorthand for GetItemByID that returns "unknown" if item is not in the database.
+        /// </summary>
+        /// <param name="itemId">The id of the item to find.</param>
+        /// <returns>The first item name which id matches Item ID, EveMonConstants.UnknownText if no such item is found.</returns>
+        public static string GetItemName(int itemId)
+        {
+            return GetItemByID(itemId)?.Name ?? EveMonConstants.UnknownText;
+        }
+
+        /// <summary>
         /// Recursively searches the root category and all underlying categories for the first item with a 
         /// name that exactly matches the given itemName.
         /// </summary>

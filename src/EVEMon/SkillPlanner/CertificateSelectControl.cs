@@ -195,7 +195,7 @@ namespace EVEMon.SkillPlanner
         {
             cbFilter.Items.Clear();
             cbFilter.Items.AddRange(EnumExtensions.GetDescriptions<CertificateFilter>()
-                .Where(description => !String.IsNullOrWhiteSpace((string)description))
+                .Where(description => !string.IsNullOrWhiteSpace((string)description))
                 .ToArray());
 
             // Skill Planner or Data Browser (associated character)
@@ -221,7 +221,7 @@ namespace EVEMon.SkillPlanner
         {
             cbSorting.Items.Clear();
             cbSorting.Items.AddRange(EnumExtensions.GetDescriptions<CertificateSort>()
-                .Where(description => !String.IsNullOrWhiteSpace((string)description))
+                .Where(description => !string.IsNullOrWhiteSpace((string)description))
                 .ToArray());
 
             // Skill Planner or Data Browser (associated character)
@@ -261,7 +261,7 @@ namespace EVEMon.SkillPlanner
                         : CertificateSort.None.GetDescription();
 
                 tbSearchText.Text = settings.TextSearch;
-                lbSearchTextHint.Visible = String.IsNullOrEmpty(tbSearchText.Text);
+                lbSearchTextHint.Visible = string.IsNullOrEmpty(tbSearchText.Text);
 
                 return;
             }
@@ -324,7 +324,7 @@ namespace EVEMon.SkillPlanner
         /// </summary>
         private void UpdateSearchTextHintVisibility()
         {
-            lbSearchTextHint.Visible = !tbSearchText.Focused && String.IsNullOrEmpty(tbSearchText.Text);
+            lbSearchTextHint.Visible = !tbSearchText.Focused && string.IsNullOrEmpty(tbSearchText.Text);
         }
 
         #endregion
@@ -624,7 +624,7 @@ namespace EVEMon.SkillPlanner
             }
 
             // Not sorted but there is a text filter
-            if (!String.IsNullOrEmpty(tbSearchText.Text))
+            if (!string.IsNullOrEmpty(tbSearchText.Text))
             {
                 lbSearchList.Show();
                 UpdateListBox(classes);
@@ -821,7 +821,7 @@ namespace EVEMon.SkillPlanner
             classes = classes.Where(predicate);
 
             // Text search
-            if (!String.IsNullOrEmpty(tbSearchText.Text))
+            if (!string.IsNullOrEmpty(tbSearchText.Text))
             {
                 classes = classes.Where(x => x.Name.Contains(tbSearchText.Text, ignoreCase: true));
             }
@@ -882,7 +882,7 @@ namespace EVEMon.SkillPlanner
             {
                 // Sort by name, default, occurs on initialization
                 default:
-                    return String.Empty;
+                    return string.Empty;
                     // Sort by time to next level
                 case CertificateSort.TimeToNextLevel:
                     {
@@ -1104,10 +1104,10 @@ namespace EVEMon.SkillPlanner
 
             cmiExpandSelected.Text = m_selectedCertificateClass?.Certificate == null && node != null && !node.IsExpanded
                 ? $"Expand \"{node.Text}\""
-                : String.Empty;
+                : string.Empty;
             cmiCollapseSelected.Text = m_selectedCertificateClass?.Certificate == null && node != null && node.IsExpanded
                 ? $"Collapse \"{node.Text}\""
-                : String.Empty;
+                : string.Empty;
 
             expandCollapseSeparator.Visible = m_selectedCertificateClass?.Certificate == null && node != null;
 
@@ -1122,7 +1122,7 @@ namespace EVEMon.SkillPlanner
                 !m_plan.WillGrantEligibilityFor(m_selectedCertificateClass.Certificate.GetCertificateLevel(5));
 
             cmiLvPlanToLevel.Text =
-                $"Plan {(m_selectedCertificateClass == null ? String.Empty : $"\"{m_selectedCertificateClass?.Name}\" ")}to...";
+                $"Plan {(m_selectedCertificateClass == null ? string.Empty : $"\"{m_selectedCertificateClass?.Name}\" ")}to...";
             
             // "Plan to N" menus
             for (int i = 1; i <= 5; i++)

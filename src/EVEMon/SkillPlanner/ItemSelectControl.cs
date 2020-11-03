@@ -17,9 +17,9 @@ namespace EVEMon.SkillPlanner
         private readonly List<MarketGroup> m_presetGroups = new List<MarketGroup>();
         private readonly List<ItemMetaGroup> m_metaGroups = new List<ItemMetaGroup>();
 
-        private Func<Item, Boolean> m_slotPredicate = x => true;
-        private Func<Item, Boolean> m_metaGroupPredicate = x => true;
-        private Func<Item, Boolean> m_fittingPredicate = x => true;
+        private Func<Item, bool> m_slotPredicate = x => true;
+        private Func<Item, bool> m_metaGroupPredicate = x => true;
+        private Func<Item, bool> m_fittingPredicate = x => true;
 
         private bool m_init;
 
@@ -115,7 +115,7 @@ namespace EVEMon.SkillPlanner
 
             // Initialize the metagroup combo
             ccbGroupFilter.Items.Clear();
-            ccbGroupFilter.Items.AddRange(m_metaGroups.Cast<Object>().ToArray());
+            ccbGroupFilter.Items.AddRange(m_metaGroups.Cast<object>().ToArray());
             ccbGroupFilter.ToolTip = toolTip;
         }
 
@@ -174,7 +174,7 @@ namespace EVEMon.SkillPlanner
                 m_metaGroupPredicate = x => (x.MetaGroup & settings.MetagroupFilter) != ItemMetaGroup.None;
 
                 tbSearchText.Text = settings.TextSearch;
-                lbSearchTextHint.Visible = String.IsNullOrEmpty(tbSearchText.Text);
+                lbSearchTextHint.Visible = string.IsNullOrEmpty(tbSearchText.Text);
 
                 return;
             }

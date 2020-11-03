@@ -14,11 +14,9 @@ namespace EVEMon.Common.Data
         public MasteryShipCollection(Character character)
         {
             // Builds the list
-            foreach (MasteryShip masteryShip in StaticMasteries.AllMasteryShips
-                .Where(masteryShip => masteryShip.Ship != null))
-            {
-                Items[masteryShip.Ship.ID] = new MasteryShip(character, masteryShip);
-            }
+            foreach (var masteryShip in StaticMasteries.AllMasteryShips)
+                if (masteryShip.Ship != null)
+                    Items[masteryShip.Ship.ID] = new MasteryShip(character, masteryShip);
         }
 
         /// <summary>
@@ -26,7 +24,8 @@ namespace EVEMon.Common.Data
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
-        public MasteryShip GetMasteryShipByID(int id) => Items.ContainsKey(id) ? Items[id] : null;
+        public MasteryShip GetMasteryShipByID(int id) => Items.ContainsKey(id) ? Items[id] :
+            null;
 
         /// <summary>
         /// Initializes each item in the collection.
@@ -34,9 +33,7 @@ namespace EVEMon.Common.Data
         public void Initialize()
         {
             foreach (KeyValuePair<int, MasteryShip> item in Items)
-            {
                 item.Value.Initialize();
-            }
         }
     }
 }

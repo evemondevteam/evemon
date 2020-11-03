@@ -84,6 +84,7 @@ namespace EVEMon.SkillPlanner
             this.lblDowntime = new System.Windows.Forms.Label();
             this.lblCurrentlyTraining = new System.Windows.Forms.Label();
             this.lblPartiallyTrained = new System.Windows.Forms.Label();
+            this.lblOmegaOnly = new System.Windows.Forms.Label();
             this.pscPlan = new EVEMon.Common.Controls.PersistentSplitContainer();
             this.lvSkills = new EVEMon.Common.Controls.DraggableListView();
             this.tlpHeader = new System.Windows.Forms.TableLayoutPanel();
@@ -473,6 +474,7 @@ namespace EVEMon.SkillPlanner
             this.flpColorKey.Controls.Add(this.lblDowntime);
             this.flpColorKey.Controls.Add(this.lblCurrentlyTraining);
             this.flpColorKey.Controls.Add(this.lblPartiallyTrained);
+            this.flpColorKey.Controls.Add(this.lblOmegaOnly);
             this.flpColorKey.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flpColorKey.Location = new System.Drawing.Point(3, 16);
             this.flpColorKey.Name = "flpColorKey";
@@ -598,6 +600,18 @@ namespace EVEMon.SkillPlanner
             this.lblPartiallyTrained.TabIndex = 31;
             this.lblPartiallyTrained.Text = "Partially Trained";
             this.lblPartiallyTrained.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblOmegaOnly
+            // 
+            this.lblOmegaOnly.AutoSize = true;
+            this.lblOmegaOnly.BackColor = System.Drawing.Color.Gold;
+            this.lblOmegaOnly.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblOmegaOnly.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblOmegaOnly.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
+            this.lblOmegaOnly.Name = "lblOmegaOnly";
+            this.lblOmegaOnly.TabIndex = 38;
+            this.lblOmegaOnly.Text = "Requires Omega";
+            this.lblOmegaOnly.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pscPlan
             // 
@@ -831,6 +845,7 @@ namespace EVEMon.SkillPlanner
         private System.Windows.Forms.Label lblDowntime;
         private System.Windows.Forms.Label lblCurrentlyTraining;
         private System.Windows.Forms.Label lblPartiallyTrained;
+        private System.Windows.Forms.Label lblOmegaOnly;
         private System.Windows.Forms.ComboBox cbChooseImplantSet;
         private System.Windows.Forms.Label lblChooseImplantSet;
         private System.Windows.Forms.ToolStripMenuItem MoveToTopMenuItem;

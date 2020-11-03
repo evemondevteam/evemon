@@ -1,4 +1,4 @@
-﻿using EVEMon.Common.Serialization.Eve;
+﻿using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models
 {
@@ -8,7 +8,7 @@ namespace EVEMon.Common.Models
         /// Initializes a new instance of the <see cref="EveMailingList"/> class.
         /// </summary>
         /// <param name="src">The SRC.</param>
-        internal EveMailingList(SerializableMailingListsListItem src)
+        internal EveMailingList(EsiMailingListsListItem src)
         {
             ID = src.ID;
             Name = src.DisplayName;

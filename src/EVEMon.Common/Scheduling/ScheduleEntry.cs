@@ -13,7 +13,7 @@ namespace EVEMon.Common.Scheduling
 
         protected ScheduleEntry()
         {
-            Title = String.Empty;
+            Title = string.Empty;
             Options = ScheduleEntryOptions.None;
             EndDate = DateTime.MinValue;
             StartDate = DateTime.MinValue;

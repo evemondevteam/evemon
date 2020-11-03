@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using EVEMon.Common;
 using EVEMon.Common.Collections;
@@ -15,8 +17,11 @@ using EVEMon.Common.Enumerations.UISettings;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Factories;
 using EVEMon.Common.Helpers;
+using EVEMon.Common.Interfaces;
 using EVEMon.Common.Models;
 using EVEMon.Common.SettingsObjects;
+
+using R = EVEMon.Properties.Resources;
 
 namespace EVEMon.SkillPlanner
 {
@@ -32,6 +37,7 @@ namespace EVEMon.SkillPlanner
 
         private Plan m_plan;
         private Character m_character;
+        private Regex m_skill_regex = new Regex(@"(.*)\b(\d+|\w+)", RegexOptions.Compiled);
 
 
         #region Initialization and Lifecycle
@@ -172,7 +178,7 @@ namespace EVEMon.SkillPlanner
                 // Tell the implant window we're closing down
                 WindowsFactory.GetAndCloseByTag<ImplantCalculatorWindow, PlanEditorControl>(planEditor);
             }
-      }
+        }
 
         #endregion
 
@@ -203,7 +209,7 @@ namespace EVEMon.SkillPlanner
                 blueprintBrowser.Character = m_character;
             }
         }
-        
+
         /// <summary>
         /// Gets the plan represented by this window.
         /// </summary>
@@ -312,7 +318,7 @@ namespace EVEMon.SkillPlanner
             foreach (ToolStripItem item in upperToolStrip.Items)
             {
                 // Enable or disable the tool strip items except the plan selector and the loadout import
-                item.Enabled = (item == tsddbPlans) || (item == tsbLoadoutImport) || tabControl.SelectedIndex == 0;
+                item.Enabled = (item == tsddbPlans) || (item == tsbLoadoutImport) || (item == tsbClipboardImport) || tabControl.SelectedIndex == 0;
 
                 item.DisplayStyle = !Settings.UI.SafeForWork
                     ? ToolStripItemDisplayStyle.ImageAndText
@@ -358,7 +364,7 @@ namespace EVEMon.SkillPlanner
             if (tabControl.TabPages.Contains(tpPlanEditor))
                 tabControl.TabPages.Remove(tpPlanEditor);
 
-            Text = $"{(m_character == null ? String.Empty : $"{m_character.Name} - ")}EVEMon Data Browser";
+            Text = $"{(m_character == null ? string.Empty : $"{m_character.Name} - ")}EVEMon Data Browser";
         }
 
         /// <summary>
@@ -431,14 +437,12 @@ namespace EVEMon.SkillPlanner
         /// <exception cref="System.ArgumentNullException">skill</exception>
         internal void ShowSkillInBrowser(Skill skill)
         {
-            skill.ThrowIfNull(nameof(skill));
-
             // Quit if it's an "Unknown" skill
-            if (skill.ID == Int32.MaxValue)
-                return;
-
-            ShowSkillBrowser();
-            skillBrowser.SelectedSkill = skill;
+            if (skill != null && skill.ID != int.MaxValue && skill.ID != 0)
+            {
+                ShowSkillBrowser();
+                skillBrowser.SelectedSkill = skill;
+            }
         }
 
         /// <summary>
@@ -480,9 +484,10 @@ namespace EVEMon.SkillPlanner
             ship.ThrowIfNull(nameof(ship));
 
             // Quit if it's an "Unknown" item
-            if (ship.ID == Int32.MaxValue)
+            if (ship.ID == int.MaxValue)
                 return;
 
+            shipBrowser.SetSearchText(ship.Name);
             ShowShipBrowser();
             shipBrowser.SelectedObject = ship;
         }
@@ -505,9 +510,10 @@ namespace EVEMon.SkillPlanner
             item.ThrowIfNull(nameof(item));
 
             // Quit if it's an "Unknown" item
-            if (item.ID == Int32.MaxValue)
+            if (item.ID == int.MaxValue)
                 return;
 
+            itemBrowser.SetSearchText(item.Name);
             ShowItemBrowser();
             itemBrowser.SelectedObject = item;
         }
@@ -530,9 +536,10 @@ namespace EVEMon.SkillPlanner
             blueprint.ThrowIfNull(nameof(blueprint));
 
             // Quit if it's an "Unknown" item
-            if (blueprint.ID == Int32.MaxValue)
+            if (blueprint.ID == int.MaxValue)
                 return;
 
+            blueprintBrowser.SetSearchText(blueprint.Name);
             ShowBlueprintBrowser();
             blueprintBrowser.SelectedObject = blueprint;
         }
@@ -647,6 +654,51 @@ namespace EVEMon.SkillPlanner
             skillBrowser.UpdateSkillBrowser();
         }
 
+        /// <summary>
+        /// Checks to see if the current contents of the clipboard is a valid list of skills.
+        /// </summary>
+        /// <param name="text">Clipboard contents.</param>
+        private bool CheckClipboardSkillQueue(string text, List<StaticSkillLevel> clipboardSkills)
+        {
+            // Nothing to evaluate
+            if (string.IsNullOrEmpty(text))
+                return false;
+
+            // Multiline regex match the clipboard content
+            var matches = m_skill_regex.Matches(text);
+
+            if (matches.Count == 0)
+                return false;
+
+            for (int i = 0; i < matches.Count; i++)
+            {
+                Match m = matches[i];
+                if (m.Groups.Count != 3)
+                    return false;
+
+                // Try to identify a level from the 2nd capture group
+                int level;
+                if (!int.TryParse(m.Groups[2].Value, out level))
+                    level = Skill.GetIntFromRoman(m.Groups[2].Value);
+
+                if (level < 1 || level > 5)
+                    return false;
+
+                // 1st capture group will be skill name
+                string name = m.Groups[1].Value?.Trim();
+
+                var skill = new StaticSkillLevel(name, level);
+
+                // Did we find an actual skill?
+                if (skill.Skill == StaticSkill.UnknownStaticSkill)
+                    return false;
+
+                clipboardSkills.Add(skill);
+            }
+
+            return true;
+        }
+
         #endregion
 
 
@@ -688,9 +740,8 @@ namespace EVEMon.SkillPlanner
         /// <param name="uniqueCount">The unique count.</param>
         internal void UpdateSkillStatusLabel(bool selected, int skillCount, int uniqueCount)
         {
-            SkillsStatusLabel.Text = $"{skillCount} skill{(skillCount == 1 ? String.Empty : "s")} " +
-                                     $"{(selected ? "selected" : "planned")} " +
-                                     $"({uniqueCount} unique)";
+            SkillsStatusLabel.Text = $"{skillCount} skill{skillCount.S()} " +
+                $"{(selected ? "selected" : "planned")} ({uniqueCount} unique)";
         }
 
         /// <summary>
@@ -701,9 +752,10 @@ namespace EVEMon.SkillPlanner
         /// <param name="totalTime">The total time.</param>
         internal void UpdateTimeStatusLabel(bool selected, int skillCount, TimeSpan totalTime)
         {
+            string time = totalTime.ToDescriptiveText(DescriptiveTextOptions.IncludeCommas);
             TimeStatusLabel.AutoToolTip = false;
-            TimeStatusLabel.Text = $"{totalTime.ToDescriptiveText(DescriptiveTextOptions.IncludeCommas)} to train " +
-                                   $"{(selected ? $"selected skill{(skillCount == 1 ? String.Empty : "s")}" : "whole plan")}";
+            TimeStatusLabel.Text = time + " to train " + (selected ?
+                $"selected skill{skillCount.S()}" : "whole plan");
         }
 
         /// <summary>
@@ -719,13 +771,11 @@ namespace EVEMon.SkillPlanner
             if (totalcost > 0)
             {
                 CostStatusLabel.ToolTipText = $"{totalcost:N2} ISK required to purchase " +
-                                              $"{(selected ? "selected" : "all")} " +
-                                              $"skill{(m_plan.UniqueSkillsCount == 1 ? String.Empty : "s")} anew";
+                    (selected ? "selected" : "all") +
+                    $" skill{(m_plan.UniqueSkillsCount.S())} anew";
             }
 
-            CostStatusLabel.Text = cost > 0
-                ? $"{cost:N2} ISK required"
-                : "0 ISK required";
+            CostStatusLabel.Text = cost > 0 ? $"{cost:N2} ISK required" : "0 ISK required";
         }
 
         /// <summary>
@@ -740,16 +790,15 @@ namespace EVEMon.SkillPlanner
 
             if (skillPoints > 0)
             {
-                SkillPointsStatusLabel.ToolTipText = $"{skillPoints:N0} skill points required to train " +
-                                                     $"{(selected ? "selected" : "all")} " +
-                                                     $"skill{(skillCount == 1 ? String.Empty : "s")}";
+                SkillPointsStatusLabel.ToolTipText =
+                    $"{skillPoints:N0} skill points required to train " +
+                    (selected ? "selected" : "all") + $" skill{skillCount.S()}";
             }
 
-            int skillInjectorsCount = m_plan.Character.GetRequiredSkillInjectorsForSkillPoints(skillPoints);
-            SkillPointsStatusLabel.Text = skillPoints > 0
-                ? $"{skillPoints:N0} SP required ({skillInjectorsCount:N0} Skill Injector" +
-                  $"{(Math.Abs(skillInjectorsCount - 1) < Double.Epsilon ? String.Empty : "s")})"
-                : "0 SP required";
+            var skillInjectorsCount = m_plan.Character.GetRequiredSkillInjectorsForSkillPoints(
+                skillPoints);
+            SkillPointsStatusLabel.Text = skillPoints <= 0 ? "No SP required" :
+                $"{skillPoints:N0} SP required ({skillInjectorsCount.ToString()})";
         }
 
         /// <summary>
@@ -777,6 +826,83 @@ namespace EVEMon.SkillPlanner
             UpdateSkillPointsStatusLabel(false, entriesCount, planEditor.DisplayPlan.TotalSkillPoints);
         }
 
+
+        /// <summary>
+        /// Imports list of skills from the clipboard to the training plan
+        /// </summary>
+        /// <param name="text">Clipboard contents.</param>
+        internal void ImportSkillsFromClipboard(List<StaticSkillLevel> list)
+        {
+            // Nothing to evaluate
+            if (list.Count == 0)
+                return;
+
+            CharacterScratchpad scratchpad = new CharacterScratchpad(m_character);
+
+            foreach (StaticSkillLevel skill in list)
+            {
+                // Make sure we actually have a valid skill
+                if (skill.Skill != StaticSkill.UnknownStaticSkill)
+                {
+                    // Add any dependencies that the skill may have
+                    scratchpad.Train(skill.AllDependencies.Where(x => m_character.Skills[
+                        x.Skill.ID].Level < x.Level));
+
+                    // Add the skill itself
+                    scratchpad.Train(skill);
+                }
+            }
+
+            TimeSpan trainingTime = TimeSpan.Zero;
+            int skillCountToAdd = 0;
+
+            foreach (var skill in scratchpad.TrainedSkills)
+            {
+                // Check if skill level is already planned
+                if (!m_plan.IsPlanned(skill.Skill, skill.Level))
+                {
+                    // Include skill in calculation
+                    skillCountToAdd++;
+                    trainingTime = trainingTime.Add(m_character.
+                        GetTrainingTime(skill.Skill, skill.Level,
+                        TrainingOrigin.FromPreviousLevelOrCurrent));
+                }
+            }
+
+            if (scratchpad.TrainedSkills.Count == 0)
+            {
+                MessageBox.Show(R.MessageClipboardTrained, @"Already Trained",
+                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else if (skillCountToAdd == 0)
+            {
+                MessageBox.Show(R.MessageClipboardPlanned, @"Already Trained or Planned",
+                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                string trainingDesc = trainingTime.ToDescriptiveText(DescriptiveTextOptions.
+                    IncludeCommas | DescriptiveTextOptions.SpaceText);
+
+                var dr = MessageBox.Show($"Are you sure you want to add {skillCountToAdd} " +
+                    $"skills with a total training time of {trainingDesc}?\n\n" +
+                    "This will also include any dependencies not included in your paste.",
+                    "Add Skills?", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2);
+
+                if (dr == DialogResult.Yes)
+                {
+                    IPlanOperation operation = m_plan.TryAddSet(scratchpad.TrainedSkills, "Paste from Clipboard");
+
+                    if (operation != null)
+                    {
+                        PlanHelper.Perform(new PlanToOperationWindow(operation), this);
+                        ShowPlanEditor();
+                    }
+                }
+            }
+        }
+
         #endregion
 
 
@@ -790,9 +916,8 @@ namespace EVEMon.SkillPlanner
         /// <param name="e"></param>
         private void tsbDeletePlan_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show(@"Are you sure you want to delete this plan?",
-                @"Delete Plan",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+            DialogResult dr = MessageBox.Show(Properties.Resources.PromptDeletePlan,
+                @"Delete Plan", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                 MessageBoxDefaultButton.Button2);
 
             if (dr != DialogResult.Yes)
@@ -1043,19 +1168,15 @@ namespace EVEMon.SkillPlanner
                 Clipboard.Clear();
                 Clipboard.SetText(output);
 
-                MessageBox.Show(@"The plan has been copied to the clipboard.",
-                    @"Plan Copied",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                MessageBox.Show(Properties.Resources.MessageCopiedPlan, "Plan Copied",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (ExternalException ex)
             {
                 ExceptionHandler.LogException(ex, true);
 
-                MessageBox.Show(@"The copy to clipboard has failed. You may retry later.",
-                    @"Plan Copy Failure",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                MessageBox.Show(Properties.Resources.ErrorClipboardFailure, "Plan Copy Failure",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -1087,6 +1208,23 @@ namespace EVEMon.SkillPlanner
         private void tsbPrintPlan_Click(object sender, EventArgs e)
         {
             PlanPrinter.Print(m_plan);
+        }
+
+        private void tsbClipboardImport_Click(object sender, EventArgs e)
+        {
+            string clipboard = Clipboard.GetText();
+
+            List<StaticSkillLevel> clipboardSkills = new List<StaticSkillLevel>();
+
+            if (CheckClipboardSkillQueue(clipboard, clipboardSkills))
+            {
+                ImportSkillsFromClipboard(clipboardSkills);
+            }
+            else
+            {
+                MessageBox.Show(R.ErrorClipboardImport, @"Not a Skill Set",
+                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
         }
 
         #endregion

@@ -229,8 +229,8 @@ namespace EVEMon.LogitechG15
             CCPCharacter ccpCharacter = e.Character as CCPCharacter;
             ccpCharacter?.QueryMonitors.Query(new Enum[]
             {
-                CCPAPICharacterMethods.CharacterSheet,
-                CCPAPICharacterMethods.SkillQueue
+                ESIAPICharacterMethods.CharacterSheet,
+                ESIAPICharacterMethods.SkillQueue
             });
         }
 

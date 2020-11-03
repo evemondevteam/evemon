@@ -53,7 +53,7 @@ namespace EVEMon.About
             this.ccpDocsLinkLabel = new System.Windows.Forms.LinkLabel();
             this.bitbucketLinkLabel = new System.Windows.Forms.LinkLabel();
             this.gitHubLinkLabel = new System.Windows.Forms.LinkLabel();
-            this.eveCentralLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.eveMarketerLinkLabel = new System.Windows.Forms.LinkLabel();
             this.eveMarketDataLinkLabel = new System.Windows.Forms.LinkLabel();
             this.googleApisLinkLabel = new System.Windows.Forms.LinkLabel();
             this.dropboxSDKLinkLabel = new System.Windows.Forms.LinkLabel();
@@ -299,7 +299,7 @@ namespace EVEMon.About
             this.credentialsFlowLayoutPanel.Controls.Add(this.ccpDocsLinkLabel);
             this.credentialsFlowLayoutPanel.Controls.Add(this.bitbucketLinkLabel);
             this.credentialsFlowLayoutPanel.Controls.Add(this.gitHubLinkLabel);
-            this.credentialsFlowLayoutPanel.Controls.Add(this.eveCentralLinkLabel);
+            this.credentialsFlowLayoutPanel.Controls.Add(this.eveMarketerLinkLabel);
             this.credentialsFlowLayoutPanel.Controls.Add(this.eveMarketDataLinkLabel);
             this.credentialsFlowLayoutPanel.Controls.Add(this.googleApisLinkLabel);
             this.credentialsFlowLayoutPanel.Controls.Add(this.dropboxSDKLinkLabel);
@@ -367,18 +367,18 @@ namespace EVEMon.About
             this.gitHubLinkLabel.Text = "GitHub for hosting the project and providing our representation site.";
             this.gitHubLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
             // 
-            // eveCentralLinkLabel
+            // eveMarketerLinkLabel
             // 
-            this.eveCentralLinkLabel.AutoSize = true;
-            this.eveCentralLinkLabel.LinkArea = new System.Windows.Forms.LinkArea(0, 0);
-            this.eveCentralLinkLabel.Location = new System.Drawing.Point(0, 102);
-            this.eveCentralLinkLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.eveCentralLinkLabel.Name = "eveCentralLinkLabel";
-            this.eveCentralLinkLabel.Padding = new System.Windows.Forms.Padding(5, 3, 0, 3);
-            this.eveCentralLinkLabel.Size = new System.Drawing.Size(210, 19);
-            this.eveCentralLinkLabel.TabIndex = 12;
-            this.eveCentralLinkLabel.Text = "EVE-Central for their market data and API.";
-            this.eveCentralLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+            this.eveMarketerLinkLabel.AutoSize = true;
+            this.eveMarketerLinkLabel.LinkArea = new System.Windows.Forms.LinkArea(0, 0);
+            this.eveMarketerLinkLabel.Location = new System.Drawing.Point(0, 102);
+            this.eveMarketerLinkLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.eveMarketerLinkLabel.Name = "eveMarketerLinkLabel";
+            this.eveMarketerLinkLabel.Padding = new System.Windows.Forms.Padding(5, 3, 0, 3);
+            this.eveMarketerLinkLabel.Size = new System.Drawing.Size(216, 19);
+            this.eveMarketerLinkLabel.TabIndex = 12;
+            this.eveMarketerLinkLabel.Text = "EVEMarketer for their market data and API.";
+            this.eveMarketerLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
             // 
             // eveMarketDataLinkLabel
             // 
@@ -544,7 +544,7 @@ namespace EVEMon.About
         private System.Windows.Forms.LinkLabel ccpGamesLinkLabel;
         private System.Windows.Forms.LinkLabel ccpDocsLinkLabel;
         private System.Windows.Forms.LinkLabel googleApisLinkLabel;
-        private System.Windows.Forms.LinkLabel eveCentralLinkLabel;
+        private System.Windows.Forms.LinkLabel eveMarketerLinkLabel;
         private System.Windows.Forms.Label forgotLabel;
         private System.Windows.Forms.LinkLabel lironLeviLinkLabel;
         private System.Windows.Forms.LinkLabel stackOverflowLinkLabel;

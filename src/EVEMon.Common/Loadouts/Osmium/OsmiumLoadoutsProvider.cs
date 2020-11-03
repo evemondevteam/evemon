@@ -56,15 +56,17 @@ namespace EVEMon.Common.Loadouts.Osmium
             if (s_queryFeedPending)
                 return;
 
-            Uri url = new Uri(
-                $"{NetworkConstants.OsmiumBaseUrl}" +
-                String.Format(CultureConstants.InvariantCulture, NetworkConstants.OsmiumLoadoutFeed, ship.Name));
+            Uri url = new Uri(NetworkConstants.OsmiumBaseUrl + string.Format(
+                CultureConstants.InvariantCulture, NetworkConstants.OsmiumLoadoutFeed, ship.Name));
 
             s_queryFeedPending = true;
 
-            DownloadResult<List<SerializableOsmiumLoadoutFeed>> result =
-                await Util.DownloadJsonAsync<List<SerializableOsmiumLoadoutFeed>>(url, acceptEncoded: true);
-            OnLoadoutsFeedDownloaded(result.Result, result.Error?.Message);
+            var result = await Util.DownloadJsonAsync<List<SerializableOsmiumLoadoutFeed>>(url,
+                new RequestParams()
+                {
+                    AcceptEncoded = true
+                });
+            OnLoadoutsFeedDownloaded(result.Result, result.Exception?.Message);
         }
 
         /// <summary>
@@ -77,9 +79,8 @@ namespace EVEMon.Common.Loadouts.Osmium
             if (s_queryPending)
                 return;
 
-            Uri url = new Uri(
-                $"{NetworkConstants.OsmiumBaseUrl}" +
-                String.Format(CultureConstants.InvariantCulture, NetworkConstants.OsmiumLoadoutDetails, id));
+            Uri url = new Uri(NetworkConstants.OsmiumBaseUrl + string.Format(
+                CultureConstants.InvariantCulture, NetworkConstants.OsmiumLoadoutDetails, id));
 
             s_queryPending = true;
 
@@ -96,12 +97,9 @@ namespace EVEMon.Common.Loadouts.Osmium
         public override ILoadoutInfo DeserializeLoadoutsFeed(Item ship, object feed)
         {
             feed.ThrowIfNull(nameof(feed));
-
-            List<SerializableOsmiumLoadoutFeed> loadoutFeed = feed as List<SerializableOsmiumLoadoutFeed>;
-
-            return loadoutFeed == null
-                ? new LoadoutInfo()
-                : DeserializeOsmiumJsonFeedFormat(ship, loadoutFeed);
+            var loadoutFeed = feed as List<SerializableOsmiumLoadoutFeed>;
+            return (loadoutFeed == null) ? new LoadoutInfo() : DeserializeOsmiumJsonFeedFormat(
+                ship, loadoutFeed);
         }
 
         /// <summary>
@@ -139,7 +137,7 @@ namespace EVEMon.Common.Loadouts.Osmium
         /// Occurs when we downloaded a loadout from the provider.
         /// </summary>
         /// <param name="result">The result.</param>
-        private static void OnLoadoutDownloaded(DownloadResult<String> result)
+        private static void OnLoadoutDownloaded(DownloadResult<string> result)
         {
             s_queryPending = false;
 
@@ -181,5 +179,6 @@ namespace EVEMon.Common.Loadouts.Osmium
         }
 
         #endregion
+
     }
 }

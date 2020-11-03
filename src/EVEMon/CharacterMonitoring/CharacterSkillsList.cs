@@ -50,7 +50,7 @@ namespace EVEMon.CharacterMonitoring
         private readonly Font m_skillsFont;
         private readonly Font m_boldSkillsFont;
 
-        private Object m_lastTooltipItem;
+        private object m_lastTooltipItem;
         private BlinkAction m_blinkAction;
 
         private int m_maxGroupNameWidth;
@@ -281,7 +281,7 @@ namespace EVEMon.CharacterMonitoring
             DrawBackground(skill, e);
 
             // Measure texts
-            Int64 skillPointsToNextLevel = skill.StaticData.GetPointsRequiredForLevel(Math.Min(skill.Level + 1, 5));
+            long skillPointsToNextLevel = skill.StaticData.GetPointsRequiredForLevel(Math.Min(skill.Level + 1, 5));
 
             string rankText = $" (Rank {skill.Rank})";
             string spText = $"SP: {skill.SkillPoints:N0}/{skillPointsToNextLevel:N0}";
@@ -414,44 +414,70 @@ namespace EVEMon.CharacterMonitoring
         private void DrawBoxes(Skill skill, DrawItemEventArgs e)
         {
             Graphics g = e.Graphics;
+            bool isAlpha = skill.Character.EffectiveCharacterStatus.IsAlpha();
 
-            g.DrawRectangle(Pens.Black,
-                            new Rectangle(e.Bounds.Right - BoxWidth - PadRight, e.Bounds.Top + PadTop, BoxWidth, BoxHeight));
+            g.DrawRectangle(Pens.Black, new Rectangle(e.Bounds.Right - BoxWidth - PadRight,
+                e.Bounds.Top + PadTop, BoxWidth, BoxHeight));
 
-            const int LevelBoxWidth = (BoxWidth - 4 - 3) / 5;
+            const int levelBoxWidth = (BoxWidth - 4 - 3) / 5, levelBoxHeight = BoxHeight - 3;
+            int square = Math.Min(levelBoxWidth, levelBoxHeight);
             for (int level = 1; level <= 5; level++)
             {
-                Rectangle brect = new Rectangle(
-                    e.Bounds.Right - BoxWidth - PadRight + 2 + LevelBoxWidth * (level - 1) + (level - 1),
-                    e.Bounds.Top + PadTop + 2, LevelBoxWidth, BoxHeight - 3);
+                Brush fillBrush = Brushes.DarkGray;
+                int alphaPad = 0, w, h;
+                if (isAlpha && level > skill.StaticData.AlphaLimit)
+                {
+                    // Draw smaller gold square to indicate this level cannot be trained
+                    fillBrush = Brushes.DarkGoldenrod;
+                    alphaPad = 2;
+                }
+                if (level <= skill.Level)
+                {
+                    // Trained
+                    if (alphaPad > 0)
+                        // And inactive
+                        alphaPad = 0;
+                    else
+                        fillBrush = Brushes.Black;
+                }
 
-                g.FillRectangle(level <= skill.Level ? Brushes.Black : Brushes.DarkGray, brect);
+                // If the box is denoting an untrainable level, make it square
+                if (alphaPad > 0)
+                    w = h = square - 2 * alphaPad;
+                else
+                {
+                    w = levelBoxWidth;
+                    h = levelBoxHeight;
+                }
 
-                // Color indicator for a queued level
-                CCPCharacter ccpCharacter = Character as CCPCharacter;
+                // Determine proper spacing to center it in the frame
+                var brect = new Rectangle(e.Bounds.Right - BoxWidth - PadRight + 2 +
+                    (levelBoxWidth + 1) * (level - 1) + (levelBoxWidth - w) / 2,
+                    e.Bounds.Top + PadTop + 2 + (levelBoxHeight - h) / 2, w, h);
+
+                // Color indicator for a queued level or one which is training now
+                var ccpCharacter = Character as CCPCharacter;
                 if (ccpCharacter != null)
                 {
-                    SkillQueue skillQueue = ccpCharacter.SkillQueue;
-                    if (skillQueue
-                        .Any(qskill =>
-                            (!skill.IsTraining && skill == qskill.Skill && level == qskill.Level) ||
-                            (skill.IsTraining && skill == qskill.Skill && level == qskill.Level &&
-                             level > skill.Level + 1)))
+                    var skillQueue = ccpCharacter.SkillQueue;
+                    // X || (!X && Y) == X || Y
+                    if (skillQueue.Any(qskill => skill == qskill.Skill && level == qskill.
+                        Level && (!skill.IsTraining || level > skill.Level + 1)))
                     {
-                        g.FillRectangle(Brushes.RoyalBlue, brect);
+                        fillBrush = Brushes.RoyalBlue;
                     }
                 }
 
-                // Blinking indicator of skill in training level
-                if (!skill.IsTraining || level != skill.Level + 1)
-                    continue;
-                
-                if (m_blinkAction == BlinkAction.Blink)
-                    g.FillRectangle(Brushes.RoyalBlue, brect);
+                // Blink indicator of skill levels which are in training
+                if (skill.IsTraining && level == skill.Level + 1)
+                {
+                    if (m_blinkAction == BlinkAction.Blink)
+                        fillBrush = Brushes.RoyalBlue;
+                    m_blinkAction = (m_blinkAction == BlinkAction.Reset) ? BlinkAction.Blink :
+                        BlinkAction.Stop;
+                }
 
-                m_blinkAction = m_blinkAction == BlinkAction.Reset
-                    ? BlinkAction.Blink
-                    : BlinkAction.Stop;
+                g.FillRectangle(fillBrush, brect);
             }
         }
 
@@ -479,8 +505,8 @@ namespace EVEMon.CharacterMonitoring
             }
 
             // Measure Texts
-            string skillInTrainingSuffix = String.Empty;
-            string skillsInQueueSuffix = String.Empty;
+            string skillInTrainingSuffix = string.Empty;
+            string skillsInQueueSuffix = string.Empty;
             bool hasTrainingSkill = group.Any(x => x.IsTraining);
             bool hasQueuedSkill = group.Any(x => x.IsQueued && !x.IsTraining);
             if (hasTrainingSkill)
@@ -695,7 +721,7 @@ namespace EVEMon.CharacterMonitoring
             }
 
             // For a skill group, we have to handle the collapse/expand mechanism and the tooltip
-            Object item = lbSkills.Items[index];
+            object item = lbSkills.Items[index];
             SkillGroup skillGroup = item as SkillGroup;
             if (skillGroup != null)
             {
@@ -745,7 +771,7 @@ namespace EVEMon.CharacterMonitoring
                 if (!rect.Contains(e.Location))
                     continue;
 
-                Object item = lbSkills.Items[i];
+                object item = lbSkills.Items[i];
                 lbSkills.Cursor = item is Skill ? CustomCursors.ContextMenu : Cursors.Default;
 
                 // Updates the tooltip
@@ -788,7 +814,7 @@ namespace EVEMon.CharacterMonitoring
 
             if (skill == null || skill.Level == 5)
             {
-                tsmiAddSkill.Text = String.Empty;
+                tsmiAddSkill.Text = string.Empty;
                 return;
             }
             
@@ -796,7 +822,7 @@ namespace EVEMon.CharacterMonitoring
             tsmiAddSkill.Text = $"Add {skill.Name}";
 
             // Build the level options
-            for (Int64 level = skill.Level + 1; level <= 5; level++)
+            for (long level = skill.Level + 1; level <= 5; level++)
             {
                 ToolStripMenuItem tempMenuLevel = null;
                 try
@@ -826,7 +852,7 @@ namespace EVEMon.CharacterMonitoring
         /// Displays the tooltip for the given item (skill or skillgroup).
         /// </summary>
         /// <param name="item"></param>
-        private void DisplayTooltip(Object item)
+        private void DisplayTooltip(object item)
         {
             if (ttToolTip.Active && m_lastTooltipItem != null && m_lastTooltipItem == item)
                 return;
@@ -845,10 +871,10 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="skill"></param>
         private static string GetTooltip(Skill skill)
         {
-            Int64 sp = skill.SkillPoints;
-            Int64 nextLevel = Math.Min(5, skill.Level + 1);
-            Int64 nextLevelSP = skill.StaticData.GetPointsRequiredForLevel(nextLevel);
-            Int64 pointsLeft = skill.GetLeftPointsRequiredToLevel(nextLevel);
+            long sp = skill.SkillPoints;
+            long nextLevel = Math.Min(5, skill.Level + 1);
+            long nextLevelSP = skill.StaticData.GetPointsRequiredForLevel(nextLevel);
+            long pointsLeft = skill.GetLeftPointsRequiredToLevel(nextLevel);
             string remainingTimeText = skill.GetLeftTrainingTimeToLevel(nextLevel)
                 .ToDescriptiveText(DescriptiveTextOptions.IncludeCommas | DescriptiveTextOptions.UppercaseText);
 
@@ -955,12 +981,12 @@ namespace EVEMon.CharacterMonitoring
         private static string GetTooltip(SkillGroup group)
         {
             // Maximas are computed on public skills only
-            Int64 totalValidSP = group.Where(x => x.IsPublic).Sum(x => x.SkillPoints);
-            Int64 maxSP = group.Where(x => x.IsPublic).Sum(x => x.StaticData.GetPointsRequiredForLevel(5));
+            long totalValidSP = group.Where(x => x.IsPublic).Sum(x => x.SkillPoints);
+            long maxSP = group.Where(x => x.IsPublic).Sum(x => x.StaticData.GetPointsRequiredForLevel(5));
             int maxKnown = group.Count(x => x.IsPublic);
 
             // Current achievements are computed on every skill, including non-public
-            Int64 totalSP = group.Sum(x => x.SkillPoints);
+            long totalSP = group.Sum(x => x.SkillPoints);
             int known = group.Count(x => x.IsKnown);
 
             // The group has been completed !

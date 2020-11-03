@@ -47,7 +47,7 @@ namespace EVEMon.Common.Models
         /// <param name="skillArrayIndex"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        public T this[Int64 skillArrayIndex, Int64 level]
+        public T this[long skillArrayIndex, long level]
         {
             get
             {
@@ -77,7 +77,7 @@ namespace EVEMon.Common.Models
         /// <param name="skill"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        public T this[StaticSkill skill, Int64 level]
+        public T this[StaticSkill skill, long level]
         {
             get { return this[skill.ArrayIndex, level]; }
             set { this[skill.ArrayIndex, level] = value; }

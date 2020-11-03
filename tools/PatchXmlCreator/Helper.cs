@@ -44,7 +44,7 @@ namespace EVEMon.PatchXmlCreator
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_solutionDir))
+                if (string.IsNullOrWhiteSpace(s_solutionDir))
                 {
                     s_solutionDir = Regex.Match(Directory.GetCurrentDirectory(), @"[a-zA-Z]+:.*\\(?=tools)",
                         RegexOptions.Compiled | RegexOptions.IgnoreCase).ToString();
@@ -61,7 +61,7 @@ namespace EVEMon.PatchXmlCreator
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_projectDir))
+                if (string.IsNullOrWhiteSpace(s_projectDir))
                 {
                     s_projectDir = Regex.Match(Directory.GetCurrentDirectory(), @"[a-zA-Z]+:.*\\(?=bin)",
                         RegexOptions.Compiled | RegexOptions.IgnoreCase).ToString();
@@ -78,7 +78,7 @@ namespace EVEMon.PatchXmlCreator
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_outputPath))
+                if (string.IsNullOrWhiteSpace(s_outputPath))
                 {
                     s_outputPath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase.Remove(0, GetProjectDirectory.Length);
                 }
@@ -94,7 +94,7 @@ namespace EVEMon.PatchXmlCreator
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_sourceFilesDir))
+                if (string.IsNullOrWhiteSpace(s_sourceFilesDir))
                 {
                     s_sourceFilesDir = Path.GetFullPath(Path.Combine(GetSolutionDirectory, @"src\EVEMon\", GetOutputPath));
                 }
@@ -110,7 +110,7 @@ namespace EVEMon.PatchXmlCreator
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_dataFilesDir))
+                if (string.IsNullOrWhiteSpace(s_dataFilesDir))
                 {
                     s_dataFilesDir = Path.GetFullPath(Path.Combine(GetSolutionDirectory, @"src\EVEMon.Common\Resources"));
                 }
@@ -126,7 +126,7 @@ namespace EVEMon.PatchXmlCreator
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_patchDir))
+                if (string.IsNullOrWhiteSpace(s_patchDir))
                 {
                     s_patchDir = Path.GetFullPath(Path.Combine(GetProjectDirectory, @"Output"));
                 }

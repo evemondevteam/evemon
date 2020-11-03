@@ -14,18 +14,18 @@ namespace EVEMon.Common.Serialization.Eve
         }
 
         [XmlElement("intelligence")]
-        public Int64 Intelligence { get; set; }
+        public long Intelligence { get; set; }
 
         [XmlElement("memory")]
-        public Int64 Memory { get; set; }
+        public long Memory { get; set; }
 
         [XmlElement("perception")]
-        public Int64 Perception { get; set; }
+        public long Perception { get; set; }
 
         [XmlElement("willpower")]
-        public Int64 Willpower { get; set; }
+        public long Willpower { get; set; }
 
         [XmlElement("charisma")]
-        public Int64 Charisma { get; set; }
+        public long Charisma { get; set; }
     }
 }

@@ -1,19 +1,23 @@
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Extensions;
+using EVEMon.Common.Serialization.Esi;
+using EVEMon.Common.Service;
 
 namespace EVEMon.Common.Models
 {
     public sealed class CalendarEventAttendee
     {
+        private string m_characterName;
+
         #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalendarEventAttendee"/> class.
         /// </summary>
         /// <param name="src">The SRC.</param>
-        internal CalendarEventAttendee(SerializableCalendarEventAttendeeListItem src)
+        internal CalendarEventAttendee(EsiCalendarEventAttendeeListItem src)
         {
             CharacterID = src.CharacterID;
-            CharacterName = src.CharacterName;
+            m_characterName = EveIDToName.GetIDToName(src.CharacterID);
             Response = src.Response;
         }
 
@@ -30,7 +34,8 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the name of the character.
         /// </summary>
-        public string CharacterName { get; }
+        public string CharacterName => (m_characterName.IsEmptyOrUnknown()) ?
+            (m_characterName = EveIDToName.GetIDToName(CharacterID)) : m_characterName;
 
         /// <summary>
         /// Gets the response.
@@ -38,5 +43,6 @@ namespace EVEMon.Common.Models
         public string Response { get; }
 
         #endregion
+
     }
 }

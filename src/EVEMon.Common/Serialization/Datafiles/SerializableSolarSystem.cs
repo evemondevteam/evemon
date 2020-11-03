@@ -12,6 +12,7 @@ namespace EVEMon.Common.Serialization.Datafiles
     /// </remarks>
     public sealed class SerializableSolarSystem
     {
+        private readonly Collection<SerializablePlanet> m_planets;
         private readonly Collection<SerializableStation> m_stations;
 
         /// <summary>
@@ -19,6 +20,7 @@ namespace EVEMon.Common.Serialization.Datafiles
         /// </summary>
         public SerializableSolarSystem()
         {
+            m_planets = new Collection<SerializablePlanet>();
             m_stations = new Collection<SerializableStation>();
         }
 
@@ -63,6 +65,13 @@ namespace EVEMon.Common.Serialization.Datafiles
         /// <value>The security level.</value>
         [XmlAttribute("securityLevel")]
         public float SecurityLevel { get; set; }
+
+        /// <summary>
+        /// Gets the planets.
+        /// </summary>
+        /// <value>The planets.</value>
+        [XmlElement("planets")]
+        public Collection<SerializablePlanet> Planets => m_planets;
 
         /// <summary>
         /// Gets the stations.

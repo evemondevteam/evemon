@@ -13,7 +13,7 @@ namespace EVEMon.Common.Factories
     /// </summary>
     public static class WindowsFactory
     {
-        private static readonly Object s_syncLock = new object();
+        private static readonly object s_syncLock = new object();
         private static readonly List<Form> s_taggedWindows = new List<Form>();
         private static readonly List<Form> s_uniqueWindows = new List<Form>();
 
@@ -129,7 +129,7 @@ namespace EVEMon.Common.Factories
             where TForm : Form
             where TTag : class
         {
-            Object otag = tag;
+            object otag = tag;
 
             lock (s_syncLock)
             {
@@ -196,7 +196,7 @@ namespace EVEMon.Common.Factories
 
             creation.ThrowIfNull(nameof(creation));
 
-            Object otag = tag;
+            object otag = tag;
 
             lock (s_syncLock)
             {
@@ -281,7 +281,7 @@ namespace EVEMon.Common.Factories
             where TForm : Form
             where TTag : class
         {
-            Object otag = tag;
+            object otag = tag;
 
             lock (s_syncLock)
             {

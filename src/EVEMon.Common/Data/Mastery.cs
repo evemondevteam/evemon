@@ -12,7 +12,7 @@ namespace EVEMon.Common.Data
     /// <summary>
     /// Represents a mastery level.
     /// </summary>
-    public sealed class Mastery : ReadonlyCollection<MasteryCertificate>
+    public sealed class Mastery : ReadonlyCollection<MasteryCertificate>, IComparable<Mastery>
     {
         private bool m_updated;
         private readonly Character m_character;
@@ -28,16 +28,13 @@ namespace EVEMon.Common.Data
         internal Mastery(MasteryShip masteryShip, SerializableMastery src)
             : base(src?.Certificates.Count ?? 0)
         {
-            if (src == null)
-                return;
-
-            MasteryShip = masteryShip;
-            Level = src.Grade;
-            Status = MasteryStatus.Untrained;
-
-            foreach (SerializableMasteryCertificate certificate in src.Certificates)
+            if (src != null)
             {
-                Items.Add(new MasteryCertificate(this, certificate));
+                MasteryShip = masteryShip;
+                Level = src.Grade;
+                Status = MasteryStatus.Untrained;
+                foreach (SerializableMasteryCertificate certificate in src.Certificates)
+                    Items.Add(new MasteryCertificate(this, certificate));
             }
         }
 
@@ -47,21 +44,14 @@ namespace EVEMon.Common.Data
         /// <param name="character">The character.</param>
         /// <param name="mastery">The mastery.</param>
         internal Mastery(Character character, Mastery mastery)
-            : base(mastery?.Count ?? 0)
+            : base(mastery.Count)
         {
-            if (mastery == null)
-                return;
-
             m_character = character;
-
             MasteryShip = mastery.MasteryShip;
             Level = mastery.Level;
             Status = MasteryStatus.Untrained;
-
             foreach (MasteryCertificate masteryCertificate in mastery)
-            {
                 Items.Add(new MasteryCertificate(character, masteryCertificate));
-            }
         }
 
         #endregion
@@ -107,17 +97,16 @@ namespace EVEMon.Common.Data
         /// Gets the prerequisite skills.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<SkillLevel> GetPrerequisiteSkills
-            => Items.SelectMany(cert => cert.Certificate.PrerequisiteSkills
-                .Where(level => (int)level.Key == Level)
-                .SelectMany(level => level.Value.ToCharacter(m_character)))
-                .Distinct();
+        public IEnumerable<SkillLevel> GetPrerequisiteSkills() => Items.SelectMany(cert =>
+            cert.Certificate.PrerequisiteSkills.Where(level => (int)level.Key == Level).
+            SelectMany(level => level.Value.ToCharacter(m_character))).Distinct();
 
         /// <summary>
         /// Gets the training time.
         /// </summary>
         /// <returns></returns>
-        public TimeSpan GetTrainingTime => m_character.GetTrainingTimeToMultipleSkills(GetPrerequisiteSkills);
+        public TimeSpan GetTrainingTime() => m_character.GetTrainingTimeToMultipleSkills(
+            GetPrerequisiteSkills());
 
         #endregion
 
@@ -125,7 +114,7 @@ namespace EVEMon.Common.Data
         #region Helper Methods
 
         /// <summary>
-        /// Tries the update mastery level status.
+        /// Tries to update the mastery level status.
         /// </summary>
         public bool TryUpdateMasteryStatus()
         {
@@ -136,12 +125,11 @@ namespace EVEMon.Common.Data
             bool trained = true;
 
             // Scan prerequisite skills
-            foreach (SkillLevel prereqSkill in GetPrerequisiteSkills)
+            foreach (SkillLevel prereqSkill in GetPrerequisiteSkills())
             {
-                // Trained only if the skill's level is greater or equal than the minimum level
-                trained &= prereqSkill.Skill.Level >= prereqSkill.Level;
-
-                noPrereq &= prereqSkill.AllDependencies.All(x => !x.IsTrained);
+                // Trained only if the skill's level is greater or equal to the minimum level
+                trained = trained && prereqSkill.Skill.Level >= prereqSkill.Level;
+                noPrereq = noPrereq && prereqSkill.AllDependencies.All(x => !x.IsTrained);
             }
 
             // Updates status
@@ -156,9 +144,43 @@ namespace EVEMon.Common.Data
             return true;
         }
 
+        /// <summary>
+        /// Sets this mastery as "untrained", a useful optimization for low-SP characters
+        /// (which are more numerous than maxed chars)
+        /// </summary>
+        public bool SetAsUntrained()
+        {
+            if (m_updated)
+                return false;
+
+            m_updated = true;
+            Status = MasteryStatus.Untrained;
+            return true;
+        }
 
         #endregion
 
+        public int CompareTo(Mastery other)
+        {
+            MasteryShip sm = MasteryShip, osm = other.MasteryShip;
+            int comparison;
+            if (sm == null)
+                // NULL versions should not be intermixed, but if they are, put them last
+                comparison = (osm == null) ? 0 : 1;
+            else if (osm == null)
+                comparison = -1;
+            else
+            {
+                // Both are not null
+                string shipOne = sm.Ship?.Name ?? string.Empty, shipTwo = osm.Ship?.Name ??
+                    string.Empty;
+                comparison = shipOne.CompareTo(shipTwo);
+                if (comparison == 0)
+                    // Levels are 1 to 5, no overflow can occur here
+                    comparison = Level - other.Level;
+            }
+            return comparison;
+        }
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
@@ -166,6 +188,7 @@ namespace EVEMon.Common.Data
         /// <returns>
         /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
-        public override string ToString() => $"Level {Skill.GetRomanFromInt(Level)}";
+        public override string ToString() => "Level " + Skill.GetRomanFromInt(Level);
+
     }
 }

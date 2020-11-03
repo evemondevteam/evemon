@@ -27,16 +27,17 @@ namespace EVEMon.Common.Data
         /// </summary>
         private StaticSkill()
         {
-            ID = Int32.MaxValue;
+            ID = int.MaxValue;
             Name = $"{EveMonConstants.UnknownText} Skill";
             Description = "An unknown skill.";
-            ArrayIndex = Int16.MaxValue;
+            ArrayIndex = short.MaxValue;
             Prerequisites = new Collection<StaticSkillLevel>();
             PrimaryAttribute = EveAttribute.None;
             SecondaryAttribute = EveAttribute.None;
             Group = StaticSkillGroup.UnknownStaticSkillGroup;
             FormattedCost = Cost.ToNumericString(0);
-        }
+            AlphaLimit = 0;
+       }
 
         /// <summary>
         /// Deserialization constructor from datafiles.
@@ -54,11 +55,11 @@ namespace EVEMon.Common.Data
             Description = src.Description;
             PrimaryAttribute = src.PrimaryAttribute;
             SecondaryAttribute = src.SecondaryAttribute;
-            IsTrainableOnTrialAccount = src.CanTrainOnTrial;
             ArrayIndex = arrayIndex;
             Group = group;
             Prerequisites = new Collection<StaticSkillLevel>();
             FormattedCost = Cost.ToNumericString(0);
+            AlphaLimit = src.AlphaLimit;
         }
 
         #endregion
@@ -76,15 +77,6 @@ namespace EVEMon.Common.Data
 
             // Create the prerequisites list
             Prerequisites.AddRange(prereqs.Select(x => new StaticSkillLevel(x.GetSkill(), x.Level)));
-
-            if (!IsTrainableOnTrialAccount)
-                return;
-
-            // Check trainableOnTrialAccount on its childrens to be sure it's really trainable
-            if (Prerequisites.All(prereq => prereq.Skill.IsTrainableOnTrialAccount))
-                return;
-
-            IsTrainableOnTrialAccount = false;
         }
 
         #endregion
@@ -115,12 +107,12 @@ namespace EVEMon.Common.Data
         /// <summary>
         /// Gets the rank of this skill.
         /// </summary>
-        public Int64 Rank { get; }
+        public long Rank { get; }
 
         /// <summary>
         /// Gets the skill's cost.
         /// </summary>
-        public Int64 Cost { get; }
+        public long Cost { get; }
 
         /// <summary>
         /// Gets the skill group this skill is part of.
@@ -143,9 +135,14 @@ namespace EVEMon.Common.Data
         public EveAttribute SecondaryAttribute { get; }
 
         /// <summary>
-        /// Get whether skill is trainable on a trial account.
+        /// Get whether skill is trainable on a alpha account.
         /// </summary>
-        public bool IsTrainableOnTrialAccount { get; private set; }
+        public bool AlphaFriendly { get { return AlphaLimit > 0; } }
+
+        /// <summary>
+        /// Get the level limit for an alpha clone.
+        /// </summary>
+        public long AlphaLimit { get; private set; }
 
         /// <summary>
         /// Gets the prerequisites a character must satisfy before it can be trained.
@@ -168,7 +165,7 @@ namespace EVEMon.Common.Data
         {
             get
             {
-                Int64[] highestLevels = new Int64[StaticSkills.ArrayIndicesCount];
+                long[] highestLevels = new long[StaticSkills.ArrayIndicesCount];
                 List<StaticSkillLevel> list = new List<StaticSkillLevel>();
 
                 // Fill the array
@@ -205,7 +202,7 @@ namespace EVEMon.Common.Data
         /// <param name="level">The level.</param>
         /// <returns>The required nr. of points.</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Int64 GetPointsRequiredForLevel(Int64 level)
+        public long GetPointsRequiredForLevel(long level)
         {
             // Much faster than the old formula. This one too may have 1pt difference here and there, only on the lv2 skills
             switch (level)
@@ -239,7 +236,7 @@ namespace EVEMon.Common.Data
         /// </summary>
         /// <param name="level">The level.</param>
         /// <returns>The required nr. of points.</returns>
-        public Int64 GetPointsRequiredForLevelOnly(int level)
+        public long GetPointsRequiredForLevelOnly(int level)
         {
             if (level == 0)
                 return 0;

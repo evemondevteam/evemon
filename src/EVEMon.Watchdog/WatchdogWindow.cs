@@ -100,7 +100,7 @@ namespace EVEMon.Watchdog
             ProcessStartInfo startInfo = new ProcessStartInfo
                                              {
                                                  FileName = executable,
-                                                 Arguments = String.Join(" ", arguments),
+                                                 Arguments = string.Join(" ", arguments),
                                                  UseShellExecute = false
                                              };
 

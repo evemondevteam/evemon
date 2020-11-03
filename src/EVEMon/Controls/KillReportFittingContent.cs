@@ -520,7 +520,7 @@ namespace EVEMon.Controls
                 if (!rect.Contains(e.Location))
                     continue;
 
-                Object item = FittingContentListBox.Items[i];
+                object item = FittingContentListBox.Items[i];
                 FittingContentListBox.Cursor = item is KillLogItem ? CustomCursors.ContextMenu : Cursors.Default;
 
                 return;

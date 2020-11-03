@@ -11,7 +11,7 @@ namespace EVEMon.Common.Notifications
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="newMessages">The new messages.</param>
-        public EveMailMessageNotificationEventArgs(Object sender, int newMessages)
+        public EveMailMessageNotificationEventArgs(object sender, int newMessages)
             : base(sender, NotificationCategory.NewEveMailMessage)
         {
             m_newMailMessagesCount = newMessages;
@@ -38,7 +38,7 @@ namespace EVEMon.Common.Notifications
         /// </summary>
         private void UpdateDescription()
         {
-            Description = $"{m_newMailMessagesCount} new EVE mail message{(m_newMailMessagesCount > 1 ? "s" : String.Empty)}.";
+            Description = $"{m_newMailMessagesCount} new EVE mail message{(m_newMailMessagesCount > 1 ? "s" : string.Empty)}.";
         }
     }
 }

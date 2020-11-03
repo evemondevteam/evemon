@@ -18,7 +18,7 @@ namespace EVEMon.Common.SettingsObjects
         /// </summary>
         public CharacterUISettings()
         {
-            SelectedPage = String.Empty;
+            SelectedPage = string.Empty;
             m_collapsedGroups = new Collection<string>();
             m_advancedFeaturesEnabledPages = new Collection<string>();
         }

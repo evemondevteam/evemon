@@ -171,12 +171,11 @@ namespace EVEMon.CharacterMonitoring
             // Update the labels
             string highestRankText = m_charFacWarStats.HighestRank > m_charFacWarStats.CurrentRank
                 ? $"({GetMilitiaRank(m_charFacWarStats.HighestRank)})"
-                : String.Empty;
+                : string.Empty;
 
             TimeSpan timeServed = DateTime.UtcNow.Subtract(m_charFacWarStats.EnlistedDate);
-            string timeServedText = timeServed < TimeSpan.FromDays(1)
-                                        ? "Less than one day."
-                                        : $"{timeServed.Days} day{(timeServed.Days > 1 ? "s" : String.Empty)}";
+            string timeServedText = timeServed < TimeSpan.FromDays(1) ? "Less than one day." :
+                $"{timeServed.Days} day{(timeServed.Days.S())}";
 
             FactionLabel.Text = $"Faction: {m_charFacWarStats.FactionName}";
             CorporationLabel.Text = $"Corporation: {Character.CorporationName}";
@@ -200,7 +199,7 @@ namespace EVEMon.CharacterMonitoring
                     // Add enough subitems to match the number of columns
                     while (item.SubItems.Count < lvPersonal.Columns.Count)
                     {
-                        item.SubItems.Add(String.Empty);
+                        item.SubItems.Add(string.Empty);
                     }
 
                     // Create the subitems
@@ -275,7 +274,7 @@ namespace EVEMon.CharacterMonitoring
                     // Add enough subitems to match the number of columns
                     while (item.SubItems.Count < lvMilitia.Columns.Count)
                     {
-                        item.SubItems.Add(String.Empty);
+                        item.SubItems.Add(string.Empty);
                     }
 
                     // Create the subitems

@@ -9,7 +9,8 @@ namespace EVEMon.Common.Data
     /// </summary>
     public static class StaticMasteries
     {
-        private static readonly Dictionary<int, MasteryShip> s_masteryShipsByID = new Dictionary<int, MasteryShip>();
+        private static readonly Dictionary<int, MasteryShip> s_masteryShipsByID =
+            new Dictionary<int, MasteryShip>();
 
 
         #region Initialization
@@ -19,15 +20,14 @@ namespace EVEMon.Common.Data
         /// </summary>
         internal static void Load()
         {
-            MasteriesDatafile datafile = Util.DeserializeDatafile<MasteriesDatafile>(DatafileConstants.MasteriesDatafile);
+            MasteriesDatafile datafile = Util.DeserializeDatafile<MasteriesDatafile>(
+                DatafileConstants.MasteriesDatafile);
 
             foreach (SerializableMasteryShip srcShip in datafile.MasteryShips)
             {
                 Ship ship = StaticItems.GetItemByID(srcShip.ID) as Ship;
-                if (ship == null)
-                    continue;
-
-                s_masteryShipsByID[ship.ID] = new MasteryShip(srcShip, ship);
+                if (ship != null)
+                    s_masteryShipsByID[ship.ID] = new MasteryShip(srcShip, ship);
             }
 
             GlobalDatafileCollection.OnDatafileLoaded();

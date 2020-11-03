@@ -4,9 +4,9 @@ namespace EVEMon.Common.Interfaces
 {
     public interface ICharacterAttribute
     {
-        Int64 Base { get; }
-        Int64 ImplantBonus { get; }
-        Int64 EffectiveValue { get; }
+        long Base { get; }
+        long ImplantBonus { get; }
+        long EffectiveValue { get; }
 
         /// <summary>
         /// Gets a string representation with the provided format. The following parameters are accepted :

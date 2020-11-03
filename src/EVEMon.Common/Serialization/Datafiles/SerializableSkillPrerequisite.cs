@@ -27,6 +27,6 @@ namespace EVEMon.Common.Serialization.Datafiles
         /// </summary>
         /// <value>The level.</value>
         [XmlAttribute("level")]
-        public Int64 Level { get; set; }
+        public long Level { get; set; }
     }
 }

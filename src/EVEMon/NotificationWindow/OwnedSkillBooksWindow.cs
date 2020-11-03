@@ -63,7 +63,7 @@ namespace EVEMon.NotificationWindow
             EveMonClient.CharacterAssetsUpdated += EveMonClient_CharacterAssetsUpdated;
             Disposed += OnDisposed;
 
-            Text = String.Format(CultureConstants.DefaultCulture, Text, m_character.Name);
+            Text = string.Format(CultureConstants.DefaultCulture, Text, m_character.Name);
 
             UpdateList();
         }
@@ -160,7 +160,7 @@ namespace EVEMon.NotificationWindow
             // Add enough subitems to match the number of columns
             while (item.SubItems.Count < lvOwnedSkillBooks.Columns.Count + 1)
             {
-                item.SubItems.Add(String.Empty);
+                item.SubItems.Add(string.Empty);
             }
 
             // Creates the subitems

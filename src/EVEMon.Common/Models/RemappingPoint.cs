@@ -14,8 +14,8 @@ namespace EVEMon.Common.Models
     /// </summary>
     public sealed class RemappingPoint
     {
-        private readonly Int64[] m_attributes = new Int64[5];
-        private string m_description = String.Empty;
+        private readonly long[] m_attributes = new long[5];
+        private string m_description = string.Empty;
 
         /// <summary>
         /// Default constructor.
@@ -61,7 +61,7 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="attrib"></param>
         /// <returns></returns>
-        public Int64 this[EveAttribute attrib] => m_attributes[(int)attrib];
+        public long this[EveAttribute attrib] => m_attributes[(int)attrib];
 
         /// <summary>
         /// Gets a short string representation of the point ("i5 p7 c8 w9 m5").
@@ -96,7 +96,7 @@ namespace EVEMon.Common.Models
                 case RemappingPointStatus.UpToDate:
                     return $"Remapping : {m_description}";
                 default:
-                    return String.Empty;
+                    return string.Empty;
             }
         }
 
@@ -117,7 +117,7 @@ namespace EVEMon.Common.Models
                 case RemappingPointStatus.UpToDate:
                     return $"Remapping (active) : {ToShortString()}";
                 default:
-                    return String.Empty;
+                    return string.Empty;
             }
         }
 
@@ -168,7 +168,7 @@ namespace EVEMon.Common.Models
 
             newScratchpad.ThrowIfNull(nameof(newScratchpad));
 
-            Int64 bonusDifference = newScratchpad[attrib].Base - oldScratchpad[attrib].Base;
+            long bonusDifference = newScratchpad[attrib].Base - oldScratchpad[attrib].Base;
 
             if (bonusDifference == 0)
                 return newScratchpad[attrib].ToString("%N (0) = %e = (%B + %r + %i)");

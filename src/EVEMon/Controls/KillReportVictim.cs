@@ -81,7 +81,7 @@ namespace EVEMon.Controls
 
             Item ship = StaticItems.GetItemByID(m_killLog.Victim.ShipTypeID);
             ShipNameLabel.Text = ship.Name;
-            ShipGroupLabel.Text = String.Format(CultureConstants.DefaultCulture, ShipGroupLabel.Text, ship.GroupName);
+            ShipGroupLabel.Text = string.Format(CultureConstants.DefaultCulture, ShipGroupLabel.Text, ship.GroupName);
 
             KillTimeLabel.Text = m_killLog.KillTime.ToLocalTime().DateTimeToDotFormattedString();
             SolarSystemLabel.Text = m_killLog.SolarSystem?.Name;
@@ -95,56 +95,33 @@ namespace EVEMon.Controls
         /// Gets the image for the specified picture box.
         /// </summary>
         /// <param name="pictureBox">The picture box.</param>
-        /// <param name="useFallbackUri">if set to <c>true</c> [use fallback URI].</param>
-        private async Task GetImageForAsync(PictureBox pictureBox, bool useFallbackUri = false)
+        private async Task GetImageForAsync(PictureBox pictureBox)
         {
-            while (true)
-            {
-                Image img = await ImageService.GetImageAsync(GetImageUrl(pictureBox, useFallbackUri)).ConfigureAwait(false);
-
-                if (img == null && !useFallbackUri)
-                {
-                    useFallbackUri = true;
-                    continue;
-                }
-
+            Image img = await ImageService.GetImageAsync(GetImageUrl(pictureBox)).ConfigureAwait(false);
+            if (img != null)
                 pictureBox.Image = img;
-                break;
-            }
         }
 
         /// <summary>
         /// Gets the image URL.
         /// </summary>
         /// <param name="pictureBox">The picture box.</param>
-        /// <param name="useFallbackUri">if set to <c>true</c> [use fallback URI].</param>
         /// <returns></returns>
-        private Uri GetImageUrl(PictureBox pictureBox, bool useFallbackUri)
+        private Uri GetImageUrl(PictureBox pictureBox)
         {
-            string path = String.Empty;
-
             if (pictureBox.Equals(CharacterPictureBox))
-                path = String.Format(CultureConstants.InvariantCulture,
-                    NetworkConstants.CCPPortraits, m_killLog.Victim.ID, (int)EveImageSize.x128);
+                return ImageHelper.GetPortraitUrl(m_killLog.Victim.ID,
+                    (int)EveImageSize.x128);
 
             if (pictureBox.Equals(ShipPictureBox))
-                path = String.Format(CultureConstants.InvariantCulture,
-                    NetworkConstants.CCPIconsFromImageServer, "render", m_killLog.Victim.ShipTypeID,
+                return ImageHelper.GetTypeRenderURL(m_killLog.Victim.ShipTypeID,
                     (int)EveImageSize.x128);
 
             if (pictureBox.Equals(CorpPictureBox))
-                path = String.Format(CultureConstants.InvariantCulture,
-                    NetworkConstants.CCPIconsFromImageServer, "corporation", m_killLog.Victim.CorporationID,
-                    (int)EveImageSize.x32);
+                return ImageHelper.GetCorporationImageURL(m_killLog.Victim.CorporationID);
 
-            if (pictureBox.Equals(AlliancePictureBox))
-                path = String.Format(CultureConstants.InvariantCulture,
-                    NetworkConstants.CCPIconsFromImageServer, "alliance", m_killLog.Victim.AllianceID,
-                    (int)EveImageSize.x32);
-
-            return useFallbackUri
-                ? ImageService.GetImageServerBaseUri(path)
-                : ImageService.GetImageServerCdnUri(path);
+            // Picture box is for alliance
+            return ImageHelper.GetAllianceImageURL(m_killLog.Victim.AllianceID);
         }
 
         #endregion

@@ -134,7 +134,7 @@ namespace EVEMon.Common.CloudStorageServices
                 .Where(type => typeof(CloudStorageServiceProvider).IsAssignableFrom(type) &&
                                type.GetConstructor(Type.EmptyTypes) != null)
                 .Select(type => Activator.CreateInstance(type) as CloudStorageServiceProvider)
-                .Where(provider => !String.IsNullOrWhiteSpace(provider.Name) && provider.Enabled)
+                .Where(provider => !string.IsNullOrWhiteSpace(provider.Name) && provider.Enabled)
                 .OrderBy(provider => provider.Name);
 
         /// <summary>
@@ -628,7 +628,7 @@ namespace EVEMon.Common.CloudStorageServices
             using (StreamReader reader = new StreamReader(Util.ZlibUncompress(response)))
                 content = await reader.ReadToEndAsync();
 
-            if (String.IsNullOrWhiteSpace(content))
+            if (string.IsNullOrWhiteSpace(content))
             {
                 result.Error = new SerializableAPIError
                 {

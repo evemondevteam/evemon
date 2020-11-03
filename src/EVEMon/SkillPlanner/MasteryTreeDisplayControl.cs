@@ -287,11 +287,11 @@ namespace EVEMon.SkillPlanner
         /// </summary>
         private void UpdateTree()
         {
-            Mastery oldSelection = SelectedMasteryLevel;
-            TreeNode newSelection = null;
+            // Multiple copies of "CPU Management IV" etc. could exist in the tree. To restore
+            // the same selection, the full path to the selection must be stored
+            string path = treeView.SelectedNode?.FullPath ?? "";
 
             treeView.ImageList = Settings.UI.SafeForWork ? m_emptyImageList : imageList;
-
             treeView.BeginUpdate();
             try
             {
@@ -304,17 +304,11 @@ namespace EVEMon.SkillPlanner
 
                 // Create the nodes when not done, yet
                 if (treeView.Nodes.Count == 0)
-                {
                     foreach (Mastery masteryLevel in m_masteryShip)
                     {
-                        TreeNode node = CreateNode(masteryLevel);
+                        var node = CreateNode(masteryLevel);
                         treeView.Nodes.Add(node);
-
-                        // Does the old selection still exists ?
-                        if (masteryLevel == oldSelection)
-                            newSelection = node;
                     }
-                }
 
                 // Update the nodes
                 foreach (TreeNode node in treeView.Nodes)
@@ -322,9 +316,35 @@ namespace EVEMon.SkillPlanner
                     UpdateNode(node);
                 }
 
-                // Is the old selection kept ? Then we select the matching node
-                if (newSelection != null)
-                    treeView.SelectedNode = newSelection;
+                // If old selection exists, select it
+                if (!string.IsNullOrEmpty(path))
+                {
+                    var nodes = treeView.Nodes;
+                    // Iterate through all components in the path
+                    string[] components = path.Split(new string[] { treeView.PathSeparator },
+                        StringSplitOptions.None);
+                    int nc = components.Length;
+                    for (int index = 0; index < nc && nodes != null; index++)
+                    {
+                        TreeNode child = null;
+                        string component = components[index];
+                        int n = nodes.Count;
+                        // Search nodes for a node with the same text
+                        for (int i = 0; i < n && child == null; i++)
+                        {
+                            var candidate = nodes[i];
+                            if (candidate.Text?.Equals(component) ?? false)
+                                child = candidate;
+                        }
+                        nodes = child?.Nodes;
+                        if (index == nc - 1 && child != null)
+                        {
+                            // Found node, select it
+                            child.EnsureVisible();
+                            treeView.SelectedNode = child;
+                        }
+                    }
+                }
             }
             finally
             {
@@ -336,19 +356,19 @@ namespace EVEMon.SkillPlanner
         /// Create a node from a mastery.
         /// </summary>
         /// <param name="masteryLevel">The mastery level.</param>
-        /// <returns></returns>
+        /// <returns>The node created.</returns>
         private TreeNode CreateNode(Mastery masteryLevel)
         {
-            TreeNode node = new TreeNode
+            var node = new TreeNode
             {
                 Text = masteryLevel.ToString(),
                 Tag = masteryLevel
             };
 
-            foreach (CertificateLevel certificate in masteryLevel
-                .OrderBy(cert => cert.Certificate.Class.Name)
-                .Select(cert => cert.ToCharacter(m_character).GetCertificateLevel(masteryLevel.Level)))
+            foreach (var cert in masteryLevel.OrderBy(cert => cert.Certificate.Class.Name))
             {
+                var certificate = cert.ToCharacter(m_character).GetCertificateLevel(
+                    masteryLevel.Level);
                 node.Nodes.Add(CreateNode(certificate));
             }
 
@@ -391,10 +411,10 @@ namespace EVEMon.SkillPlanner
             };
 
             // Add this skill's prerequisites
-            foreach (SkillLevel prereqSkill in skillPrereq.Skill.Prerequisites
-                .Where(prereqSkill => prereqSkill.Skill != skillPrereq.Skill))
+            foreach (var prereqSkill in skillPrereq.Skill.Prerequisites)
             {
-                node.Nodes.Add(CreateNode(prereqSkill));
+                if (prereqSkill.Skill != skillPrereq.Skill)
+                    node.Nodes.Add(CreateNode(prereqSkill));
             }
 
             return node;
@@ -490,7 +510,8 @@ namespace EVEMon.SkillPlanner
                 // When not trained, let's display the training time of all certificates of this level
                 if (!masteryLevel.IsTrained)
                 {
-                    line2 = masteryLevel.GetTrainingTime.ToDescriptiveText(DescriptiveTextOptions.IncludeCommas);
+                    line2 = masteryLevel.GetTrainingTime().ToDescriptiveText(
+                        DescriptiveTextOptions.IncludeCommas);
                 }
             }
             else if (certLevel != null)
@@ -503,7 +524,8 @@ namespace EVEMon.SkillPlanner
                 // When not trained, let's display the training time
                 if (!certLevel.IsTrained)
                 {
-                    line2 = certLevel.GetTrainingTime.ToDescriptiveText(DescriptiveTextOptions.IncludeCommas);
+                    line2 = certLevel.GetTrainingTime.ToDescriptiveText(DescriptiveTextOptions.
+                        IncludeCommas);
                 }
             }
             // Or a skill prerequisite ?
@@ -543,7 +565,7 @@ namespace EVEMon.SkillPlanner
                 int left = e.Bounds.Left + il.ImageSize.Width + 2;
                 Size line1Size = TextRenderer.MeasureText(e.Node.Text, m_boldFont);
 
-                if (!String.IsNullOrEmpty(line2))
+                if (!string.IsNullOrEmpty(line2))
                 {
                     Size line2Size = TextRenderer.MeasureText(line2, Font);
 
@@ -608,38 +630,40 @@ namespace EVEMon.SkillPlanner
                 else if (node != null)
                 {
                     // Update "add to" menu
-                    SkillLevel prereq = (SkillLevel)node.Tag;
-                    Skill skill = prereq.Skill;
-                    planToLevel.Enabled = skill.Level < prereq.Level && !m_plan.IsPlanned(skill, prereq.Level);
-                    planToLevel.Text = $"Plan \"{skill} {Skill.GetRomanFromInt(prereq.Level)}\"";
+                    var prereq = node.Tag as SkillLevel;
+                    if (prereq != null)
+                    {
+                        Skill skill = prereq.Skill;
+                        planToLevel.Enabled = skill.Level < prereq.Level && !m_plan.
+                            IsPlanned(skill, prereq.Level);
+                        planToLevel.Text = $"Plan \"{skill} {Skill.GetRomanFromInt(prereq.Level)}\"";
+                    }
                 }
             }
             // Update "show in skill browser" text
-            showInBrowserMenu.Text = certLevel != null
-                ? "Show in Certificate Browser"
-                : "Show in Skill Browser";
+            showInBrowserMenu.Text = certLevel != null ? "Show in Certificate Browser" :
+                "Show in Skill Browser";
 
             // Update "show in skill browser" menu
-            showInBrowserMenu.Visible = (node != null) && (masteryLevel == null);
+            showInBrowserMenu.Visible = (node != null && masteryLevel == null);
 
             // Update "show in skill explorer" menu
-            showInExplorerMenu.Visible = (node != null) && (masteryLevel == null) && (certLevel == null);
+            showInExplorerMenu.Visible = (node != null && masteryLevel == null && certLevel == null);
 
             // Update "show in" menu
-            showInMenuSeparator.Visible = (node != null) && (masteryLevel == null);
+            showInMenuSeparator.Visible = (node != null && masteryLevel == null);
 
             // "Collapse" and "Expand" menus
-            tsmCollapseSelected.Visible = node != null && node.GetNodeCount(true) > 0 && node.IsExpanded;
-            tsmExpandSelected.Visible = node != null && node.GetNodeCount(true) > 0 && !node.IsExpanded;
+            int subNodeCount = node?.GetNodeCount(true) ?? 0;
+            tsmCollapseSelected.Visible = subNodeCount > 0 && node.IsExpanded;
+            tsmExpandSelected.Visible = subNodeCount > 0 && !node.IsExpanded;
 
-            tsmExpandSelected.Text = node != null && node.GetNodeCount(true) > 0 && !node.IsExpanded
-                ? $"Expand \"{node.Text}\""
-                : String.Empty;
-            tsmCollapseSelected.Text = node != null && node.GetNodeCount(true) > 0 && node.IsExpanded
-                ? $"Collapse \"{node.Text}\""
-                : String.Empty;
+            tsmExpandSelected.Text = (subNodeCount > 0 && !node.IsExpanded) ?
+                $"Expand \"{node.Text}\"" : string.Empty;
+            tsmCollapseSelected.Text = (subNodeCount > 0 && node.IsExpanded) ?
+                $"Collapse \"{node.Text}\"" : string.Empty;
 
-            toggleSeparator.Visible = node != null && node.GetNodeCount(true) > 0;
+            toggleSeparator.Visible = subNodeCount > 0;
 
             // "Expand All" and "Collapse All" menus
             tsmCollapseAll.Enabled = tsmCollapseAll.Visible = m_allExpanded;
@@ -653,9 +677,9 @@ namespace EVEMon.SkillPlanner
         /// <param name="e"></param>
         private void tsmAddToPlan_Click(object sender, EventArgs e)
         {
-            Mastery masteryLevel = treeView.SelectedNode.Tag as Mastery;
-            CertificateLevel certLevel = treeView.SelectedNode.Tag as CertificateLevel;
-            IPlanOperation operation;
+            var masteryLevel = treeView.SelectedNode.Tag as Mastery;
+            var certLevel = treeView.SelectedNode.Tag as CertificateLevel;
+            IPlanOperation operation = null;
 
             if (masteryLevel != null)
                 operation = m_plan.TryPlanTo(masteryLevel);
@@ -663,18 +687,18 @@ namespace EVEMon.SkillPlanner
                 operation = m_plan.TryPlanTo(certLevel);
             else
             {
-                SkillLevel prereq = (SkillLevel)treeView.SelectedNode.Tag;
-                operation = m_plan.TryPlanTo(prereq.Skill, prereq.Level);
+                var prereq = treeView.SelectedNode.Tag as SkillLevel;
+                if (prereq != null)
+                    operation = m_plan.TryPlanTo(prereq.Skill, prereq.Level);
             }
 
-            if (operation == null)
-                return;
-
-            PlanWindow planWindow = ParentForm as PlanWindow;
-            if (planWindow == null)
-                return;
-
-            PlanHelper.SelectPerform(new PlanToOperationWindow(operation), planWindow, operation);
+            if (operation != null)
+            {
+                var planWindow = ParentForm as PlanWindow;
+                if (planWindow != null)
+                    PlanHelper.SelectPerform(new PlanToOperationWindow(operation), planWindow,
+                        operation);
+            }
         }
 
         /// <summary>
@@ -741,10 +765,11 @@ namespace EVEMon.SkillPlanner
             // When a skill is selected, we select it in the skill browser
             else
             {
-                Skill skill = ((SkillLevel)treeView.SelectedNode?.Tag)?.Skill;
+                var skill = (treeView.SelectedNode?.Tag as SkillLevel)?.Skill;
 
                 // Open the skill browser
-                PlanWindow.ShowPlanWindow(m_character, m_plan).ShowSkillInBrowser(skill);
+                if (skill != null)
+                    PlanWindow.ShowPlanWindow(m_character, m_plan).ShowSkillInBrowser(skill);
             }
         }
 
@@ -755,10 +780,12 @@ namespace EVEMon.SkillPlanner
         /// <param name="e"></param>
         private void showInExplorerMenu_Click(object sender, EventArgs e)
         {
-            Skill skill = ((SkillLevel)treeView.SelectedNode?.Tag)?.Skill;
+            var skill = (treeView.SelectedNode?.Tag as SkillLevel)?.Skill;
 
             // Open the skill explorer
-            SkillExplorerWindow.ShowSkillExplorerWindow(m_character, m_plan).ShowSkillInExplorer(skill);
+            if (skill != null)
+                SkillExplorerWindow.ShowSkillExplorerWindow(m_character, m_plan).
+                    ShowSkillInExplorer(skill);
         }
 
         #endregion

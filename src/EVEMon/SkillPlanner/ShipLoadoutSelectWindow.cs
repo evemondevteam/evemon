@@ -190,9 +190,9 @@ namespace EVEMon.SkillPlanner
             // Set labels while the user wait
             lblShipName.Text = m_ship.Name;
             lblLoadoutName.Text = @"No Loadout Selected";
-            lblAuthor.Text = String.Empty;
-            lblSubmitDate.Text = String.Empty;
-            lblPlanned.Text = String.Empty;
+            lblAuthor.Text = string.Empty;
+            lblSubmitDate.Text = string.Empty;
+            lblPlanned.Text = string.Empty;
             lblPlanned.Hide();
             lblTrainTime.Text = @"N/A";
             lblTrainTime.Visible = m_character != null;
@@ -359,7 +359,7 @@ namespace EVEMon.SkillPlanner
 
             // Order the nodes
             TreeNode[] orderNodes = tvLoadout.Nodes.Cast<TreeNode>().OrderBy(
-                node => LoadoutHelper.OrderedSlotNames.IndexOf(String.Intern(node.Text))).ToArray();
+                node => LoadoutHelper.OrderedSlotNames.IndexOf(string.Intern(node.Text))).ToArray();
 
             tvLoadout.BeginUpdate();
             try
@@ -441,7 +441,7 @@ namespace EVEMon.SkillPlanner
             lblTrainTime.Text = trainingTime.ToDescriptiveText(
                 DescriptiveTextOptions.IncludeCommas | DescriptiveTextOptions.SpaceText);
             lblTrainTime.Show();
-            lblPlanned.Text = String.Empty;
+            lblPlanned.Text = string.Empty;
             lblPlanned.Hide();
             btnPlan.Enabled = true;
         }
@@ -719,10 +719,10 @@ namespace EVEMon.SkillPlanner
 
             cmiExpandSelected.Text = selectedItem == null && node != null && !node.IsExpanded
                 ? $"Expand \"{node.Text}\""
-                : String.Empty;
+                : string.Empty;
             cmiCollapseSelected.Text = selectedItem == null && node != null && node.IsExpanded
                 ? $"Collapse \"{node.Text}\""
-                : String.Empty;
+                : string.Empty;
 
             // "Expand All" and "Collapse All" menus
             cmiCollapseAll.Enabled = cmiCollapseAll.Visible = m_allExpanded;
@@ -792,7 +792,7 @@ namespace EVEMon.SkillPlanner
         private void UpdateTitle()
         {
             Text = $"{m_character} " +
-                   (m_plan == null ? String.Empty : $" [{m_plan.Name}] ") +
+                   (m_plan == null ? string.Empty : $" [{m_plan.Name}] ") +
                    $"- {Settings.LoadoutsProvider.Provider?.Name} Loadout Selection";
         }
 
@@ -866,10 +866,10 @@ namespace EVEMon.SkillPlanner
                 switch (SortColumn)
                 {
                     case 0: // sort by name
-                        compareResult = String.Compare(a.Text, b.Text, StringComparison.CurrentCulture);
+                        compareResult = string.Compare(a.Text, b.Text, StringComparison.CurrentCulture);
                         break;
                     case 1: // Author
-                        compareResult = String.Compare(a.SubItems[1].Text, b.SubItems[1].Text, StringComparison.CurrentCulture);
+                        compareResult = string.Compare(a.SubItems[1].Text, b.SubItems[1].Text, StringComparison.CurrentCulture);
                         break;
                     case 2: // Rating
                         if (loadoutB != null && loadoutA != null && loadoutA.Rating < loadoutB.Rating)

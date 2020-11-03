@@ -89,11 +89,11 @@
             // 
             this.CopyToClipboardLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.CopyToClipboardLinkLabel.AutoSize = true;
-            this.CopyToClipboardLinkLabel.Location = new System.Drawing.Point(484, 50);
+            this.CopyToClipboardLinkLabel.Location = new System.Drawing.Point(487, 50);
             this.CopyToClipboardLinkLabel.Margin = new System.Windows.Forms.Padding(0);
             this.CopyToClipboardLinkLabel.Name = "CopyToClipboardLinkLabel";
             this.CopyToClipboardLinkLabel.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.CopyToClipboardLinkLabel.Size = new System.Drawing.Size(93, 23);
+            this.CopyToClipboardLinkLabel.Size = new System.Drawing.Size(90, 23);
             this.CopyToClipboardLinkLabel.TabIndex = 4;
             this.CopyToClipboardLinkLabel.TabStop = true;
             this.CopyToClipboardLinkLabel.Text = "Copy to Clipboard";
@@ -101,9 +101,9 @@
             // 
             // DetailsPanel
             // 
-            this.DetailsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.DetailsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.DetailsPanel.BackColor = System.Drawing.SystemColors.Window;
             this.DetailsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.MainTableLayoutPanel.SetColumnSpan(this.DetailsPanel, 2);
@@ -126,12 +126,12 @@
             this.DetailsTextBox.ReadOnly = true;
             this.DetailsTextBox.Size = new System.Drawing.Size(545, 349);
             this.DetailsTextBox.TabIndex = 3;
-            this.DetailsTextBox.Text = "This text should not be seen.";
+            this.DetailsTextBox.Text = "No error details are available.";
             // 
             // TroubleshooterPanel
             // 
-            this.TroubleshooterPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.TroubleshooterPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.TroubleshooterPanel.AutoSize = true;
             this.TroubleshooterPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.TroubleshooterPanel.BackColor = System.Drawing.SystemColors.InactiveCaption;
@@ -145,7 +145,7 @@
             this.TroubleshooterPanel.TabIndex = 2;
             this.TroubleshooterPanel.Visible = false;
             // 
-            // APIErrorWindow
+            // ApiErrorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -155,7 +155,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(500, 500);
-            this.Name = "APIErrorWindow";
+            this.Name = "ApiErrorWindow";
             this.Text = "API Error Details";
             ((System.ComponentModel.ISupportInitialize)(this.IconPictureBox)).EndInit();
             this.MainTableLayoutPanel.ResumeLayout(false);

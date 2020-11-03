@@ -74,10 +74,12 @@ namespace EVEMon.Common.Collections.Global
             // Must always run synchronously as masteries depend on it
             await TaskHelper.RunIOBoundTaskAsync(() => StaticCertificates.Load());
 
+            // Must always run synchronously as ID to name depends on it
+            await TaskHelper.RunIOBoundTaskAsync(() => StaticGeography.Load());
+
             // Non critical loadings as all dependencies have been loaded
             Task blueprints = TaskHelper.RunIOBoundTaskAsync(() => StaticBlueprints.Load());
             Task reprocessing = TaskHelper.RunIOBoundTaskAsync(() => StaticReprocessing.Load());
-            Task masteries = TaskHelper.RunIOBoundTaskAsync(() => StaticGeography.Load());
             await TaskHelper.RunIOBoundTaskAsync(() => StaticMasteries.Load());
 
             EveMonClient.Trace("Datafiles.Load - done", printMethod: false);

@@ -271,7 +271,7 @@ namespace EVEMon.Common.ExternalCalendar
             string certPath = Directory.GetParent(configuration.FilePath).Parent?.Parent?.FullName;
 
             bool fileExists = false;
-            if (!String.IsNullOrWhiteSpace(certPath))
+            if (!string.IsNullOrWhiteSpace(certPath))
             {
                 certPath = Path.Combine(certPath, CredentialsDirectory);
                 string filePath = Path.Combine(certPath, $"{typeof(TokenResponse).FullName}-{UserId}");
@@ -300,15 +300,15 @@ namespace EVEMon.Common.ExternalCalendar
         {
             if (s_calendarId != null)
             {
-                if (String.IsNullOrWhiteSpace(Settings.Calendar.GoogleCalendarName) && s_isPrimaryCalendar)
+                if (string.IsNullOrWhiteSpace(Settings.Calendar.GoogleCalendarName) && s_isPrimaryCalendar)
                     return s_calendarId;
 
                 if (s_calendarId == Settings.Calendar.GoogleCalendarName)
                     return s_calendarId;
             }
 
-            s_isPrimaryCalendar = String.IsNullOrWhiteSpace(Settings.Calendar.GoogleCalendarName);
-            s_calendarId = String.IsNullOrWhiteSpace(Settings.Calendar.GoogleCalendarName)
+            s_isPrimaryCalendar = string.IsNullOrWhiteSpace(Settings.Calendar.GoogleCalendarName);
+            s_calendarId = string.IsNullOrWhiteSpace(Settings.Calendar.GoogleCalendarName)
                                ? "primary"
                                : Settings.Calendar.GoogleCalendarName;
 

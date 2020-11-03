@@ -151,7 +151,7 @@ namespace EVEMon.Common.Controls
         /// Gets or sets the selected item.
         /// </summary>
         [Browsable(false)]
-        public new Object SelectedItem
+        public new object SelectedItem
         {
             get { return m_listBox.SelectedItem; }
             set { m_listBox.SelectedItem = value; }
@@ -181,7 +181,7 @@ namespace EVEMon.Common.Controls
         /// Gets the text to display.
         /// </summary>
         /// <returns></returns>
-        public override string GetTextValue() => m_listBox.SelectedItem?.ToString() ?? String.Empty;
+        public override string GetTextValue() => m_listBox.SelectedItem?.ToString() ?? string.Empty;
 
         /// <summary>
         /// When the drop down is closed, we hide the tooltip.
@@ -236,7 +236,7 @@ namespace EVEMon.Common.Controls
             }
 
             // Display text
-            if (!String.IsNullOrEmpty(m_displayText))
+            if (!string.IsNullOrEmpty(m_displayText))
             {
                 using (Brush foreBrush = new SolidBrush(ForeColor))
                 {

@@ -7,6 +7,7 @@ using EVEMon.Common.Constants;
 using EVEMon.Common.Data;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Extensions;
+using EVEMon.Common.Helpers;
 using EVEMon.Common.Serialization.Eve;
 using EVEMon.Common.Service;
 
@@ -112,7 +113,7 @@ namespace EVEMon.Common.Models
                     case KillLogFittingContentGroup.Cargo:
                         return EveFlag.GetFlagText(EVEFlag);
                     default:
-                        return String.Empty;
+                        return string.Empty;
                 }
             }
         }
@@ -147,6 +148,26 @@ namespace EVEMon.Common.Models
 
 
         #region Helper Methods
+
+        /// <summary>
+        /// Exports this object to a serializable form.
+        /// </summary>
+        /// <returns>The SerializableKillLogItemListItem representing this object.</returns>
+        public SerializableKillLogItemListItem Export()
+        {
+            var exported = new SerializableKillLogItemListItem()
+            {
+                EVEFlag = EVEFlag,
+                QtyDestroyed = QtyDestroyed,
+                QtyDropped = QtyDropped,
+                Singleton = Singleton,
+                TypeID = m_typeID
+            };
+            // Recursively export contained items
+            foreach (var item in m_items)
+                exported.Items.Add(item.Export());
+            return exported;
+        }
 
         /// <summary>
         /// Gets the fiiting and content group.
@@ -219,27 +240,14 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the item image.
         /// </summary>
-        /// <param name="useFallbackUri">if set to <c>true</c> [use fallback URI].</param>
-        private async Task GetItemImageAsync(bool useFallbackUri = false)
+        private async Task GetItemImageAsync()
         {
-            while (true)
-            {
-                Image img = await ImageService.GetImageAsync(GetImageUrl(useFallbackUri)).ConfigureAwait(false);
-
-                if (img == null)
-                {
-                    if (useFallbackUri)
-                        return;
-
-                    useFallbackUri = true;
-                    continue;
-                }
-
+            Uri uri = ImageHelper.GetTypeImageURL(m_typeID);
+            Image img = await ImageService.GetImageAsync(uri).ConfigureAwait(false);
+            if (img != null) {
                 m_image = img;
-
                 // Notify the subscriber that we got the image
                 KillLogItemImageUpdated?.ThreadSafeInvoke(this, EventArgs.Empty);
-                break;
             }
         }
 
@@ -248,22 +256,6 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <returns></returns>
         private static Bitmap GetDefaultImage() => new Bitmap(24, 24);
-
-        /// <summary>
-        /// Gets the image URL.
-        /// </summary>
-        /// <param name="useFallbackUri">if set to <c>true</c> [use fallback URI].</param>
-        /// <returns></returns>
-        private Uri GetImageUrl(bool useFallbackUri)
-        {
-            string path = String.Format(CultureConstants.InvariantCulture,
-                NetworkConstants.CCPIconsFromImageServer, "type", m_typeID,
-                (int)EveImageSize.x32);
-
-            return useFallbackUri
-                ? ImageService.GetImageServerBaseUri(path)
-                : ImageService.GetImageServerCdnUri(path);
-        }
 
         #endregion
     }

@@ -1,6 +1,4 @@
-using System;
 using System.Xml.Serialization;
-using EVEMon.Common.Data;
 
 namespace EVEMon.Common.Serialization.Eve
 {
@@ -21,21 +19,11 @@ namespace EVEMon.Common.Serialization.Eve
             get { return CloneName; }
             set
             {
-                if (!String.IsNullOrEmpty(value))
-                    CloneName = value;
-
-                var station = LocationID != 0 && LocationID <= Int32.MaxValue
-                    ? Station.GetByID(Convert.ToInt32(LocationID))
-                    : null;
-
-                CloneName = String.Format("Clone in {0}", station != null
-                    ? station.Name
-                    : String.Format("Clone Vat Bay ({0})", LocationID));
+                CloneName = value;
             }
         }
 
         [XmlIgnore]
         public string CloneName { get; set; }
-
     }
 }

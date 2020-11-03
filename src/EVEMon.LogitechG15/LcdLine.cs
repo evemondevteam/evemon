@@ -45,6 +45,8 @@ namespace EVEMon.LogitechG15
         internal void Render(Graphics canvas, Graphics overlay, float offset, float defaultOffset)
         {
             double percentage;
+            // Values are serialized using current culture so should be parsed using current
+            // culture
             if (double.TryParse(m_text, out percentage))
                 RenderProgressLine(canvas, overlay, offset, defaultOffset, percentage);
             else

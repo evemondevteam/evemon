@@ -146,9 +146,9 @@ namespace EVEMon.XmlGenerator.Utils
         /// Gets the solution directory.
         /// </summary>
         /// <returns></returns>
-        private static String GetSolutionDirectory()
+        private static string GetSolutionDirectory()
         {
-            if (String.IsNullOrWhiteSpace(s_solutionDir))
+            if (string.IsNullOrWhiteSpace(s_solutionDir))
                 s_solutionDir = Regex.Match(Directory.GetCurrentDirectory(), @"[a-zA-Z]+:.*\\(?=tools)",
                     RegexOptions.Compiled | RegexOptions.IgnoreCase).ToString();
             return s_solutionDir;
@@ -160,7 +160,7 @@ namespace EVEMon.XmlGenerator.Utils
         /// <returns></returns>
         private static string GetProjectDirectory()
         {
-            if (String.IsNullOrWhiteSpace(s_projectDir))
+            if (string.IsNullOrWhiteSpace(s_projectDir))
             {
                 s_projectDir = Regex.Match(Directory.GetCurrentDirectory(), @"[a-zA-Z]+:.*\\(?=bin)",
                     RegexOptions.Compiled | RegexOptions.IgnoreCase).ToString();
@@ -171,9 +171,9 @@ namespace EVEMon.XmlGenerator.Utils
         /// <summary>
         /// Gets the output path.
         /// </summary>
-        private static String GetOutputPath()
+        private static string GetOutputPath()
         {
-            if (String.IsNullOrWhiteSpace(s_outputPath))
+            if (string.IsNullOrWhiteSpace(s_outputPath))
             {
                 s_outputPath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase.Remove(0, GetProjectDirectory().Length);
             }
@@ -190,7 +190,7 @@ namespace EVEMon.XmlGenerator.Utils
 
             s_counter = 0;
             s_percentOld = -1;
-            s_text = String.Empty;
+            s_text = string.Empty;
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace EVEMon.XmlGenerator.Utils
 
             s_percentOld = percentRounded;
 
-            if (!String.IsNullOrEmpty(s_text))
+            if (!string.IsNullOrEmpty(s_text))
                 Console.SetCursorPosition(Console.CursorLeft - s_text.Length, Console.CursorTop);
 
             s_text = $"{percent:P0}";
@@ -221,7 +221,7 @@ namespace EVEMon.XmlGenerator.Utils
         /// <param name="totalCount">The total count.</param>
         internal static void UpdateProgress(int totalCount)
         {
-            if (!String.IsNullOrEmpty(s_text))
+            if (!string.IsNullOrEmpty(s_text))
                 Console.SetCursorPosition(Console.CursorLeft - s_text.Length, Console.CursorTop);
 
             s_tablesCount++;

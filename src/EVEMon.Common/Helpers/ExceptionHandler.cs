@@ -32,11 +32,11 @@ namespace EVEMon.Common.Helpers
         /// <param name="header">The header.</param>
         private static void LogException(Exception e, string header)
         {
-            Trace.WriteLine(String.Empty);
+            Trace.WriteLine(string.Empty);
             EveMonClient.Trace(header);
             Trace.Indent();
             Trace.WriteLine(e.ToString().RemoveProjectLocalPath());
-            Trace.WriteLine(String.Empty);
+            Trace.WriteLine(string.Empty);
             Trace.Unindent();
         }
     }

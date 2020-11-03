@@ -1,8 +1,7 @@
-﻿using System;
-using System.Globalization;
-using EVEMon.Common.Constants;
+﻿using EVEMon.Common.Constants;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Serialization.Datafiles;
+using System;
 
 namespace EVEMon.Common.Data
 {
@@ -120,7 +119,7 @@ namespace EVEMon.Common.Data
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">obj</exception>
-        public String GetLabelOrDefault(Item obj)
+        public string GetLabelOrDefault(Item obj)
         {
             obj.ThrowIfNull(nameof(obj));
 
@@ -135,19 +134,19 @@ namespace EVEMon.Common.Data
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">obj</exception>
-        public Double GetNumericValue(Item obj)
+        public double GetNumericValue(Item obj)
         {
             obj.ThrowIfNull(nameof(obj));
 
             // Retrieve the string for the number
             EvePropertyValue? value = obj.Properties[ID];
-            String number = value?.Value ?? DefaultValue;
+            string number = value?.Value ?? DefaultValue;
 
             // Try to parse it as a real
-            Single result;
-            return Single.TryParse(number, NumberStyles.Number, CultureConstants.InvariantCulture, out result)
-                       ? result
-                       : default(Single);
+            float result;
+            number.TryParseInv(out result);
+            // result is set to default(float) if it fails anyways
+            return result;
         }
 
         /// <summary>
@@ -155,10 +154,10 @@ namespace EVEMon.Common.Data
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        private String Format(String value)
+        private string Format(string value)
         {
-            Single numericValue;
-            if (!Single.TryParse(value, NumberStyles.Number, CultureConstants.InvariantCulture, out numericValue))
+            float numericValue;
+            if (!value.TryParseInv(out numericValue))
                 return value;
 
             try
@@ -197,11 +196,11 @@ namespace EVEMon.Common.Data
 
                         // Format a value of Absolute Percentage
                     case DBConstants.AbsolutePercentUnitID:
-                        return $"{numericValue * 100} {Unit}";
+                        return $"{numericValue * 100:0.###} {Unit}";
 
                         // Format a value of Inverse Absolute Percentage
                     case DBConstants.InverseAbsolutePercentUnitID:
-                        return $"{(1 - numericValue) * 100} {Unit}";
+                        return $"{(1 - numericValue) * 100:0.###} {Unit}";
 
                         // Format a value of Modifier Percentage
                     case DBConstants.ModifierPercentUnitID:
@@ -217,17 +216,14 @@ namespace EVEMon.Common.Data
 
                         // A reference to an item or a skill (typeID)
                     case DBConstants.TypeUnitID:
-                        int id = Int32.Parse(value, CultureConstants.InvariantCulture);
-                        Item item = StaticItems.GetItemByID(id);
-                        return id == 0
-                            ? String.Empty
-                            : item != null
-                                ? item.Name
-                                : EveMonConstants.UnknownText;
+                        int id;
+                        return (!value.TryParseInv(out id) || id == 0) ? string.Empty :
+                            StaticItems.GetItemName(id);
 
                         // Format a Sizeclass ("1=small 2=medium 3=l")
                     case DBConstants.SizeclassUnitID:
-                        int size = Int32.Parse(value, CultureConstants.InvariantCulture);
+                        int size;
+                        value.TryParseInv(out size);
                         switch (size)
                         {
                             case 1:

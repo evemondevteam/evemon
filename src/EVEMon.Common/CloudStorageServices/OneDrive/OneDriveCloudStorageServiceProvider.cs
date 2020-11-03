@@ -57,7 +57,7 @@ namespace EVEMon.Common.CloudStorageServices.OneDrive
         /// <c>true</c> if the provider API credentials are stored; otherwise, <c>false</c>.
         /// </value>
         public override bool HasCredentialsStored
-            => !String.IsNullOrEmpty(OneDriveCloudStorageServiceSettings.Default.RefreshToken);
+            => !string.IsNullOrEmpty(OneDriveCloudStorageServiceSettings.Default.RefreshToken);
 
         /// <summary>
         /// Gets the settings.
@@ -101,7 +101,7 @@ namespace EVEMon.Common.CloudStorageServices.OneDrive
         {
             m_result = new SerializableAPIResult<SerializableAPICredentials>();
 
-            await CheckAuthCodeAsync(String.Empty).ConfigureAwait(false);
+            await CheckAuthCodeAsync(string.Empty).ConfigureAwait(false);
 
             return m_result;
         }
@@ -217,7 +217,7 @@ namespace EVEMon.Common.CloudStorageServices.OneDrive
                 using (OneDriveClient client = (OneDriveClient)await GetClient().ConfigureAwait(false))
                 using (Stream stream = Util.GetMemoryStream(content))
                 {
-                    Item response = await (String.IsNullOrWhiteSpace(m_fileId)
+                    Item response = await (string.IsNullOrWhiteSpace(m_fileId)
                         ? client.Drive.Special.AppRoot
                             .ItemWithPath(Uri.EscapeUriString(SettingsFileNameWithoutExtension))
                         : client.Drive.Items[m_fileId])
@@ -254,7 +254,7 @@ namespace EVEMon.Common.CloudStorageServices.OneDrive
             {
                 m_fileId = m_fileId ?? await GetFileIdAsync().ConfigureAwait(false);
 
-                if (String.IsNullOrWhiteSpace(m_fileId))
+                if (string.IsNullOrWhiteSpace(m_fileId))
                     throw new FileNotFoundException();
 
                 using (OneDriveClient client = (OneDriveClient)await GetClient().ConfigureAwait(false))
@@ -332,7 +332,7 @@ namespace EVEMon.Common.CloudStorageServices.OneDrive
             CredentialCache credentialCache = new CredentialCache();
             string credentials = OneDriveCloudStorageServiceSettings.Default.Credentials;
 
-            if (!String.IsNullOrWhiteSpace(credentials))
+            if (!string.IsNullOrWhiteSpace(credentials))
                 credentialCache.InitializeCacheFromBlob(Encoding.Default.GetBytes(credentials));
 
             IServiceInfoProvider serviceInfoProvider = new ServiceInfoProvider(new FormsWebAuthenticationUi())
@@ -365,7 +365,7 @@ namespace EVEMon.Common.CloudStorageServices.OneDrive
             catch (OneDriveException exc)
             {
                 if (exc.IsMatch(OneDriveErrorCode.ItemNotFound.ToString()))
-                    return String.Empty;
+                    return string.Empty;
 
                 throw;
             }

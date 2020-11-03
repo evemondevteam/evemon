@@ -21,9 +21,10 @@ namespace EVEMon.Common.Data
             Level = src.Level;
             Quality = src.Quality;
             Division = src.DivisionName;
-            AgentType = Enum.IsDefined(typeof(AgentType), src.AgentType)
-                            ? (AgentType)Enum.Parse(typeof(AgentType), src.AgentType)
-                            : AgentType.NonAgent;
+            AgentType type;
+            if (!Enum.TryParse(src.AgentType, out type))
+                type = AgentType.NonAgent;
+            AgentType = type;
             ResearchSkill = StaticSkills.GetSkillName(src.ResearchSkillID);
             LocatorService = src.LocatorService;
         }

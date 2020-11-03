@@ -8,7 +8,7 @@ namespace EVEMon.Common.CustomEventArgs
         /// Initializes a new instance of the <see cref="AttributeHighlightingEventArgs"/> class.
         /// </summary>
         /// <param name="highlightValue">The highlight value.</param>
-        public AttributeHighlightingEventArgs(Int64 highlightValue)
+        public AttributeHighlightingEventArgs(long highlightValue)
         {
             Value = highlightValue;
         }
@@ -17,6 +17,6 @@ namespace EVEMon.Common.CustomEventArgs
         /// Gets the value.
         /// </summary>
         /// <value>The value.</value>
-        public Int64 Value { get; }
+        public long Value { get; }
     }
 }

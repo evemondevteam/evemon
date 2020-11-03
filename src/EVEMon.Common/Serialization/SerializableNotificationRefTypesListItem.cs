@@ -7,6 +7,9 @@ namespace EVEMon.Common.Serialization
         [XmlAttribute("refTypeID")]
         public int TypeID { get; set; }
 
+        [XmlAttribute("refTypeCode")]
+        public string TypeCode { get; set; }
+
         [XmlAttribute("refTypeName")]
         public string TypeName { get; set; }
 

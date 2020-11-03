@@ -319,7 +319,7 @@ namespace EVEMon.PieChart
             base.OnMouseEnter(e);
 
             m_defaultToolTipAutoPopDelay = m_toolTip.AutoPopDelay;
-            m_toolTip.AutoPopDelay = Int16.MaxValue;
+            m_toolTip.AutoPopDelay = short.MaxValue;
         }
 
         /// <summary>

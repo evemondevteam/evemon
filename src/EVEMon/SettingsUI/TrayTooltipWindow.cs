@@ -64,7 +64,7 @@ namespace EVEMon.SettingsUI
             UpdateCharactersList();
 
             // Replaces the fragments like "%10546464r" (the number being the character ID) by the remaining time
-            string tooltip = m_tooltipFormat ?? String.Empty;
+            string tooltip = m_tooltipFormat ?? string.Empty;
             foreach (Character character in m_characters)
             {
                 if (character.IsTraining)
@@ -105,7 +105,7 @@ namespace EVEMon.SettingsUI
 
             // Assembles the tooltip format
             StringBuilder sb = new StringBuilder();
-            if (String.IsNullOrEmpty(Settings.UI.SystemTrayTooltip.Format))
+            if (string.IsNullOrEmpty(Settings.UI.SystemTrayTooltip.Format))
             {
                 // Bad tooltip format
                 sb.Append("You can configure this tooltip in the options/general panel");
@@ -165,7 +165,7 @@ namespace EVEMon.SettingsUI
 
             CCPCharacter ccpCharacter = character as CCPCharacter;
             if (ccpCharacter == null || (!ccpCharacter.IsTraining && !ccpCharacter.SkillQueue.IsPaused))
-                return String.Empty;
+                return string.Empty;
 
             int level;
             switch (m.Groups[1].Value[0])
@@ -183,12 +183,12 @@ namespace EVEMon.SettingsUI
                     level = character.CurrentlyTrainingSkill.Level;
                     break;
                 default:
-                    return String.Empty;
+                    return string.Empty;
             }
 
             // Second group
             if (level < 0 || m.Groups[1].Value.Length <= 1)
-                return String.Empty;
+                return string.Empty;
 
             switch (m.Groups[1].Value[1])
             {
@@ -197,7 +197,7 @@ namespace EVEMon.SettingsUI
                 case 'r':
                     return Skill.GetRomanFromInt(level);
                 default:
-                    return String.Empty;
+                    return string.Empty;
             }
         }
 

@@ -428,8 +428,8 @@ namespace EVEMon.CharacterMonitoring
             }
 
             // For a medals group, we have to handle the collapse/expand mechanism
-            Object item = lbMedals.Items[index];
-            String standingsGroup = item as String;
+            object item = lbMedals.Items[index];
+            string standingsGroup = item as string;
             if (standingsGroup == null)
                 return;
 
@@ -527,7 +527,7 @@ namespace EVEMon.CharacterMonitoring
         /// Toggles the expansion or collapsing of a single group
         /// </summary>
         /// <param name="group">The group to expand or collapse.</param>
-        private void ToggleGroupExpandCollapse(String group)
+        private void ToggleGroupExpandCollapse(string group)
         {
             if (m_collapsedGroups.Contains(group))
             {
@@ -547,7 +547,7 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="group">The group.</param>
         /// <param name="itemRect">The item rect.</param>
         /// <returns></returns>
-        private Rectangle GetButtonRectangle(String group, Rectangle itemRect)
+        private Rectangle GetButtonRectangle(string group, Rectangle itemRect)
         {
             // Checks whether this group is collapsed
             bool isCollapsed = m_collapsedGroups.Contains(group);

@@ -290,6 +290,15 @@ namespace EVEMon.SkillPlanner
         #region Helper Methods
 
         /// <summary>
+        /// Replaces the user set search string with another.
+        /// </summary>
+        /// <param name="text">The text to replace it with.</param>
+        internal void SetSearchText(string text)
+        {
+            shipSelectControl.SearchText = text;
+        }
+
+        /// <summary>
         /// Updates the contol visibility.
         /// </summary>
         private void UpdateControlVisibility()

@@ -62,7 +62,7 @@ namespace EVEMon.Common.MarketPricer.EveMarketdata
                 return;
 
             // Check the selected provider
-            if (!String.IsNullOrWhiteSpace(SelectedProviderName))
+            if (!string.IsNullOrWhiteSpace(SelectedProviderName))
             {
                 if (SelectedProviderName != Name)
                 {
@@ -135,9 +135,9 @@ namespace EVEMon.Common.MarketPricer.EveMarketdata
                 double buyPrice = item.First(x => x.BuySell == "b").Price;
                 double sellPrice = item.First(x => x.BuySell == "s").Price;
 
-                if (Math.Abs(buyPrice) <= Double.Epsilon)
+                if (Math.Abs(buyPrice) <= double.Epsilon)
                     PriceByItemID[item.Key] = sellPrice;
-                else if (Math.Abs(sellPrice) <= Double.Epsilon)
+                else if (Math.Abs(sellPrice) <= double.Epsilon)
                     PriceByItemID[item.Key] = buyPrice;
                 else
                     PriceByItemID[item.Key] = (buyPrice + sellPrice) / 2;
@@ -161,14 +161,15 @@ namespace EVEMon.Common.MarketPricer.EveMarketdata
 
             PriceByItemID.Clear();
             Loaded = false;
-
             EveMonClient.Trace("begin");
-
-            var url = new Uri(
-                $"{NetworkConstants.EVEMarketDataBaseUrl}{NetworkConstants.EVEMarketDataAPIItemPrices}");
-
-            DownloadResult<SerializableEMDItemPrices> result =
-                await Util.DownloadXmlAsync<SerializableEMDItemPrices>(url, acceptEncoded: true);
+            var url = new Uri(NetworkConstants.EVEMarketDataBaseUrl + NetworkConstants.
+                EVEMarketDataAPIItemPrices);
+            // This appears to be paginated, find out how to request more pages
+            var result = await Util.DownloadXmlAsync<SerializableEMDItemPrices>(url,
+                new RequestParams()
+                {
+                    AcceptEncoded = true
+                });
             OnPricesDownloaded(result);
         }
 
@@ -178,42 +179,38 @@ namespace EVEMon.Common.MarketPricer.EveMarketdata
         /// <param name="result">The result.</param>
         private static void OnPricesDownloaded(DownloadResult<SerializableEMDItemPrices> result)
         {
+            bool error = true;
+            SerializableEMDItemPriceList prices = null;
+            var downloadResult = result?.Result;
             // Reset query pending flag
             s_queryPending = false;
-
-            if (result == null || result.Error != null || result.Result.Result == null || !result.Result.Result.ItemPrices.Any())
-            {
-                Loaded = true;
-                CachedUntil = DateTime.UtcNow.AddHours(1);
-
-                if (result?.Result == null)
-                    EveMonClient.Trace("no result");
-                else if (result.Error != null)
-                    EveMonClient.Trace(result.Error.Message);
-                else if (result.Result.Result == null || !result.Result.Result.ItemPrices.Any())
-                    EveMonClient.Trace("empty result");
-                else
-                    EveMonClient.Trace("failed");
-
-                EveMonClient.OnPricesDownloaded(null, String.Empty);
-
-                return;
-            }
-            
-            Import(result.Result.Result.ItemPrices);
-
             Loaded = true;
-            CachedUntil = DateTime.UtcNow.AddDays(1);
-
-            // Reset query pending flag
-            s_queryPending = false;
-
-            EveMonClient.Trace("done");
-
-            EveMonClient.OnPricesDownloaded(null, String.Empty);
-
+            if (downloadResult == null)
+                // No result returned
+                EveMonClient.Trace("No result");
+            else if (result.Error != null)
+                // Error
+                EveMonClient.Trace(result.Error.Message);
+            else if ((prices = downloadResult.Result) == null || !prices.ItemPrices.Any())
+                // Empty result
+                EveMonClient.Trace("Empty result");
+            else
+                error = false;
+            if (error || prices == null)
+                // Retry in 1 hour, indicate error
+                CachedUntil = DateTime.UtcNow.AddHours(1);
+            else
+            {
+                // Retry in 1 day
+                CachedUntil = DateTime.UtcNow.AddDays(1);
+                Import(prices.ItemPrices);
+                EveMonClient.Trace("done");
+            }
+            EveMonClient.OnPricesDownloaded(null, string.Empty);
             // Save the file in cache
-            SaveAsync(Filename, Util.SerializeToXmlDocument(result.Result)).ConfigureAwait(false);
+            if (downloadResult != null)
+                SaveAsync(Filename, Util.SerializeToXmlDocument(downloadResult)).
+                    ConfigureAwait(false);
         }
 
         #endregion

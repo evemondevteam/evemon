@@ -63,9 +63,9 @@ namespace EVEMon.Controls
             TopDamageAttacker.KillLog = m_killLog;
             TopDamageAttacker.Attacker = topDamageAttacker;
 
-            InvolvedPartiesLabel.Text = String.Format(CultureConstants.DefaultCulture, InvolvedPartiesLabel.Text,
+            InvolvedPartiesLabel.Text = string.Format(CultureConstants.DefaultCulture, InvolvedPartiesLabel.Text,
                                                       m_killLog.Attackers.Count());
-            TotalDamageTakenLabel.Text = String.Format(CultureConstants.DefaultCulture, TotalDamageTakenLabel.Text,
+            TotalDamageTakenLabel.Text = string.Format(CultureConstants.DefaultCulture, TotalDamageTakenLabel.Text,
                                                        m_killLog.Victim.DamageTaken);
 
             // Add the rest of the gang

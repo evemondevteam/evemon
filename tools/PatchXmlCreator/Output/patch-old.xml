@@ -1,126 +1,110 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <evemon xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <newest>
-    <date>07 June 2016</date>
-    <version>3.0.2.4644</version>
-    <md5>8a1856cc0ef143bb57ecd75245f4105d</md5>
-    <url>https://forums.eveonline.com/default.aspx?g=posts&amp;m=6520811</url>
-    <autopatchurl>https://github.com/evemondevteam/evemon/releases/download/3.0.2/EVEMon-install-3.0.2.exe</autopatchurl>
+    <date>18 April 2020</date>
+    <version>4.0.17.4966</version>
+    <md5>92267627c6318a49c3d0bda1f5b1418f</md5>
+    <url>https://forums.eveonline.com/t/evemon-4-0-17-beta-under-new-ownership-conversion-for-esi/75953</url>
+    <autopatchurl>https://github.com/peterhaneve/evemon/releases/download/4.0.17/EVEMon-install-4.0.17.exe</autopatchurl>
     <autopatchargs>/S /AUTORUN /SKIPDOTNET</autopatchargs>
     <additionalargs>/D=%EVEMON_EXECUTABLE_PATH%</additionalargs>
-    <message><![CDATA[# Release v3.0.2
+    <message><![CDATA[# Release v4.0.17
 
 ## Bug Fixes
-- More fixes around Market Transactions and Contracts with Citadels
-- Fix a bug in Auto-Updater
+- Fully rewrite image handler to fix missing images and invalid character identities in multiple locations
+- Replace corrupted SDE files from CCP with last known good version which resolves a variety of missing data issues
 
-
-### Contributors
-- Blitz Bandis
-- Jimi C]]></message>
+## Contributors
+- Peter Han
+- wvdvegt
+- hollo6
+- landrace]]></message>
   </newest>
   <releases>
     <release>
-      <date>03 December 2016</date>
-      <version>3.0.3.4658</version>
-      <md5>4c270a47b5ca0df5a5d5261c73981444</md5>
-      <url>https://evemondevteam.github.io/evemon/#change-logs</url>
-      <autopatchurl>https://bitbucket.org/EVEMonDevTeam/evemon/downloads/EVEMon-install-3.0.3.exe</autopatchurl>
+      <date>18 April 2020</date>
+      <version>4.0.17.4966</version>
+      <md5>92267627c6318a49c3d0bda1f5b1418f</md5>
+      <url>https://forums.eveonline.com/t/evemon-4-0-17-beta-under-new-ownership-conversion-for-esi/75953</url>
+      <autopatchurl>https://github.com/peterhaneve/evemon/releases/download/4.0.17/EVEMon-install-4.0.17.exe</autopatchurl>
       <autopatchargs>/S /AUTORUN /SKIPDOTNET</autopatchargs>
       <additionalargs>/D=%EVEMON_EXECUTABLE_PATH%</additionalargs>
-      <message><![CDATA[== Breaking Changes ==
+      <message><![CDATA[# Release v4.0.17
 
- * Minimum .NET Framework version required is 4.6.1.
+## Bug Fixes
+- Fully rewrite image handler to fix missing images and invalid character identities in multiple locations
+- Replace corrupted SDE files from CCP with last known good version which resolves a variety of missing data issues
 
-== Contributors for this version ==
-
- * Ashilta
- * JimiC
- * Elliena Bulmer
-
-== New Features ==
- 
- * Unfortunately, no new features are provided in this release.
- 
-== Bug Fixes ==
-
- * Fixed a bug wich caused exceptions to be thrown in the skill planner when no plan was loaded
- * Fixed a bug which caused issues parsing the details of a users wallet following trades in Citadels
- * Fixed a bug where the EVEMon installer was unable to see more recent versions of the .NET Framework
- * Fixed a bug where scrolling through the skill queue would occasionally throw a 'System.DivideByZero' exception
- 
-== Enhancements ==
-
- * EVEMon has been brought up-to-date with the latest version of the EVE SDE.
-
-== Misc ==
-
- * An issue where the pre-requisites of the Advanced Weapon Upgrades were listed incorrectly is resolved by updating the SDE]]></message>
+## Contributors
+- Peter Han
+- wvdvegt
+- hollo6
+- landrace]]></message>
     </release>
   </releases>
   <datafiles>
     <datafile>
       <name>eve-blueprints-en-US.xml.gzip</name>
-      <date>03 December 2016</date>
-      <md5>219eb76e35e9c1df32d2b7f21268582c</md5>
-      <url>https://bitbucket.org/EVEMonDevTeam/evemon/wiki/updates/datafiles/Ascension/1102990</url>
-      <message><![CDATA[Ascension 1.0 (1102990) blueprints data file by the EVEMon Development Team
+      <date>25 June 2020</date>
+      <md5>3429df4087134b8ba91327ce7e348943</md5>
+      <url>https://peterhaneve.github.io/evemon-datafiles/Invasion/1758168</url>
+      <message><![CDATA[Invasion 1.9 (1758168) blueprints data file by the EVEMon Development Team
 NOT COMPATIBLE with EVEMon prior to version 2.2.0]]></message>
     </datafile>
     <datafile>
       <name>eve-certificates-en-US.xml.gzip</name>
-      <date>03 December 2016</date>
+      <date>05 June 2018</date>
       <md5>540000f7c111354769a54fa31e57d411</md5>
-      <url>https://bitbucket.org/EVEMonDevTeam/evemon/wiki/updates/datafiles/Ascension/1102990</url>
-      <message><![CDATA[Ascension 1.0 (1102990) certificates data file by the EVEMon Development Team
+      <url>https://peterhaneve.github.io/evemon-datafiles/Invasion/1758168</url>
+      <message><![CDATA[Invasion 1.9 (1758168) certificates data file by the EVEMon Development Team
 NOT COMPATIBLE with EVEMon prior to version 2.2.0]]></message>
     </datafile>
     <datafile>
       <name>eve-geography-en-US.xml.gzip</name>
-      <date>03 December 2016</date>
-      <md5>c9f5f87b8d330a9807d8a29211547791</md5>
-      <url>https://bitbucket.org/EVEMonDevTeam/evemon/wiki/updates/datafiles/Ascension/1102990</url>
-      <message><![CDATA[Ascension 1.0 (1102990) geography data file by the EVEMon Development Team
+      <date>25 June 2020</date>
+      <md5>bd6283bee820dd226df3af61d93215cc</md5>
+      <url>https://peterhaneve.github.io/evemon-datafiles/Invasion/1758168</url>
+      <message><![CDATA[Invasion 1.9 (1758168) geography data file by the EVEMon Development Team
 NOT COMPATIBLE with EVEMon prior to version 2.2.0]]></message>
     </datafile>
     <datafile>
       <name>eve-items-en-US.xml.gzip</name>
-      <date>03 December 2016</date>
-      <md5>4d7be11780cc5865d858cbbf5d3ed2c5</md5>
-      <url>https://bitbucket.org/EVEMonDevTeam/evemon/wiki/updates/datafiles/Ascension/1102990</url>
-      <message><![CDATA[Ascension 1.0 (1102990) items data file by the EVEMon Development Team
+      <date>25 June 2020</date>
+      <md5>b3ed7b991afbd36ccf2f2a4a77c6ef9e</md5>
+      <url>https://peterhaneve.github.io/evemon-datafiles/Invasion/1758168</url>
+      <message><![CDATA[Invasion 1.9 (1758168) items data file by the EVEMon Development Team
 NOT COMPATIBLE with EVEMon prior to version 2.2.0]]></message>
     </datafile>
     <datafile>
       <name>eve-masteries-en-US.xml.gzip</name>
-      <date>03 December 2016</date>
+      <date>05 June 2018</date>
       <md5>3668b50996fc40a0c0853fec427b5712</md5>
-      <url>https://bitbucket.org/EVEMonDevTeam/evemon/wiki/updates/datafiles/Ascension/1102990</url>
-      <message><![CDATA[Ascension 1.0 (1102990) masteries data file by the EVEMon Development Team
+      <url>https://peterhaneve.github.io/evemon-datafiles/Invasion/1758168</url>
+      <message><![CDATA[Invasion 1.9 (1758168) masteries data file by the EVEMon Development Team
 NOT COMPATIBLE with EVEMon prior to version 2.2.0]]></message>
     </datafile>
     <datafile>
       <name>eve-properties-en-US.xml.gzip</name>
-      <date>03 December 2016</date>
-      <md5>1e561036689c116fd39755ed30c20bda</md5>
-      <url>https://bitbucket.org/EVEMonDevTeam/evemon/wiki/updates/datafiles/Ascension/1102990</url>
-      <message><![CDATA[Ascension 1.0 (1102990) properties data file by the EVEMon Development Team
+      <date>25 June 2020</date>
+      <md5>bfa88d7e71747815ba1d3ef8e9a27a89</md5>
+      <url>https://peterhaneve.github.io/evemon-datafiles/Invasion/1758168</url>
+      <message><![CDATA[Invasion 1.9 (1758168) properties data file by the EVEMon Development Team
 NOT COMPATIBLE with EVEMon prior to version 2.2.0]]></message>
     </datafile>
     <datafile>
       <name>eve-reprocessing-en-US.xml.gzip</name>
-      <date>03 December 2016</date>
-      <md5>7ef72dae81f0dd200ef8f31c90fcb762</md5>
-      <url>https://bitbucket.org/EVEMonDevTeam/evemon/wiki/updates/datafiles/Ascension/1102990</url>
-      <message><![CDATA[Ascension 1.0 (1102990) reprocessing data file by the EVEMon Development Team
+      <date>25 June 2020</date>
+      <md5>b974861590311560a8649d583d3fab82</md5>
+      <url>https://peterhaneve.github.io/evemon-datafiles/Invasion/1758168</url>
+      <message><![CDATA[Invasion 1.9 (1758168) reprocessing data file by the EVEMon Development Team
 NOT COMPATIBLE with EVEMon prior to version 2.2.0]]></message>
     </datafile>
     <datafile>
       <name>eve-skills-en-US.xml.gzip</name>
-      <date>03 December 2016</date>
-      <md5>5c6f3a9ea32a6f135b12f82ac6d8d2ce</md5>
-      <url>https://bitbucket.org/EVEMonDevTeam/evemon/wiki/updates/datafiles/Ascension/1102990</url>
-      <message><![CDATA[Ascension 1.0 (1102990) skills data file by the EVEMon Development Team
+      <date>25 June 2020</date>
+      <md5>703e1ef01cd4634ed39d86466b4ce32e</md5>
+      <url>https://peterhaneve.github.io/evemon-datafiles/Invasion/1758168</url>
+      <message><![CDATA[Invasion 1.9 (1758168) skills data file by the EVEMon Development Team
 NOT COMPATIBLE with EVEMon prior to version 2.2.0]]></message>
     </datafile>
   </datafiles>

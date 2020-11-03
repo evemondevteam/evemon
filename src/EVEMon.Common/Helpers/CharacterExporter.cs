@@ -94,14 +94,14 @@ namespace EVEMon.Common.Helpers
                 .Select(x => GetMergedSkill(plan, x))
                 .Count();
 
-            Int64 skillGroupTotalSP = skillGroup
+            long skillGroupTotalSP = skillGroup
                 .Where(x => x.IsKnown || (plan != null && plan.IsPlanned(x)))
                 .Select(x => GetMergedSkill(plan, x))
                 .Sum(x => x.Skillpoints);
 
             // Skill Group
             builder.AppendLine($"{skillGroup.Name}, " +
-                               $"{count} Skill{(count > 1 ? "s" : String.Empty)}, " +
+                               $"{count} Skill{(count > 1 ? "s" : string.Empty)}, " +
                                FormattableString.Invariant($"{skillGroupTotalSP:N0} Points"));
 
             // Skills
@@ -157,14 +157,14 @@ namespace EVEMon.Common.Helpers
                 builder.AppendLine($"{skill.Name}={skill.Level}");
             }
 
-            APIKey apiKey = character.Identity.FindAPIKeyWithAccess(CCPAPICharacterMethods.CharacterSheet);
+            ESIKey apiKey = character.Identity.FindAPIKeyWithAccess(ESIAPICharacterMethods.CharacterSheet);
 
             if (apiKey == null)
                 return builder.ToString();
 
             builder
                 .AppendLine($"KeyID={apiKey.ID}")
-                .AppendLine($"VCode={apiKey.VerificationCode}")
+                .AppendLine($"VCode={apiKey.AccessToken}")
                 .Append($"CharID={character.CharacterID}");
 
             return builder.ToString();
@@ -256,7 +256,7 @@ namespace EVEMon.Common.Helpers
                 .Select(x => GetMergedSkill(plan, x))
                 .Count();
 
-            Int64 skillGroupTotalSP = skillGroup
+            long skillGroupTotalSP = skillGroup
                 .Where(x => x.IsKnown || (plan != null && plan.IsPlanned(x)))
                 .Select(x => GetMergedSkill(plan, x))
                 .Sum(x => x.Skillpoints);

@@ -100,7 +100,7 @@ namespace EVEMon.Common.Serialization.Datafiles
         /// The meta level.
         /// </value>
         [XmlAttribute("metaLevel")]
-        public Int64 MetaLevel { get; set; }
+        public long MetaLevel { get; set; }
 
         /// <summary>
         /// Gets or sets the meta group.

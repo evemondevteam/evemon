@@ -7,6 +7,8 @@ using EVEMon.Common.Constants;
 using EVEMon.Common.Controls;
 using EVEMon.Common.Data;
 using EVEMon.Common.Enumerations;
+using EVEMon.Common.Extensions;
+using EVEMon.Common.Helpers;
 using EVEMon.Common.Models;
 using EVEMon.Common.Serialization.Eve;
 using EVEMon.Common.Service;
@@ -73,71 +75,44 @@ namespace EVEMon.Controls
         /// </summary>
         private void UpdateContent()
         {
-            CharacterNameLabel.Text = String.IsNullOrEmpty(m_attacker.Name) ? m_attacker.ShipTypeName : m_attacker.Name;
+            string alliance = m_attacker.AllianceName;
+            CharacterNameLabel.Text = m_attacker.Name.IsEmptyOrUnknown() ? m_attacker.
+                ShipTypeName : m_attacker.Name;
             CorpNameLabel.Text = m_attacker.CorporationName;
-            AllianceNameLabel.Text = m_attacker.AllianceID == 0 ? String.Empty : m_attacker.AllianceName;
+            AllianceNameLabel.Text = m_attacker.AllianceID == 0 ? string.Empty : (alliance.
+                IsEmptyOrUnknown() ? string.Empty : alliance);
 
-            DamageDoneLabel.Text = String.Format(CultureConstants.DefaultCulture, DamageDoneLabel.Text, m_attacker.DamageDone,
-                m_attacker.DamageDone / (double)KillLog.Victim.DamageTaken);
+            DamageDoneLabel.Text = string.Format(CultureConstants.DefaultCulture,
+                DamageDoneLabel.Text, m_attacker.DamageDone, m_attacker.DamageDone / (double)
+                KillLog.Victim.DamageTaken);
 
-            Task.WhenAll(
-                GetImageForAsync(CharacterPictureBox),
-                GetImageForAsync(ShipPictureBox),
-                GetImageForAsync(WeaponPictureBox));
+            Task.WhenAll(GetImageForAsync(CharacterPictureBox),
+                GetImageForAsync(ShipPictureBox), GetImageForAsync(WeaponPictureBox));
         }
 
         /// <summary>
         /// Gets the image for the specified picture box.
         /// </summary>
         /// <param name="pictureBox">The picture box.</param>
-        /// <param name="useFallbackUri">if set to <c>true</c> [use fallback URI].</param>
-        private async Task GetImageForAsync(PictureBox pictureBox, bool useFallbackUri = false)
+        private async Task GetImageForAsync(PictureBox pictureBox)
         {
-            while (true)
-            {
-                Image img = await ImageService.GetImageAsync(GetImageUrl(pictureBox, useFallbackUri));
-
-                if (img == null && !useFallbackUri)
-                {
-                    useFallbackUri = true;
-                    continue;
-                }
-
+            Image img = await ImageService.GetImageAsync(GetImageUrl(pictureBox));
+            if (img != null || pictureBox.Equals(WeaponPictureBox))
                 pictureBox.Image = img;
-                break;
-            }
         }
 
         /// <summary>
         /// Gets the image URL.
         /// </summary>
         /// <param name="pictureBox">The picture box.</param>
-        /// <param name="useFallbackUri">if set to <c>true</c> [use fallback URI].</param>
         /// <returns></returns>
-        private Uri GetImageUrl(PictureBox pictureBox, bool useFallbackUri)
+        private Uri GetImageUrl(PictureBox pictureBox)
         {
-            string path;
-
             if (pictureBox == CharacterPictureBox)
-            {
-                path = String.Format(CultureConstants.InvariantCulture,
-                    NetworkConstants.CCPPortraits, m_attacker.ID, (int)EveImageSize.x64);
-
-                return useFallbackUri
-                    ? ImageService.GetImageServerBaseUri(path)
-                    : ImageService.GetImageServerCdnUri(path);
-            }
-
-            int typeId = pictureBox.Equals(ShipPictureBox)
-                ? m_attacker.ShipTypeID
-                : m_attacker.WeaponTypeID;
-
-            path = String.Format(CultureConstants.InvariantCulture,
-                NetworkConstants.CCPIconsFromImageServer, "type", typeId, (int)EveImageSize.x32);
-
-            return useFallbackUri
-                ? ImageService.GetImageServerBaseUri(path)
-                : ImageService.GetImageServerCdnUri(path);
+                return ImageHelper.GetPortraitUrl(m_attacker.ID, (int)EveImageSize.x64);
+            else
+                return ImageHelper.GetTypeImageURL(pictureBox.Equals(ShipPictureBox) ?
+                    m_attacker.ShipTypeID : m_attacker.WeaponTypeID);
         }
 
         #endregion
@@ -247,12 +222,12 @@ namespace EVEMon.Controls
             if (e.Cancel)
                 return;
 
-            string text = m_selectedItem is Ship ? "Ship" : m_selectedItem != null ? "Item" : String.Empty;
+            string text = m_selectedItem is Ship ? "Ship" : m_selectedItem != null ? "Item" : string.Empty;
 
-            if (!String.IsNullOrWhiteSpace(text))
+            if (!string.IsNullOrWhiteSpace(text))
                 showInBrowserMenuItem.Text = $"Show In {text} Browser...";
 
-            showInBrowserMenuItem.Visible = !String.IsNullOrWhiteSpace(text);
+            showInBrowserMenuItem.Visible = !string.IsNullOrWhiteSpace(text);
         }
 
         /// <summary>

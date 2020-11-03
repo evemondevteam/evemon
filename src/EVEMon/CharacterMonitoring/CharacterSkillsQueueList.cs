@@ -40,7 +40,7 @@ namespace EVEMon.CharacterMonitoring
         private readonly Font m_boldSkillsQueueFont;
         private readonly Font m_skillsQueueFont;
 
-        private Object m_lastTooltipItem;
+        private object m_lastTooltipItem;
         private BlinkAction m_blinkAction;
         private QueuedSkill m_selectedSkill;
 
@@ -228,23 +228,17 @@ namespace EVEMon.CharacterMonitoring
             const TextFormatFlags Format = TextFormatFlags.NoPadding | TextFormatFlags.NoClipping;
             bool hasSkill = (skill.Skill != null) && (skill.Skill != Skill.UnknownSkill);
 
-            Int64 skillPoints = (skill.Skill != null) && (skill.Level > skill.Skill.Level + 1)
-                ? skill.CurrentSP
-                : !hasSkill
-                    ? skill.StartSP
-                    : skill.Skill.SkillPoints;
-            Int64 skillPointsToNextLevel = !hasSkill
-                ? skill.EndSP
-                : skill.Skill.StaticData.GetPointsRequiredForLevel(Math.Min(skill.Level, 5));
-            Int64 pointsLeft = skillPointsToNextLevel - skillPoints;
-            TimeSpan timeSpanFromPoints = !hasSkill
-                ? skill.EndTime.Subtract(DateTime.UtcNow)
-                : skill.Skill.GetTimeSpanForPoints(pointsLeft);
-            string remainingTimeText = timeSpanFromPoints.ToDescriptiveText(DescriptiveTextOptions.SpaceBetween);
+            long skillPoints = (skill.Skill != null) && (skill.Level > skill.Skill.Level + 1) ?
+                skill.CurrentSP : (!hasSkill ? skill.StartSP : skill.Skill.SkillPoints);
+            long skillPointsToNextLevel = !hasSkill ? skill.EndSP :
+                skill.Skill.StaticData.GetPointsRequiredForLevel(Math.Min(skill.Level, 5));
+            long pointsLeft = skillPointsToNextLevel - skillPoints;
+            TimeSpan timeSpanFromPoints = !hasSkill ? skill.EndTime.Subtract(DateTime.UtcNow) :
+                skill.Skill.GetTimeSpanForPoints(pointsLeft);
+            string remainingTimeText = timeSpanFromPoints.ToDescriptiveText(
+                DescriptiveTextOptions.SpaceBetween);
 
-            double fractionCompleted = e.Index == 0
-                ? skill.FractionCompleted
-                : 0d;
+            double fractionCompleted = e.Index == 0 ? skill.FractionCompleted : 0.0;
 
             string indexText = $"{e.Index + 1}. ";
             string rankText = $" (Rank {(skill.Skill == null ? 0 : skill.Rank)})";
@@ -442,7 +436,8 @@ namespace EVEMon.CharacterMonitoring
                 return;
 
             // Update the drawing based upon the mouse wheel scrolling.
-            int numberOfItemLinesToMove = e.Delta * SystemInformation.MouseWheelScrollLines / Math.Abs(e.Delta);
+            int numberOfItemLinesToMove = e.Delta * SystemInformation.MouseWheelScrollLines /
+                Math.Abs(e.Delta);
             int lines = numberOfItemLinesToMove;
             if (lines == 0)
                 return;
@@ -457,27 +452,26 @@ namespace EVEMon.CharacterMonitoring
             for (int i = 1; i <= Math.Abs(lines); i++)
             {
                 object item = null;
+                var queue = lbSkillsQueue.Items;
 
                 // Going up
                 if (direction == Math.Abs(direction))
                 {
                     // Retrieve the next top item
                     if (lbSkillsQueue.TopIndex - i >= 0)
-                        item = lbSkillsQueue.Items[lbSkillsQueue.TopIndex - i];
+                        item = queue[lbSkillsQueue.TopIndex - i];
                 }
                     // Going down
                 else
                 {
                     // Compute the height of the items from current the topindex (included)
                     int height = 0;
-                    for (int j = lbSkillsQueue.TopIndex + i - 1; j < lbSkillsQueue.Items.Count; j++)
-                    {
+                    for (int j = lbSkillsQueue.TopIndex + i - 1; j < queue.Count; j++)
                         height += GetItemHeight;
-                    }
 
                     // Retrieve the next bottom item
                     if (height > lbSkillsQueue.ClientSize.Height)
-                        item = lbSkillsQueue.Items[lbSkillsQueue.TopIndex + i - 1];
+                        item = queue[lbSkillsQueue.TopIndex + i - 1];
                 }
 
                 // If found a new item as top or bottom
@@ -564,17 +558,13 @@ namespace EVEMon.CharacterMonitoring
         private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             e.Cancel = !Character.SkillQueue.Any();
-
-            if (e.Cancel)
-                return;
-
-            BuildContextMenu(m_selectedSkill);
-
-            showInSkillBrowserMenuItem.Visible =
-                showInSkillExplorerMenuItem.Visible =
-                    showInMenuSeparator.Visible =
-                        tsmiAddSkill.Visible =
-                            addSkillSeparator.Visible = m_selectedSkill != null;
+            if (!e.Cancel)
+            {
+                BuildContextMenu(m_selectedSkill);
+                showInSkillBrowserMenuItem.Visible = showInSkillExplorerMenuItem.Visible =
+                    showInMenuSeparator.Visible = tsmiAddSkill.Visible =
+                    addSkillSeparator.Visible = (m_selectedSkill != null);
+            }
         }
 
         /// <summary>
@@ -592,7 +582,7 @@ namespace EVEMon.CharacterMonitoring
             tsmiAddSkill.Text = $"Add {queuedSkill.Skill.Name}";
 
             // Build the level options
-            for (Int64 level = queuedSkill.Level; level <= 5; level++)
+            for (long level = queuedSkill.Level; level <= 5; level++)
             {
                 ToolStripMenuItem tempMenuLevel = null;
                 try
@@ -603,7 +593,8 @@ namespace EVEMon.CharacterMonitoring
                         (menuPlanItem, plan) =>
                         {
                             menuPlanItem.Click += menuPlanItem_Click;
-                            menuPlanItem.Tag = new KeyValuePair<Plan, SkillLevel>(plan, new SkillLevel(queuedSkill.Skill, level));
+                            menuPlanItem.Tag = new KeyValuePair<Plan, SkillLevel>(plan,
+                                new SkillLevel(queuedSkill.Skill, level));
                         });
 
                     ToolStripMenuItem menuLevel = tempMenuLevel;
@@ -644,15 +635,15 @@ namespace EVEMon.CharacterMonitoring
         private static string GetTooltip(QueuedSkill skill)
         {
             if (skill.Skill == null)
-                return String.Empty;
+                return string.Empty;
 
-            Int64 sp = skill.Level > skill.Skill.Level + 1 ? skill.CurrentSP : skill.Skill.SkillPoints;
-            Int32 nextLevel = Math.Min(5, skill.Level);
-            Double fractionCompleted = skill.FractionCompleted;
-            Int64 nextLevelSP = skill.Skill == Skill.UnknownSkill
+            long sp = skill.Level > skill.Skill.Level + 1 ? skill.CurrentSP : skill.Skill.SkillPoints;
+            int nextLevel = Math.Min(5, skill.Level);
+            double fractionCompleted = skill.FractionCompleted;
+            long nextLevelSP = skill.Skill == Skill.UnknownSkill
                 ? skill.EndSP
                 : skill.Skill.StaticData.GetPointsRequiredForLevel(nextLevel);
-            Int64 pointsLeft = nextLevelSP - sp;
+            long pointsLeft = nextLevelSP - sp;
             TimeSpan timeSpanFromPoints = skill.Skill == Skill.UnknownSkill
                 ? skill.EndTime.Subtract(DateTime.UtcNow)
                 : skill.Skill.GetTimeSpanForPoints(pointsLeft);
@@ -662,14 +653,14 @@ namespace EVEMon.CharacterMonitoring
             if (sp < skill.Skill.StaticData.GetPointsRequiredForLevel(1))
             {
                 // Training hasn't got past level 1 yet
-                StringBuilder untrainedToolTip = new StringBuilder();
-                untrainedToolTip
-                    .Append($"Not yet trained to Level I ({Math.Floor(fractionCompleted * 100) / 100:P0})")
-                    .AppendLine()
-                    .Append($"Next level I: {pointsLeft:N0} skill points remaining")
-                    .AppendLine()
-                    .Append($"Training time remaining: {remainingTimeText}")
-                    .AppendLine();
+                var untrainedToolTip = new StringBuilder();
+                untrainedToolTip.Append("Not yet trained to Level I (");
+                untrainedToolTip.AppendFormat("{0:P0}", Math.Floor(fractionCompleted * 100.0) *
+                    0.01).AppendLine(")");
+                untrainedToolTip.Append("Next level I: ").AppendFormat("{0:N0}", pointsLeft);
+                untrainedToolTip.AppendLine(" skill points remaining");
+                untrainedToolTip.Append("Training time remaining: ");
+                untrainedToolTip.AppendLine(remainingTimeText);
 
                 AddSkillBoilerPlate(untrainedToolTip, skill);
 
@@ -680,14 +671,16 @@ namespace EVEMon.CharacterMonitoring
             // Currently training skill?
             if (skill.IsTraining && fractionCompleted > 0)
             {
-                StringBuilder partiallyTrainedToolTip = new StringBuilder();
-                partiallyTrainedToolTip
-                    .Append($"Partially Completed ({Math.Floor(fractionCompleted * 100) / 100:P0})")
-                    .AppendLine()
-                    .Append($"Training to level {Skill.GetRomanFromInt(nextLevel)}: {pointsLeft:N0} skill points remaining")
-                    .AppendLine()
-                    .Append($"Training time remaining: {remainingTimeText}")
-                    .AppendLine();
+                var partiallyTrainedToolTip = new StringBuilder();
+                partiallyTrainedToolTip.Append("Partially Completed (");
+                partiallyTrainedToolTip.AppendFormat("{0:P0}", Math.Floor(fractionCompleted *
+                    100.0) * 0.01).AppendLine(")");
+                partiallyTrainedToolTip.Append("Training to level ");
+                partiallyTrainedToolTip.Append(Skill.GetRomanFromInt(nextLevel));
+                partiallyTrainedToolTip.Append(": ").AppendFormat("{0:N0}", pointsLeft);
+                partiallyTrainedToolTip.AppendLine(" skill points remaining");
+                partiallyTrainedToolTip.Append("Training time remaining: ");
+                partiallyTrainedToolTip.AppendLine(remainingTimeText);
 
                 AddSkillBoilerPlate(partiallyTrainedToolTip, skill);
 
@@ -697,14 +690,15 @@ namespace EVEMon.CharacterMonitoring
             // Currently training skill but next queued level?
             if (skill.IsTraining && Math.Abs(fractionCompleted) < double.Epsilon)
             {
-                StringBuilder partiallyTrainedToolTip = new StringBuilder();
-                partiallyTrainedToolTip
-                    .Append($"Previous level not yet completed")
-                    .AppendLine()
-                    .Append($"Queued to level {Skill.GetRomanFromInt(nextLevel)}: {pointsLeft:N0} skill points remaining")
-                    .AppendLine()
-                    .Append($"Training time to next level: {remainingTimeText}")
-                    .AppendLine();
+                var partiallyTrainedToolTip = new StringBuilder();
+                partiallyTrainedToolTip.Append("Previous level not yet completed");
+                partiallyTrainedToolTip.AppendLine();
+                partiallyTrainedToolTip.Append("Queued to level ");
+                partiallyTrainedToolTip.Append(Skill.GetRomanFromInt(nextLevel));
+                partiallyTrainedToolTip.Append(": ").AppendFormat("{0:N0}", pointsLeft);
+                partiallyTrainedToolTip.AppendLine(" skill points remaining");
+                partiallyTrainedToolTip.Append("Training time to next level: ");
+                partiallyTrainedToolTip.AppendLine(remainingTimeText);
 
                 AddSkillBoilerPlate(partiallyTrainedToolTip, skill);
 
@@ -715,13 +709,15 @@ namespace EVEMon.CharacterMonitoring
             if (skill.Skill.IsPartiallyTrained && !skill.IsTraining)
             {
                 StringBuilder partiallyTrainedToolTip = new StringBuilder();
-                partiallyTrainedToolTip
-                    .Append($"Partially Completed ({Math.Floor(fractionCompleted * 100) / 100:P0})")
-                    .AppendLine()
-                    .Append($"Queued to level {Skill.GetRomanFromInt(nextLevel)}: {pointsLeft:N0} skill points remaining")
-                    .AppendLine()
-                    .Append($"Training time remaining: {remainingTimeText}")
-                    .AppendLine();
+                partiallyTrainedToolTip.Append("Partially Completed (");
+                partiallyTrainedToolTip.AppendFormat("{0:P0}", Math.Floor(fractionCompleted *
+                    100.0) * 0.01).AppendLine(")");
+                partiallyTrainedToolTip.Append("Queued to level ");
+                partiallyTrainedToolTip.Append(Skill.GetRomanFromInt(nextLevel));
+                partiallyTrainedToolTip.Append(": ").AppendFormat("{0:N0}", pointsLeft);
+                partiallyTrainedToolTip.AppendLine(" skill points remaining");
+                partiallyTrainedToolTip.Append("Training time remaining: ");
+                partiallyTrainedToolTip.AppendLine(remainingTimeText);
 
                 AddSkillBoilerPlate(partiallyTrainedToolTip, skill);
 
@@ -731,14 +727,18 @@ namespace EVEMon.CharacterMonitoring
             // We've completed all the skill points for the current level
             if (!skill.Skill.IsPartiallyTrained && skill.Level <= 5)
             {
-                StringBuilder levelCompleteToolTip = new StringBuilder();
-                levelCompleteToolTip
-                    .Append($"Completed Level {Skill.GetRomanFromInt(skill.Level - 1)}: {sp:N0}/{nextLevelSP:N0}")
-                    .AppendLine()
-                    .Append($"Queued level {Skill.GetRomanFromInt(nextLevel)}: {pointsLeft:N0} skill points required")
-                    .AppendLine()
-                    .Append($"Training time to next level: {remainingTimeText}")
-                    .AppendLine();
+                var levelCompleteToolTip = new StringBuilder();
+                levelCompleteToolTip.Append("Completed Level ");
+                levelCompleteToolTip.Append(Skill.GetRomanFromInt(skill.Level - 1));
+                levelCompleteToolTip.Append(": ").AppendFormat("{0:N0}", sp);
+                levelCompleteToolTip.Append("/").AppendFormat("{0:N0}", nextLevelSP);
+                levelCompleteToolTip.AppendLine();
+                levelCompleteToolTip.Append("Queued level ");
+                levelCompleteToolTip.Append(Skill.GetRomanFromInt(nextLevel));
+                levelCompleteToolTip.Append(": ").AppendFormat("{0:N0}", pointsLeft);
+                levelCompleteToolTip.AppendLine(" skill points required");
+                levelCompleteToolTip.Append("Training time to next level: ");
+                levelCompleteToolTip.AppendLine(remainingTimeText);
 
                 AddSkillBoilerPlate(levelCompleteToolTip, skill);
 
@@ -746,17 +746,17 @@ namespace EVEMon.CharacterMonitoring
             }
 
             // Error in calculating SkillPoints
-            StringBuilder calculationErrorToolTip = new StringBuilder();
-            calculationErrorToolTip
-                .AppendLine("Partially Trained (Could not calculate all skill details)")
-                .Append($"Next level {nextLevel}: {pointsLeft:N0} skill points remaining")
-                .AppendLine()
-                .Append($"Training time remaining: {remainingTimeText}")
-                .AppendLine();
+            var calcError = new StringBuilder();
+            calcError.AppendLine("Partially Trained (Could not calculate all skill details)");
+            calcError.Append("Next level ").AppendFormat("{0:N0}", nextLevel);
+            calcError.Append(": ").AppendFormat("{0:N0}", pointsLeft);
+            calcError.AppendLine(" skill points remaining");
+            calcError.Append("Training time remaining: ");
+            calcError.AppendLine(remainingTimeText);
 
-            AddSkillBoilerPlate(calculationErrorToolTip, skill);
+            AddSkillBoilerPlate(calcError, skill);
 
-            return calculationErrorToolTip.ToString();
+            return calcError.ToString();
         }
 
         /// <summary>
@@ -766,12 +766,10 @@ namespace EVEMon.CharacterMonitoring
         /// <param name="skill">The skill.</param>
         private static void AddSkillBoilerPlate(StringBuilder toolTip, QueuedSkill skill)
         {
-            toolTip
-                .AppendLine()
-                .AppendLine(skill.Skill.Description.WordWrap(100))
-                .Append($"Primary: {skill.Skill.PrimaryAttribute}, ")
-                .Append($"Secondary: {skill.Skill.SecondaryAttribute} ")
-                .Append($"({skill.SkillPointsPerHour} SP/Hour)");
+            toolTip.AppendLine().AppendLine(skill.Skill.Description.WordWrap(100));
+            toolTip.Append("Primary: ").Append(skill.Skill.PrimaryAttribute).Append(", ");
+            toolTip.Append("Secondary: ").Append(skill.Skill.SecondaryAttribute).Append(" (");
+            toolTip.AppendFormat("{0:F0}", skill.SkillPointsPerHour).Append(" SP/Hour)");
         }
 
         /// <summary>
@@ -811,7 +809,8 @@ namespace EVEMon.CharacterMonitoring
             KeyValuePair<Plan, SkillLevel> tag = (KeyValuePair<Plan, SkillLevel>)planItem.Tag;
 
             IPlanOperation operation = tag.Key.TryPlanTo(tag.Value.Skill, tag.Value.Level);
-            if (operation == null)
+            // If this operation does not change the plan, do nothing
+            if (operation == null || operation.Type == PlanOperations.None)
                 return;
 
             PlanWindow planWindow = PlanWindow.ShowPlanWindow(plan: operation.Plan);

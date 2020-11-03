@@ -271,7 +271,7 @@ namespace EVEMon.Common.Controls
             /// Thread syncronisation lock. Used extensively to enusre that mouseMove event handlers
             /// and thread timer callbacks always have a consistent object state.
             /// </summary>
-            protected readonly Object SyncLock = new Object();
+            protected readonly object SyncLock = new object();
 
             /// <summary>
             /// Flag to determine if mouse tracking enabled
@@ -464,7 +464,7 @@ namespace EVEMon.Common.Controls
                 // Store the existing icon text, then reset it if popups aren't disabled
                 trayIcon.m_iconText = trayIcon.notifyIcon.Text;
                 if (Settings.UI.SystemTrayPopup.Style != TrayPopupStyles.Disabled)
-                    trayIcon.notifyIcon.Text = String.Empty;
+                    trayIcon.notifyIcon.Text = string.Empty;
 
                 // Start the timer and enable mouse tracking
                 // Lock the syncLock since we don't know the timeout value and need to ensure

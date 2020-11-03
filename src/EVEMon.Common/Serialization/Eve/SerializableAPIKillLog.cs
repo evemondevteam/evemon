@@ -15,8 +15,8 @@ namespace EVEMon.Common.Serialization.Eve
             m_kills = new Collection<SerializableKillLogListItem>();
         }
 
-        [XmlArray("kills")]
-        [XmlArrayItem("kill")]
+        [XmlArray("ArrayOfEsiKillLogListItem")]
+        [XmlArrayItem("EsiKillLogListItem")]
         public Collection<SerializableKillLogListItem> Kills => m_kills;
     }
 }

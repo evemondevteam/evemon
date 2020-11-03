@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using EVEMon.Common.Attributes;
 using EVEMon.Common.Models;
-using EVEMon.Common.Models.Extended;
-using EVEMon.Common.Serialization.Settings;
-using EVEMon.Common.SettingsObjects;
 
 namespace EVEMon.Common.Collections.Global
 {
@@ -38,12 +35,7 @@ namespace EVEMon.Common.Collections.Global
         /// Gets the default provider.
         /// </summary>
         public static APIProvider TestProvider => APIProvider.TestProvider;
-
-        /// <summary>
-        /// Gets an enumeration over the used-defined providers.
-        /// </summary>
-        public IEnumerable<APIProvider> CustomProviders => m_customProviders;
-
+        
         /// <summary>
         /// Gets the used provider.
         /// </summary>
@@ -53,11 +45,8 @@ namespace EVEMon.Common.Collections.Global
             get { return m_currentProvider; }
             set
             {
-                // Is it a custom provider stored in this collection ?
-                if (m_customProviders.Contains(value))
-                    m_currentProvider = value;
                 // Is it the default provider ?
-                else if (APIProvider.DefaultProvider == value)
+                if (APIProvider.DefaultProvider == value)
                     m_currentProvider = value;
                 // is it the test provider
                 else if (APIProvider.TestProvider == value)
@@ -85,93 +74,7 @@ namespace EVEMon.Common.Collections.Global
                 : m_customProviders.FirstOrDefault(provider => provider.Name == name);
 
         #endregion
-
-
-        #region Importation/exportation and other internals
-
-        /// <summary>
-        /// Update the providers with the provided serialization object.
-        /// </summary>
-        /// <param name="serial"></param>
-        internal void Import(APIProvidersSettings serial)
-        {
-            m_customProviders.Clear();
-            CurrentProvider = DefaultProvider;
-
-            // Providers
-            foreach (SerializableAPIProvider sProvider in serial.CustomProviders)
-            {
-                APIProvider provider = new APIProvider
-                {
-                    Name = sProvider.Name,
-                    Url = new Uri(sProvider.Address),
-                    SupportsCompressedResponse = sProvider.SupportsCompressedResponse
-                };
-
-                // Providers' methods
-                foreach (SerializableAPIMethod sMethod in sProvider.Methods)
-                {
-                    Enum method = APIMethods.Methods.FirstOrDefault(x => x.ToString() == sMethod.MethodName);
-                    if (method == null)
-                        continue;
-
-                    APIMethod apiMethod = provider.GetMethod(method);
-                    if (apiMethod != null)
-                        apiMethod.Path = sMethod.Path;
-                }
-
-                // Add this provider to our inner list
-                m_customProviders.Add(provider);
-            }
-
-            // Current provider
-            APIProvider newCurrentProvider = this[serial.CurrentProviderName];
-
-            if (newCurrentProvider != null)
-                CurrentProvider = newCurrentProvider;
-
-            // Test Provider is only available in debug mode
-            if (serial.CurrentProviderName == TestProvider.Name)
-                CurrentProvider = EveMonClient.IsDebugBuild ? TestProvider : DefaultProvider;
-        }
-
-        /// <summary>
-        /// Exports the providers to a serialization object.
-        /// </summary>
-        /// <returns></returns>
-        internal APIProvidersSettings Export()
-        {
-            APIProvidersSettings serial = new APIProvidersSettings { CurrentProviderName = CurrentProvider.Name };
-
-            // Providers
-            foreach (APIProvider provider in CustomProviders)
-            {
-                SerializableAPIProvider serialProvider = new SerializableAPIProvider
-                {
-                    Name = provider.Name,
-                    Address = provider.Url.AbsoluteUri,
-                    SupportsCompressedResponse = provider.SupportsCompressedResponse
-                };
-
-                serial.CustomProviders.Add(serialProvider);
-
-                // Methods
-                serialProvider.Methods.Clear();
-                foreach (APIMethod method in provider.Methods.Where(method => !String.IsNullOrWhiteSpace(method.Path)))
-                {
-                    serialProvider.Methods.Add(new SerializableAPIMethod
-                    {
-                        MethodName = method.Method.ToString(),
-                        Path = method.Path
-                    });
-                }
-            }
-
-            return serial;
-        }
-
-        #endregion
-
+        
 
         /// <summary>
         /// Core method to implement for collection services.

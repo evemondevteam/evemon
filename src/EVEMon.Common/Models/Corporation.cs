@@ -1,5 +1,4 @@
-﻿
-namespace EVEMon.Common.Models
+﻿namespace EVEMon.Common.Models
 {
     public sealed class Corporation
     {

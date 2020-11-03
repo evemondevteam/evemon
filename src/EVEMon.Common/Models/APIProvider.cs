@@ -1,29 +1,33 @@
+using EVEMon.Common.Attributes;
+using EVEMon.Common.Constants;
+using EVEMon.Common.Extensions;
+using EVEMon.Common.Net;
+using EVEMon.Common.Serialization;
+using EVEMon.Common.Serialization.Esi;
+using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Xsl;
-using EVEMon.Common.Attributes;
-using EVEMon.Common.Constants;
-using EVEMon.Common.Enumerations.CCPAPI;
-using EVEMon.Common.Extensions;
-using EVEMon.Common.Serialization.Eve;
-using EVEMon.Common.Threading;
 
 namespace EVEMon.Common.Models
 {
-
     /// <summary>
     /// Serializable class abstracting an API queries provider and its configuration.
     /// </summary>
     [EnforceUIThreadAffinity]
     public sealed class APIProvider
     {
+        // Called when an ESI request completes
+        public delegate void ESIRequestCallback<T>(EsiResult<T> result, object state);
+
         private static APIProvider s_ccpProvider;
         private static APIProvider s_ccpTestProvider;
         private static XslCompiledTransform s_rowsetsTransform;
 
-        private readonly List<APIMethod> m_methods;
+        private readonly List<ESIMethod> m_methods;
         private bool m_supportsCompressedResponse;
 
         /// <summary>
@@ -31,7 +35,7 @@ namespace EVEMon.Common.Models
         /// </summary>
         internal APIProvider()
         {
-            m_methods = new List<APIMethod>(APIMethod.CreateDefaultSet());
+            m_methods = new List<ESIMethod>(ESIMethod.CreateDefaultSet());
             Url = new Uri("http://your-custom-API-provider.com");
             Name = "your provider's name";
         }
@@ -48,12 +52,7 @@ namespace EVEMon.Common.Models
         /// Returns the server host for this APIConfiguration.
         /// </summary>
         public Uri Url { get; set; }
-
-        /// <summary>
-        /// Returns a list of APIMethodsEnum supported by this APIConfiguration.
-        /// </summary>
-        public IEnumerable<APIMethod> Methods => m_methods;
-
+        
         /// <summary>
         /// Gets or sets a value indicating whether the provider supports compressed responses.
         /// </summary>
@@ -78,18 +77,18 @@ namespace EVEMon.Common.Models
             => s_ccpProvider ??
                (s_ccpProvider = new APIProvider
                {
-                   Url = new Uri(NetworkConstants.APIBase),
+                   Url = new Uri(NetworkConstants.ESIBase),
                    Name = "CCP"
                });
 
         /// <summary>
-        /// Gets the test API provider
+        /// Gets the test API provider (RIP SiSi ESI)
         /// </summary>
         public static APIProvider TestProvider
             => s_ccpTestProvider ??
                (s_ccpTestProvider = new APIProvider
                {
-                   Url = new Uri(NetworkConstants.APITestBase),
+                   Url = new Uri("https://www.google.com/"),
                    Name = "CCP Test API"
                });
 
@@ -97,251 +96,207 @@ namespace EVEMon.Common.Models
 
 
         #region Helpers
-
+        
         /// <summary>
         /// Returns the request method.
         /// </summary>
-        /// <param name="requestMethod">An APIMethodsEnum enumeration member specifying the method for which the URL is required.</param>
-        public APIMethod GetMethod(Enum requestMethod)
+        /// <param name="requestMethod">An ESIMethodsEnum enumeration member specifying the
+        /// method for which the URL is required.</param>
+        private ESIMethod GetESIMethod(Enum requestMethod)
         {
-            foreach (APIMethod method in m_methods.Where(method => method.Method.Equals(requestMethod)))
-            {
-                return method;
-            }
-
-            throw new InvalidOperationException();
+            var esiMethod = m_methods.FirstOrDefault(method => method.Method.Equals(
+                requestMethod));
+            if (esiMethod == null)
+                throw new InvalidOperationException("No ESI method found for " + requestMethod);
+            return esiMethod;
         }
 
         /// <summary>
-        /// Returns the full canonical URL for the specified APIMethod as constructed from the Server and APIMethod properties.
+        /// Creates an ESI result to wrap a result from DownloadJsonAsync, and synchronizes
+        /// its times if necessary.
         /// </summary>
-        /// <param name="requestMethod">An APIMethodsEnum enumeration member specifying the method for which the URL is required.</param>
+        /// <typeparam name="T">The type of the result.</typeparam>
+        /// <param name="result">The downloaded data.</param>
+        /// <returns>An ESI result wrapping the data, with errors set as necessary.</returns>
+        private EsiResult<T> GetESIResult<T>(JsonResult<T> result)
+        {
+            result.ThrowIfNull(nameof(result));
+
+            // Update ESI error count; since ESI currently throttles by minute add 90 seconds
+            var response = result.Response;
+            if (response?.ErrorCount != null && !response.IsNotModifiedResponse && !response.
+                    IsOKResponse)
+                EsiErrors.UpdateErrors((int)response.ErrorCount, DateTime.UtcNow.AddSeconds(90.0));
+
+            var esiResult = new EsiResult<T>(result);
+            // Sync clock on the answer if necessary and provided
+            var sync = esiResult.Result as ISynchronizableWithLocalClock;
+            DateTime? when = esiResult.CurrentTime;
+            if (sync != null && when != null)
+                sync.SynchronizeWithLocalClock(DateTime.UtcNow - (DateTime)when);
+            return esiResult;
+        }
+
+        /// <summary>
+        /// Returns the full canonical ESI URL for the specified APIMethod as constructed from
+        /// the Server and APIMethod properties.
+        /// </summary>
+        /// <param name="requestMethod">An APIMethodsEnum enumeration member specifying the
+        /// method for which the URL is required.</param>
+        /// <param name="data">The ESI parameters for this URL.</param>
+        /// <param name="page">The page to fetch; 0 or 1 will fetch without requesting a page
+        /// </param>
         /// <returns>A String representing the full URL path of the specified method.</returns>
-        public Uri GetMethodUrl(Enum requestMethod)
+        private Uri GetESIUrl(Enum requestMethod, ESIParams data, int page = 1)
         {
-            // Gets the proper data
-            Uri url = Url;
-            string path = GetMethod(requestMethod).Path;
-            if (String.IsNullOrEmpty(path) || String.IsNullOrEmpty(url.AbsoluteUri))
+            long id = data.ParamOne;
+            string paramStr = string.IsNullOrEmpty(data.GetData) ? data.ParamTwo.ToString(
+                CultureConstants.InvariantCulture) : data.GetData;
+            string path = string.Format(GetESIMethod(requestMethod).Path, id, paramStr);
+            
+            // Build the URI
+            var builder = new UriBuilder(new Uri(NetworkConstants.ESIBase));
+            builder.Path = Path.Combine(builder.Path, path);
+            if (page > 1)
+                builder.Query = "page=" + page.ToString(CultureConstants.InvariantCulture);
+            return builder.Uri;
+        }
+
+        /// <summary>
+        /// Creates the request parameters for ESI.
+        /// </summary>
+        /// <param name="data">The ESI parameters.</param>
+        /// <returns>The required request parameters, including the ETag/Expiry (if supplied)
+        /// and POST data/token.</returns>
+        private RequestParams GetRequestParams(ESIParams data)
+        {
+            return new RequestParams(data.LastResponse, data.PostData)
             {
-                url = s_ccpProvider.Url;
-                path = s_ccpProvider.GetMethod(requestMethod).Path;
-            }
-
-            // Build the uri
-            Uri baseUri = url;
-            UriBuilder uriBuilder = new UriBuilder(baseUri);
-            uriBuilder.Path = Path.Combine(uriBuilder.Path, path);
-            return uriBuilder.Uri;
+                Authentication = data.Token,
+                AcceptEncoded = SupportsCompressedResponse
+            };
         }
 
         #endregion
 
 
-        #region Queries
-
-
+        #region Querying
 
         /// <summary>
-        /// Query a method without arguments.
+        /// Helper method for fetching paginated items.
         /// </summary>
-        /// <typeparam name="T">The type of the deserialization object.</typeparam>
-        /// <param name="method"></param>
-        /// <param name="callback">The callback to invoke once the query has been completed.</param>
-        public void QueryMethodAsync<T>(Enum method, Action<CCPAPIResult<T>> callback)
-        {
-            QueryMethodAsync(method, callback, null, RowsetsTransform);
-        }
-
-        /// <summary>
-        /// Query a method with the provided arguments for an API key.
-        /// </summary>
-        /// <typeparam name="T">The type of the deserialization object.</typeparam>
-        /// <param name="method">The method.</param>
-        /// <param name="keyId">The API key's ID</param>
-        /// <param name="verificationCode">The API key's verification code</param>
-        /// <param name="callback">The callback to invoke once the query has been completed.</param>
-        public void QueryMethodAsync<T>(Enum method, long keyId, string verificationCode, Action<CCPAPIResult<T>> callback)
-        {
-            string postData = String.Format(CultureConstants.InvariantCulture, NetworkConstants.PostDataBase,
-                keyId, verificationCode);
-            QueryMethodAsync(method, callback, postData, RowsetsTransform);
-        }
-
-        /// <summary>
-        /// Query a method with the provided arguments for a character.
-        /// </summary>
-        /// <typeparam name="T">The type of the deserialization object.</typeparam>
-        /// <param name="method">The method.</param>
-        /// <param name="keyId">The API key's ID</param>
-        /// <param name="verificationCode">The API key's verification code</param>
-        /// <param name="id">The character or corporation ID.</param>
-        /// <param name="callback">The callback to invoke once the query has been completed.</param>
-        /// <exception cref="System.ArgumentNullException">method</exception>
-        public void QueryMethodAsync<T>(Enum method, long keyId, string verificationCode, long id,
-            Action<CCPAPIResult<T>> callback)
-        {
-            method.ThrowIfNull(nameof(method));
-
-            string postData = GetPostDataString(method, keyId, verificationCode, id);
-
-            QueryMethodAsync(method, callback, postData, RowsetsTransform);
-        }
-
-        /// <summary>
-        /// Query a method with the provided arguments for a character messages and contracts.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="method">The method.</param>
-        /// <param name="keyId">The API key's ID</param>
-        /// <param name="verificationCode">The API key's verification code</param>
-        /// <param name="id">The character ID.</param>
-        /// <param name="messageID">The message ID.</param>
-        /// <param name="callback">The callback.</param>
-        public void QueryMethodAsync<T>(Enum method, long keyId, string verificationCode, long id, long messageID,
-            Action<CCPAPIResult<T>> callback)
-        {
-            string postData = String.Format(CultureConstants.InvariantCulture, GetPostDataFormat(method),
-                keyId, verificationCode, id, messageID);
-            QueryMethodAsync(method, callback, postData, RowsetsTransform);
-        }
-
-        /// <summary>
-        /// Query a method with the provided arguments.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="method">The method.</param>
-        /// <param name="ids">The ids.</param>
-        /// <param name="callback">The callback.</param>
-        public void QueryMethodAsync<T>(Enum method, string ids, Action<CCPAPIResult<T>> callback)
-        {
-            string postData = String.Format(CultureConstants.InvariantCulture, NetworkConstants.PostDataIDsOnly,
-                ids);
-            QueryMethodAsync(method, callback, postData, RowsetsTransform);
-        }
-
-        #endregion
-
-
-        #region Querying helpers
-
-        /// <summary>
-        /// Query this method with the provided HTTP POST data.
-        /// </summary>
-        /// <typeparam name="T">The subtype to deserialize (the deserialized type being <see cref="CCPAPIResult{T}"/>).</typeparam>
+        /// <typeparam name="T">The subtype to deserialize (the deserialized type being
+        /// <see cref="CCPAPIResult{T}" />). It must be a collection type of U!</typeparam>
+        /// <typeparam name="U">The item type to deserialize.</typeparam>
         /// <param name="method">The method to query</param>
-        /// <param name="postData">The http POST data</param>
-        /// <param name="transform">The XSL transform to apply, may be null.</param>
-        /// <returns>The deserialized object</returns>
-        private CCPAPIResult<T> QueryMethod<T>(Enum method, string postData, XslCompiledTransform transform)
+        /// <param name="callback">The callback to invoke once the query has been completed.
+        /// </param>
+        /// <param name="data">The parameters to use for the request, including the token,
+        /// arguments, and POST data.</param>
+        /// <param name="state">State to be passed to the callback when it is used.</param>
+        private void QueryEsiPageHelper<T, U>(Enum method, ESIRequestCallback<T> callback,
+            ESIParams data, PageInfo<T, U> state) where T : List<U> where U : class
         {
-            // Download
-            Uri url = GetMethodUrl(method);
-            CCPAPIResult<T> result = Util.DownloadAPIResult<T>(url, SupportsCompressedResponse, postData, transform);
-
-            // On failure with a custom method, fallback to CCP
-            return ShouldRetryWithCCP(result) ? s_ccpProvider.QueryMethod<T>(method, postData, transform) : result;
+            int page = state.CurrentPage;
+            var first = state.FirstResult;
+            Uri pageUrl = GetESIUrl(method, data, page);
+            // Create RequestParams manually to zero out the ETag/Expiry since it was already
+            // checked
+            Util.DownloadJsonAsync<T>(pageUrl, new RequestParams(null, data.PostData)
+            {
+                Authentication = data.Token,
+                AcceptEncoded = SupportsCompressedResponse
+            }).ContinueWith(task =>
+            {
+                var esiResult = GetESIResult(task.Result);
+                object callbackState = state.State;
+                if (esiResult.HasError)
+                    // Invoke the callback if an error occurred
+                    Dispatcher.Invoke(() => callback.Invoke(esiResult, callbackState));
+                else if (!esiResult.HasData)
+                    // This should not occur
+                    Dispatcher.Invoke(() => callback.Invoke(first, callbackState));
+                else
+                {
+                    first.Result.AddRange(esiResult.Result);
+                    if (page >= state.LastPage)
+                        // All pages fetched
+                        Dispatcher.Invoke(() => callback.Invoke(first, callbackState));
+                    else
+                        // Go to the next page
+                        QueryEsiPageHelper(method, callback, data, state.NextPage());
+                }
+            });
         }
 
         /// <summary>
-        /// Asynchrnoneously queries this method with the provided HTTP POST data.
+        /// Asynchronously queries this method, fetching all pages if necessary, with the
+        /// provided request data.
         /// </summary>
-        /// <typeparam name="T">The subtype to deserialize (the deserialized type being <see cref="CCPAPIResult{T}" />).</typeparam>
+        /// <typeparam name="T">The subtype to deserialize (the deserialized type being
+        /// <see cref="CCPAPIResult{T}" />). It must be a collection type of U!</typeparam>
+        /// <typeparam name="U">The item type to deserialize.</typeparam>
         /// <param name="method">The method to query</param>
-        /// <param name="callback">The callback to invoke once the query has been completed.</param>
-        /// <param name="postData">The http POST data</param>
-        /// <param name="transform">The XSL transform to apply, may be null.</param>
-        /// <exception cref="System.ArgumentNullException">callback; The callback cannot be null.</exception>
-        private void QueryMethodAsync<T>(Enum method, Action<CCPAPIResult<T>> callback, string postData,
-            XslCompiledTransform transform)
+        /// <param name="callback">The callback to invoke once the query has been completed.
+        /// </param>
+        /// <param name="data">The parameters to use for the request, including the token,
+        /// arguments, and POST data.</param>
+        /// <param name="state">State to be passed to the callback when it is used.</param>
+        /// <exception cref="System.ArgumentNullException">callback; The callback cannot be
+        /// null.</exception>
+        public void QueryPagedEsi<T, U>(Enum method, ESIRequestCallback<T> callback,
+            ESIParams data, object state = null) where T : List<U> where U : class
         {
-            // Check callback not null
             callback.ThrowIfNull(nameof(callback), "The callback cannot be null.");
 
-            // Lazy download
-            Uri url = GetMethodUrl(method);
-
-            Util.DownloadAPIResultAsync<T>(url, SupportsCompressedResponse, postData, transform)
-                .ContinueWith(task =>
-                {
-                    // On failure with a custom provider, fallback to CCP
-                    if (ShouldRetryWithCCP(task.Result))
-                    {
-                        APIProvider ccpProvider = EveMonClient.APIProviders.CurrentProvider.Url.Host != TestProvider.Url.Host
-                            ? s_ccpProvider
-                            : s_ccpTestProvider;
-                        ccpProvider.QueryMethodAsync(method, callback, postData, transform);
-                        return;
-                    }
-
+            Uri url = GetESIUrl(method, data);
+            Util.DownloadJsonAsync<T>(url, GetRequestParams(data)).ContinueWith(task =>
+            {
+                var esiResult = GetESIResult(task.Result);
+                // Check page count
+                int pages = esiResult.Response.Pages;
+                if (pages > 1 && esiResult.HasData && !esiResult.HasError)
+                    // Fetch the other pages
+                    QueryEsiPageHelper(method, callback, data, new PageInfo<T, U>(esiResult,
+                        pages, state));
+                else
                     // Invokes the callback
-                    Dispatcher.Invoke(() => callback.Invoke(task.Result));
-                });
+                    Dispatcher.Invoke(() => callback.Invoke(esiResult, state));
+            });
         }
 
         /// <summary>
-        /// Checks whether the query must be retrieved with CCP as the default provider.
+        /// Asynchronously queries this method with the provided request data.
         /// </summary>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        private bool ShouldRetryWithCCP(IAPIResult result)
-            => s_ccpProvider != this && s_ccpTestProvider != this && result.HasError &&
-               result.ErrorType != CCPAPIErrors.CCP;
-
-        /// <summary>
-        /// Gets the post data string.
-        /// </summary>
-        /// <param name="method">The method.</param>
-        /// <param name="keyId">The key identifier.</param>
-        /// <param name="verificationCode">The verification code.</param>
-        /// <param name="id">The identifier.</param>
-        /// <returns></returns>
-        private static string GetPostDataString(Enum method, long keyId, string verificationCode, long id)
+        /// <typeparam name="T">The subtype to deserialize (the deserialized type being
+        /// <see cref="CCPAPIResult{T}" />).</typeparam>
+        /// <param name="method">The method to query</param>
+        /// <param name="callback">The callback to invoke once the query has been completed.
+        /// </param>
+        /// <param name="data">The parameters to use for the request, including the token,
+        /// arguments, and POST data.</param>
+        /// <param name="state">State to be passed to the callback when it is used.</param>
+        /// <exception cref="System.ArgumentNullException">callback; The callback cannot be
+        /// null.</exception>
+        public void QueryEsi<T>(Enum method, ESIRequestCallback<T> callback, ESIParams
+            data, object state = null) where T : class
         {
-            if (method.Equals(CCPAPICharacterMethods.CharacterInfo) && keyId == 0 && string.IsNullOrEmpty(verificationCode))
-            {
-                return String.Format(CultureConstants.InvariantCulture, NetworkConstants.PostDataCharacterIDOnly, id);
-            }
+            callback.ThrowIfNull(nameof(callback), "The callback cannot be null.");
 
-            if (method.Equals(CCPAPICorporationMethods.CorporationSheet) && keyId == 0 && string.IsNullOrEmpty(verificationCode))
+            Uri url = GetESIUrl(method, data);
+            Util.DownloadJsonAsync<T>(url, GetRequestParams(data)).ContinueWith(task =>
             {
-                return String.Format(CultureConstants.InvariantCulture, NetworkConstants.PostDataCorporationIDOnly, id);
-            }
-
-            if (method.Equals(CCPAPICharacterMethods.WalletJournal) || method.Equals(CCPAPICharacterMethods.WalletTransactions))
-            {
-                return String.Format(CultureConstants.InvariantCulture, NetworkConstants.PostDataWithCharIDAndRowCount,
-                    keyId, verificationCode, id, 2560);
-            }
-
-            return String.Format(CultureConstants.InvariantCulture, NetworkConstants.PostDataWithCharID,
-                keyId, verificationCode, id);
+                // Invokes the callback
+                Dispatcher.Invoke(() => callback.Invoke(GetESIResult(task.Result), state));
+            });
         }
-
+        
         /// <summary>
-        /// Gets the post data format.
+        /// Gets the XSLT used for transforming rowsets into something deserializable by
+        /// <see cref="System.Xml.Serialization.XmlSerializer"/>
         /// </summary>
-        /// <param name="method">The method.</param>
-        /// <returns></returns>
-        private static string GetPostDataFormat(Enum method)
-        {
-            if (method.GetType() == typeof(CCPAPIGenericMethods))
-            {
-                if (method.ToString().Contains("Contract"))
-                    return NetworkConstants.PostDataWithCharIDAndContractID;
-
-                if (method.ToString().Contains("Planetary"))
-                    return NetworkConstants.PostDataWithCharIDAndPlanetID;
-            }
-
-            return NetworkConstants.PostDataWithCharIDAndIDS;
-        }
-
-        /// <summary>
-        /// Gets the XSLT used for transforming rowsets into something deserializable by <see cref="System.Xml.Serialization.XmlSerializer"/>
-        /// </summary>
-        internal static XslCompiledTransform RowsetsTransform
-            => s_rowsetsTransform ?? (s_rowsetsTransform = Util.LoadXslt(Properties.Resources.RowsetsXSLT));
+        internal static XslCompiledTransform RowsetsTransform => s_rowsetsTransform ??
+            (s_rowsetsTransform = Util.LoadXslt(Properties.Resources.RowsetsXSLT));
 
         #endregion
 
@@ -351,5 +306,130 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <returns></returns>
         public override string ToString() => Name;
+
+
+        #region Helper classes
+
+        /// <summary>
+        /// Tracks the state of a multi-paged request.
+        /// </summary>
+        private sealed class PageInfo<T, U> where T : List<U> where U : class
+        {
+            /// <summary>
+            /// The current page which was just fetched.
+            /// </summary>
+            public int CurrentPage { get; }
+
+            /// <summary>
+            /// The result from fetching the first page.
+            /// </summary>
+            public EsiResult<T> FirstResult { get; }
+
+            /// <summary>
+            /// The last page to fetch.
+            /// </summary>
+            public int LastPage { get; }
+
+            /// <summary>
+            /// The state object to be passed to the callback.
+            /// </summary>
+            public object State { get; }
+
+            /// <summary>
+            /// Creates the information for fetching the second page.
+            /// </summary>
+            /// <param name="first">The result from the first page.</param>
+            /// <param name="count">The number of total pages.</param>
+            /// <param name="state">The state to be passed to the callback.</param>
+            public PageInfo(EsiResult<T> first, int count, object state)
+            {
+                first.ThrowIfNull(nameof(first));
+                if (count < 2)
+                    throw new ArgumentOutOfRangeException("count");
+                CurrentPage = 2;
+                FirstResult = first;
+                LastPage = count;
+                State = state;
+            }
+
+            /// <summary>
+            /// Creates a page info from the previous page.
+            /// </summary>
+            /// <param name="previous">The information for the previous page fetched.</param>
+            private PageInfo(PageInfo<T, U> previous)
+            {
+                previous.ThrowIfNull(nameof(previous));
+
+                CurrentPage = previous.CurrentPage + 1;
+                FirstResult = previous.FirstResult;
+                LastPage = previous.LastPage;
+                State = previous.State;
+            }
+
+            /// <summary>
+            /// Creates a page info from the previous page.
+            /// </summary>
+            /// <returns>The state for the next page to fetch.</returns>
+            public PageInfo<T, U> NextPage()
+            {
+                return new PageInfo<T, U>(this);
+            }
+
+            public override string ToString()
+            {
+                return string.Format("Page {0:D}/{1:D}", CurrentPage, LastPage);
+            }
+        }
+
+        #endregion
+
     }
+
+    #region Helper classes
+
+    /// <summary>
+    /// Simplifies ESI request building by allowing parameters to be flexibly included.
+    /// </summary>
+    public struct ESIParams
+    {
+        /// <summary>
+        /// The first parameter, usually used for the ID of the target object in public
+        /// requests and for the character/corporation ID in private requests.
+        /// </summary>
+        public long ParamOne;
+        /// <summary>
+        /// The second parameter, usually used for the ID of the target object in private
+        /// requests.
+        /// </summary>
+        public long ParamTwo;
+        /// <summary>
+        /// The GET data to be passed in as a string.
+        /// </summary>
+        public string GetData;
+        /// <summary>
+        /// The POST data to be passed in as a string.
+        /// </summary>
+        public string PostData;
+        /// <summary>
+        /// The last response from the server.
+        /// </summary>
+        public ResponseParams LastResponse;
+        /// <summary>
+        /// The token to use for authentication.
+        /// </summary>
+        public string Token;
+
+        public ESIParams(ResponseParams lastResponse, string token = null)
+        {
+            ParamOne = 0L;
+            ParamTwo = 0L;
+            GetData = null;
+            LastResponse = lastResponse ?? new ResponseParams(0);
+            PostData = null;
+            Token = token;
+        }
+    }
+
+    #endregion
+
 }

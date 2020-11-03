@@ -13,21 +13,21 @@ namespace EVEMon.Common.Serialization.Settings
         public RemappingPointStatus Status { get; set; }
 
         [XmlAttribute("per")]
-        public Int64 Perception { get; set; }
+        public long Perception { get; set; }
 
         [XmlAttribute("int")]
-        public Int64 Intelligence { get; set; }
+        public long Intelligence { get; set; }
 
         [XmlAttribute("mem")]
-        public Int64 Memory { get; set; }
+        public long Memory { get; set; }
 
         [XmlAttribute("wil")]
-        public Int64 Willpower { get; set; }
+        public long Willpower { get; set; }
 
         [XmlAttribute("cha")]
-        public Int64 Charisma { get; set; }
+        public long Charisma { get; set; }
 
         [XmlAttribute("description")]
-        public String Description { get; set; }
+        public string Description { get; set; }
     }
 }

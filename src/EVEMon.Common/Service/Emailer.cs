@@ -73,7 +73,7 @@ namespace EVEMon.Common.Service
             // Next skills in queue
             if (queueList[0] != null)
             {
-                string plural = queueList.Count > 1 ? "s" : String.Empty;
+                string plural = queueList.Count > 1 ? "s" : string.Empty;
                 body.AppendLine($"Next skill{plural} in queue:");
 
                 foreach (QueuedSkill qskill in queueList)
@@ -220,7 +220,7 @@ namespace EVEMon.Common.Service
             // Trace something to the logs so we can identify the time the message was sent
             EveMonClient.Trace($"(Subject - {subject}; Server - {settings.EmailSmtpServerAddress}:{settings.EmailPortNumber})");
 
-            string sender = String.IsNullOrEmpty(settings.EmailFromAddress)
+            string sender = string.IsNullOrEmpty(settings.EmailFromAddress)
                 ? "no-reply@evemon.net"
                 : settings.EmailFromAddress;
 

@@ -27,7 +27,7 @@ namespace EVEMon.Common.Controls
 
             m_pto = pto;
 
-            foreach (String printer in PrinterSettings.InstalledPrinters)
+            foreach (string printer in PrinterSettings.InstalledPrinters)
             {
                 int index = comboPrinters.Items.Add(printer);
 
@@ -54,7 +54,7 @@ namespace EVEMon.Common.Controls
         /// Gets the name of the printer.
         /// </summary>
         /// <value>The name of the printer.</value>
-        public String PrinterName => comboPrinters.Items[comboPrinters.SelectedIndex].ToString();
+        public string PrinterName => comboPrinters.Items[comboPrinters.SelectedIndex].ToString();
 
         /// <summary>
         /// Gets or sets a value indicating whether [entry finish date].

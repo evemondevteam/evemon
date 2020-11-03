@@ -5,6 +5,7 @@ using System.Text;
 using EVEMon.Common;
 using EVEMon.Common.Controls;
 using EVEMon.Common.SettingsObjects;
+using EVEMon.Common.Extensions;
 
 namespace EVEMon.ApiErrorHandling
 {
@@ -26,7 +27,7 @@ namespace EVEMon.ApiErrorHandling
             // Lets add 10 - 60 to the list
             for (int i = 10; i <= 60; i += 10)
             {
-                string text = String.Empty;
+                string text = string.Empty;
 
                 if (i == updateSettings.HttpTimeout)
                     text = "Default";
@@ -92,7 +93,7 @@ namespace EVEMon.ApiErrorHandling
             /// Gets the label.
             /// </summary>
             /// <value>The label.</value>
-            public String Label
+            public string Label
             {
                 get
                 {
@@ -101,12 +102,12 @@ namespace EVEMon.ApiErrorHandling
                     if (Seconds % 60 == 0)
                     {
                         int minutes = Seconds / 60;
-                        builder.Append($"{minutes} Minute{(minutes == 1 ? String.Empty : "s")}");
+                        builder.Append($"{minutes} Minute{(minutes.S())}");
                     }
                     else
                         builder.Append($"{Seconds} Seconds");
 
-                    if (!String.IsNullOrEmpty(m_text))
+                    if (!string.IsNullOrEmpty(m_text))
                         builder.Append($" ({m_text})");
 
                     return builder.ToString();

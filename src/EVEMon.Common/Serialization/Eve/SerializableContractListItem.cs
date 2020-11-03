@@ -38,7 +38,7 @@ namespace EVEMon.Common.Serialization.Eve
         public string TitleXml
         {
             get { return Title; }
-            set { Title = value?.HtmlDecode() ?? String.Empty; }
+            set { Title = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlAttribute("forCorp")]
@@ -53,7 +53,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return DateIssued.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     DateIssued = value.TimeStringToDateTime();
             }
         }
@@ -64,7 +64,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return DateExpired.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     DateExpired = value.TimeStringToDateTime();
             }
         }
@@ -75,7 +75,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return DateAccepted.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     DateAccepted = value.TimeStringToDateTime();
             }
         }
@@ -89,7 +89,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return DateCompleted.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     DateCompleted = value.TimeStringToDateTime();
             }
         }

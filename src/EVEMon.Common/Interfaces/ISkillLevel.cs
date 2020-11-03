@@ -8,7 +8,7 @@ namespace EVEMon.Common.Interfaces
     /// </summary>
     public interface ISkillLevel
     {
-        Int64 Level { get; }
+        long Level { get; }
         StaticSkill Skill { get; }
     }
 }

@@ -1,15 +1,13 @@
-using System;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using EVEMon.Common.Constants;
 using EVEMon.Common.CustomEventArgs;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Net;
 using EVEMon.Common.Threading;
+using System;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace EVEMon.Common.Helpers
 {
@@ -71,6 +69,8 @@ namespace EVEMon.Common.Helpers
                         var ipEndPoint = new IPEndPoint(task.Result.First(), 123);
                         using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
                         {
+                            socket.ReceiveTimeout = 5000;
+                            socket.SendTimeout = 5000;
                             socket.Connect(ipEndPoint);
                             socket.Send(ntpData);
                             socket.Receive(ntpData);

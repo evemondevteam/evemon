@@ -16,7 +16,7 @@ namespace EVEMon.WindowsApi
             if (!OSFeatureCheck.TaskbarSupported)
                 return;
 
-            if (String.IsNullOrWhiteSpace(appId) || appId.Length > 128)
+            if (string.IsNullOrWhiteSpace(appId) || appId.Length > 128)
                 throw new ArgumentException("AppID must be 128 characters or less", nameof(appId));
 
             SafeNativeMethods.SetCurrentProcessExplicitAppUserModelID(appId);

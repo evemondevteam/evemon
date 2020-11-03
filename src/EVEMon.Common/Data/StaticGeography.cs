@@ -1,8 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using EVEMon.Common.Collections.Global;
 using EVEMon.Common.Serialization.Datafiles;
+using EVEMon.Common.Constants;
+using System;
+using System.Globalization;
+using EVEMon.Common.Extensions;
 
 namespace EVEMon.Common.Data
 {
@@ -13,8 +16,10 @@ namespace EVEMon.Common.Data
     {
         #region Fields
 
+        private static readonly Dictionary<int, Faction> s_factionsByID = new Dictionary<int, Faction>();
         private static readonly Dictionary<int, Region> s_regionsByID = new Dictionary<int, Region>();
         private static readonly Dictionary<int, Constellation> s_constellationsByID = new Dictionary<int, Constellation>();
+        private static readonly Dictionary<long, Planet> s_planetsByID = new Dictionary<long, Planet>();
         private static readonly Dictionary<int, SolarSystem> s_solarSystemsByID = new Dictionary<int, SolarSystem>();
         private static readonly Dictionary<long, Station> s_stationsByID = new Dictionary<long, Station>();
         private static readonly Dictionary<int, NPCCorporation> s_corporationsByID = new Dictionary<int, NPCCorporation>();
@@ -30,7 +35,49 @@ namespace EVEMon.Common.Data
         /// </summary>
         internal static void Load()
         {
-            GeoDatafile datafile = Util.DeserializeDatafile<GeoDatafile>(DatafileConstants.GeographyDatafile,
+            GeoDatafile datafile = LoadGeoData();
+            LoadFactions();
+
+            CompleteInitialization(datafile);
+
+            GlobalDatafileCollection.OnDatafileLoaded();
+        }
+
+        /// <summary>
+        /// Initialize the NPC factions.
+        /// </summary>
+        private static void LoadFactions()
+        {
+            // This is a workaround until XmlGenerator can be updated
+            foreach (string factionInfo in Properties.Resources.chrFactions.Split('\n'))
+            {
+                string[] entries = factionInfo.Split(',');
+                NPCCorporation baseCorp = null, militiaCorp = null;
+                if (entries.Length > 9)
+                {
+                    // factionID,factionName,description,raceIDs,solarSystemID,corporationID,
+                    // sizeFactor,stationCount,stationSystemCount,militiaCorporationID,iconID
+                    int id, end = entries.Length, corpID, militiaID;
+                    string factionName = entries[1].Trim();
+                    // Find executor and militia corps (also NPC)
+                    if (entries[end - 2].TryParseInv(out militiaID))
+                        militiaCorp = GetCorporationByID(militiaID);
+                    if (entries[end - 6].TryParseInv(out corpID))
+                        baseCorp = GetCorporationByID(corpID);
+                    if (entries[0].TryParseInv(out id) && !string.IsNullOrEmpty(factionName) &&
+                            id > 0 && baseCorp != null)
+                        s_factionsByID.Add(id, new Faction(id, baseCorp, militiaCorp,
+                            factionName));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Initializes the geography gzip data file.
+        /// </summary>
+        private static GeoDatafile LoadGeoData()
+        {
+            var datafile = Util.DeserializeDatafile<GeoDatafile>(DatafileConstants.GeographyDatafile,
                 Util.LoadXslt(Properties.Resources.DatafilesXSLT));
 
             // Generate the nodes
@@ -48,6 +95,12 @@ namespace EVEMon.Common.Data
                     {
                         s_solarSystemsByID[solarSystem.ID] = solarSystem;
 
+                        // Add planets to global lookup
+                        var systemPlanets = solarSystem.Planets;
+                        if (systemPlanets != null)
+                            foreach (var planet in systemPlanets)
+                                s_planetsByID[planet.ID] = planet;
+
                         foreach (Station station in solarSystem)
                         {
                             s_stationsByID[station.ID] = station;
@@ -55,17 +108,13 @@ namespace EVEMon.Common.Data
                             s_corporationsByID[station.CorporationID] = new NPCCorporation(station);
 
                             foreach (Agent agent in station)
-                            {
                                 s_agentsByID[agent.ID] = agent;
-                            }
                         }
                     }
                 }
             }
 
-            CompleteInitialization(datafile);
-
-            GlobalDatafileCollection.OnDatafileLoaded();
+            return datafile;
         }
 
         /// <summary>
@@ -144,15 +193,7 @@ namespace EVEMon.Common.Data
             s_regionsByID.TryGetValue(id, out result);
             return result;
         }
-
-        /// <summary>
-        /// Gets the region with the provided name.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns></returns>
-        public static Region GetRegionByName(string name) 
-            => s_regionsByID.Values.FirstOrDefault(region => region.Name == name);
-
+        
         /// <summary>
         /// Gets the constellation with the provided ID.
         /// </summary>
@@ -166,12 +207,16 @@ namespace EVEMon.Common.Data
         }
 
         /// <summary>
-        /// Gets the constellation with the provided name.
+        /// Gets the planet with the provided ID.
         /// </summary>
-        /// <param name="name">The name.</param>
+        /// <param name="id">The id.</param>
         /// <returns></returns>
-        public static Constellation GetConstellationByName(string name) 
-            => s_constellationsByID.Values.FirstOrDefault(constellation => constellation.Name == name);
+        public static Planet GetPlanetByID(int id)
+        {
+            Planet result;
+            s_planetsByID.TryGetValue(id, out result);
+            return result;
+        }
 
         /// <summary>
         /// Gets the system with the provided ID.
@@ -186,12 +231,22 @@ namespace EVEMon.Common.Data
         }
 
         /// <summary>
-        /// Gets the system with the provided name.
+        /// Gets the system name with the provided ID.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <returns>The system name, or EveMonConstants.UnknownText if no system has this ID</returns>
+        public static string GetSolarSystemName(int id)
+        {
+            return GetSolarSystemByID(id)?.Name ?? EveMonConstants.UnknownText;
+        }
+
+        /// <summary>
+        /// Gets the system with the provided name. Slow!
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns></returns>
-        public static SolarSystem GetSolarSystemByName(string name) 
-            => s_solarSystemsByID.Values.FirstOrDefault(system => system.Name == name);
+        public static SolarSystem GetSolarSystemByName(string name) => s_solarSystemsByID.
+            Values.FirstOrDefault(system => system.Name == name);
 
         /// <summary>
         /// Gets the station with the provided ID.
@@ -204,17 +259,9 @@ namespace EVEMon.Common.Data
             s_stationsByID.TryGetValue(id, out result);
             return result;
         }
-
+        
         /// <summary>
-        /// Gets the station with the provided name.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns></returns>
-        public static Station GetStationByName(string name)
-            => s_stationsByID.Values.FirstOrDefault(station => station.Name == name);
-
-        /// <summary>
-        /// Gets the NPC Coproration with the provided ID.
+        /// Gets the NPC Corporation with the provided ID.
         /// </summary>
         /// <param name="id">The id.</param>
         /// <returns></returns>
@@ -224,15 +271,7 @@ namespace EVEMon.Common.Data
             s_corporationsByID.TryGetValue(id, out result);
             return result;
         }
-
-        /// <summary>
-        /// Gets the  NPC Coproration with the provided name.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns></returns>
-        public static NPCCorporation GetCorporationByName(string name)
-            => s_corporationsByID.Values.FirstOrDefault(corporation => corporation.Name == name);
-
+        
         /// <summary>
         /// Gets the agent with the provided ID.
         /// </summary>
@@ -250,8 +289,20 @@ namespace EVEMon.Common.Data
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns></returns>
-        public static Station GetAgentByName(string name) 
-            => s_stationsByID.Values.FirstOrDefault(station => station.Name == name);
+        public static Agent GetAgentByName(string name) => s_agentsByID.Values.FirstOrDefault(
+            agent => agent.Name.Equals(name, StringComparison.InvariantCulture));
+
+        /// <summary>
+        /// Gets the faction with the provided ID.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <returns></returns>
+        public static Faction GetFactionByID(int id)
+        {
+            Faction result;
+            s_factionsByID.TryGetValue(id, out result);
+            return result;
+        }
 
         #endregion
 
@@ -259,7 +310,7 @@ namespace EVEMon.Common.Data
         /// <summary>
         /// The description of the range.
         /// </summary>
-        public static string GetRange(Int64 range)
+        public static string GetRange(int range)
         {
             switch (range)
             {
@@ -276,7 +327,7 @@ namespace EVEMon.Common.Data
                 case 5:
                     return "regions";
                 default:
-                    return String.Empty;
+                    return string.Empty;
             }
         }
     }

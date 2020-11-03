@@ -21,7 +21,7 @@ namespace EVEMon.Common.SettingsObjects
             CheckTimeOnStartup = true;
             CheckEVEMonVersion = true;
             HttpTimeout = 20;
-            Periods = new ModifiedSerializableDictionary<String, UpdatePeriod>();
+            Periods = new ModifiedSerializableDictionary<string, UpdatePeriod>();
             IgnoreNetworkStatus = false;
             UpdateFrequency = 720;
         }
@@ -85,6 +85,6 @@ namespace EVEMon.Common.SettingsObjects
         /// </summary>
         /// <value>The periods.</value>
         [XmlElement("periods")]
-        public ModifiedSerializableDictionary<String, UpdatePeriod> Periods { get; set; }
+        public ModifiedSerializableDictionary<string, UpdatePeriod> Periods { get; set; }
     }
 }

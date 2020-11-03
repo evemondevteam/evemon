@@ -25,7 +25,7 @@ namespace EVEMon.Common.Extensions
         /// <remarks>Please note they may be redundancies.</remarks>
         public static IEnumerable<StaticSkillLevel> GetAllPrerequisites(this IEnumerable<StaticSkill> src)
         {
-            Int64[] highestLevels = new Int64[StaticSkills.ArrayIndicesCount];
+            long[] highestLevels = new long[StaticSkills.ArrayIndicesCount];
             List<StaticSkillLevel> list = new List<StaticSkillLevel>();
 
             // Fill the array
@@ -49,7 +49,7 @@ namespace EVEMon.Common.Extensions
         /// <param name="list"></param>
         /// <param name="item"></param>
         /// <param name="includeRoots"></param>
-        internal static void FillPrerequisites(Int64[] highestLevels, List<StaticSkillLevel> list, StaticSkillLevel item,
+        internal static void FillPrerequisites(long[] highestLevels, List<StaticSkillLevel> list, StaticSkillLevel item,
             bool includeRoots)
         {
             // Prerequisites

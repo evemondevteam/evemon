@@ -78,6 +78,7 @@ namespace EVEMon.CharacterMonitoring
             this.walletJournalIcon = new System.Windows.Forms.ToolStripButton();
             this.walletTransactionsIcon = new System.Windows.Forms.ToolStripButton();
             this.jobsIcon = new System.Windows.Forms.ToolStripButton();
+            this.loyaltyIcon = new System.Windows.Forms.ToolStripButton();
             this.planetaryIcon = new System.Windows.Forms.ToolStripButton();
             this.researchIcon = new System.Windows.Forms.ToolStripButton();
             this.mailMessagesIcon = new System.Windows.Forms.ToolStripButton();
@@ -94,6 +95,8 @@ namespace EVEMon.CharacterMonitoring
             this.borderPanel = new EVEMon.Common.Controls.BorderPanel();
             this.corePanel = new System.Windows.Forms.Panel();
             this.multiPanel = new EVEMon.Common.Controls.MultiPanel.MultiPanel();
+            this.loyaltyPage = new EVEMon.Common.Controls.MultiPanel.MultiPanelPage();
+            this.loyaltyList = new EVEMon.CharacterMonitoring.CharacterLoyaltyList();
             this.standingsPage = new EVEMon.Common.Controls.MultiPanel.MultiPanelPage();
             this.standingsList = new EVEMon.CharacterMonitoring.CharacterStandingsList();
             this.skillsPage = new EVEMon.Common.Controls.MultiPanel.MultiPanelPage();
@@ -138,6 +141,7 @@ namespace EVEMon.CharacterMonitoring
             this.borderPanel.SuspendLayout();
             this.corePanel.SuspendLayout();
             this.multiPanel.SuspendLayout();
+            this.loyaltyPage.SuspendLayout();
             this.standingsPage.SuspendLayout();
             this.skillsPage.SuspendLayout();
             this.ordersPage.SuspendLayout();
@@ -485,6 +489,7 @@ namespace EVEMon.CharacterMonitoring
             this.walletJournalIcon,
             this.walletTransactionsIcon,
             this.jobsIcon,
+            this.loyaltyIcon,
             this.planetaryIcon,
             this.researchIcon,
             this.mailMessagesIcon,
@@ -670,6 +675,18 @@ namespace EVEMon.CharacterMonitoring
             this.jobsIcon.ToolTipText = "Display industry jobs";
             this.jobsIcon.Click += new System.EventHandler(this.toolbarIcon_Click);
             // 
+            // loyaltyIcon
+            // 
+            this.loyaltyIcon.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.loyaltyIcon.Image = ((System.Drawing.Image)(resources.GetObject("loyaltyIcon.Image")));
+            this.loyaltyIcon.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.loyaltyIcon.Name = "loyaltyIcon";
+            this.loyaltyIcon.Size = new System.Drawing.Size(28, 28);
+            this.loyaltyIcon.Tag = "loyaltyPage";
+            this.loyaltyIcon.Text = "Loyalty Points";
+            this.loyaltyIcon.ToolTipText = "Display loyalty point balances";
+            this.loyaltyIcon.Click += new System.EventHandler(this.toolbarIcon_Click);
+            // 
             // planetaryIcon
             // 
             this.planetaryIcon.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -828,6 +845,7 @@ namespace EVEMon.CharacterMonitoring
             // 
             // multiPanel
             // 
+            this.multiPanel.Controls.Add(this.loyaltyPage);
             this.multiPanel.Controls.Add(this.standingsPage);
             this.multiPanel.Controls.Add(this.skillsPage);
             this.multiPanel.Controls.Add(this.ordersPage);
@@ -852,6 +870,25 @@ namespace EVEMon.CharacterMonitoring
             this.multiPanel.SelectedPage = this.skillsPage;
             this.multiPanel.Size = new System.Drawing.Size(608, 181);
             this.multiPanel.TabIndex = 14;
+            // 
+            // loyaltyPage
+            // 
+            this.loyaltyPage.Controls.Add(this.loyaltyList);
+            this.loyaltyPage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.loyaltyPage.Location = new System.Drawing.Point(0, 0);
+            this.loyaltyPage.Name = "loyaltyPage";
+            this.loyaltyPage.Size = new System.Drawing.Size(608, 181);
+            this.loyaltyPage.TabIndex = 18;
+            this.loyaltyPage.Tag = "LoyaltyPoints";
+            this.loyaltyPage.Text = "loyaltyPage";
+            // 
+            // loyaltyList
+            // 
+            this.loyaltyList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.loyaltyList.Location = new System.Drawing.Point(0, 0);
+            this.loyaltyList.Name = "loyaltyList";
+            this.loyaltyList.Size = new System.Drawing.Size(608, 181);
+            this.loyaltyList.TabIndex = 0;
             // 
             // standingsPage
             // 
@@ -1259,6 +1296,7 @@ namespace EVEMon.CharacterMonitoring
             this.borderPanel.ResumeLayout(false);
             this.corePanel.ResumeLayout(false);
             this.multiPanel.ResumeLayout(false);
+            this.loyaltyPage.ResumeLayout(false);
             this.standingsPage.ResumeLayout(false);
             this.skillsPage.ResumeLayout(false);
             this.ordersPage.ResumeLayout(false);
@@ -1384,5 +1422,8 @@ namespace EVEMon.CharacterMonitoring
         private CharacterPlanetaryList planetaryList;
         private System.Windows.Forms.ToolStripSeparator tsPlanetarySeparator;
         private System.Windows.Forms.ToolStripMenuItem showOnlyExtractorMenuItem;
+        private System.Windows.Forms.ToolStripButton loyaltyIcon;
+        private Common.Controls.MultiPanel.MultiPanelPage loyaltyPage;
+        private CharacterLoyaltyList loyaltyList;
     }
 }

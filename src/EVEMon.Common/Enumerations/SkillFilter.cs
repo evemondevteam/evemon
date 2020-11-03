@@ -52,7 +52,7 @@ namespace EVEMon.Common.Enumerations
         [Description("Trainable (All)")]
         Trainable = 14,
 
-        [Description("Trainable on trial account")]
-        TrialAccountFriendly = 15
+        [Description("Trainable on alpha account")]
+        AlphaFriendly = 15
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Models;
@@ -17,7 +16,7 @@ namespace EVEMon.Common.Notifications
         /// <param name="sender">The sender.</param>
         /// <param name="pins">The pins.</param>
         /// <exception cref="System.ArgumentNullException">pins</exception>
-        public PlanetaryPinsNotificationEventArgs(Object sender, IEnumerable<PlanetaryPin> pins)
+        public PlanetaryPinsNotificationEventArgs(object sender, IEnumerable<PlanetaryPin> pins)
             : base(sender, NotificationCategory.PlanetaryPinsCompleted)
         {
             pins.ThrowIfNull(nameof(pins));
@@ -59,7 +58,7 @@ namespace EVEMon.Common.Notifications
         /// </summary>
         private void UpdateDescription()
         {
-            Description = $"{PlanetaryPins.Count} planetary work{(PlanetaryPins.Count > 1 ? "s" : String.Empty)} completed.";
+            Description = $"{PlanetaryPins.Count} planetary colon{(PlanetaryPins.Count == 1 ? "y" : "ies")} are idle.";
         }
     }
  }

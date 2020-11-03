@@ -169,10 +169,10 @@ namespace EVEMon.CharacterMonitoring
             // Do not show the "DOWNTIME" warning if character's skill queue has more than one skills
             if (ccpCharacter != null && ccpCharacter.SkillQueue.Count > 1 &&
                 isAutoBlocking &&
-                String.Equals(conflictMessage, EveMonConstants.DowntimeText, StringComparison.OrdinalIgnoreCase))
+                string.Equals(conflictMessage, EveMonConstants.DowntimeText, StringComparison.OrdinalIgnoreCase))
             {
                 lblScheduleWarning.Visible = false;
-                lblScheduleWarning.Text = String.Empty;
+                lblScheduleWarning.Text = string.Empty;
                 return;
             }
 
@@ -222,7 +222,7 @@ namespace EVEMon.CharacterMonitoring
                 : $"{training.Skill.SkillPointsPerHour} SP/Hour";
 
             lblTrainingRemain.Text = "Paused";
-            lblTrainingEst.Text = String.Empty;
+            lblTrainingEst.Text = string.Empty;
             lblScheduleWarning.Visible = false;
             skillQueueTimePanel.Visible = false;
             skillQueuePanel.Visible = true;

@@ -41,6 +41,8 @@ namespace EVEMon.SkillPlanner
             this.chManufQuantityBase = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chManufQuantityYou = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.BlueprintAttributeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showInMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showInMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.exportToCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblNoItemManufacturing = new System.Windows.Forms.Label();
             this.tpResearchME = new System.Windows.Forms.TabPage();
@@ -59,6 +61,7 @@ namespace EVEMon.SkillPlanner
             this.gbInvBoM = new System.Windows.Forms.GroupBox();
             this.lvInvention = new System.Windows.Forms.ListView();
             this.lblNoItemInvention = new System.Windows.Forms.Label();
+            this.tpReactions = new System.Windows.Forms.TabPage();
             this.tlpModifiers = new System.Windows.Forms.TableLayoutPanel();
             this.flpUpper = new System.Windows.Forms.FlowLayoutPanel();
             this.lblMaterialEfficiency = new System.Windows.Forms.Label();
@@ -93,12 +96,19 @@ namespace EVEMon.SkillPlanner
             this.gbResearching = new System.Windows.Forms.GroupBox();
             this.gbManufacturing = new System.Windows.Forms.GroupBox();
             this.pnlAttributes = new System.Windows.Forms.Panel();
+            this.gbReactions = new System.Windows.Forms.GroupBox();
+            this.lblReactionCharTime = new System.Windows.Forms.Label();
+            this.lblReactionTime = new System.Windows.Forms.Label();
+            this.lblReactionBaseTime = new System.Windows.Forms.Label();
             this.gbInvention = new System.Windows.Forms.GroupBox();
             this.lblInventionCharTime = new System.Windows.Forms.Label();
             this.lblInventionTime = new System.Windows.Forms.Label();
             this.lblInventionBaseTime = new System.Windows.Forms.Label();
-            this.showInMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showInMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.gbReactionsBoM = new System.Windows.Forms.GroupBox();
+            this.lvReactions = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.scObjectBrowser)).BeginInit();
             this.scObjectBrowser.Panel1.SuspendLayout();
             this.scObjectBrowser.Panel2.SuspendLayout();
@@ -127,6 +137,7 @@ namespace EVEMon.SkillPlanner
             this.gbCopyBoM.SuspendLayout();
             this.tpInvention.SuspendLayout();
             this.gbInvBoM.SuspendLayout();
+            this.tpReactions.SuspendLayout();
             this.tlpModifiers.SuspendLayout();
             this.flpUpper.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudME)).BeginInit();
@@ -136,7 +147,9 @@ namespace EVEMon.SkillPlanner
             this.gbResearching.SuspendLayout();
             this.gbManufacturing.SuspendLayout();
             this.pnlAttributes.SuspendLayout();
+            this.gbReactions.SuspendLayout();
             this.gbInvention.SuspendLayout();
+            this.gbReactionsBoM.SuspendLayout();
             this.SuspendLayout();
             // 
             // scObjectBrowser
@@ -145,11 +158,11 @@ namespace EVEMon.SkillPlanner
             // scObjectBrowser.Panel1
             // 
             this.scObjectBrowser.Panel1.Controls.Add(this.blueprintSelectControl);
-            this.scObjectBrowser.Size = new System.Drawing.Size(1034, 642);
+            this.scObjectBrowser.Size = new System.Drawing.Size(1034, 700);
             // 
             // pnlDetails
             // 
-            this.pnlDetails.Size = new System.Drawing.Size(866, 572);
+            this.pnlDetails.Size = new System.Drawing.Size(866, 630);
             this.pnlDetails.TabIndex = 1;
             // 
             // pnlBrowserHeader
@@ -162,8 +175,8 @@ namespace EVEMon.SkillPlanner
             // scDetailsRight.Panel2
             // 
             this.scDetailsRight.Panel2.Controls.Add(this.gbRequiredSkills);
-            this.scDetailsRight.Size = new System.Drawing.Size(240, 572);
-            this.scDetailsRight.SplitterDistance = 464;
+            this.scDetailsRight.Size = new System.Drawing.Size(240, 630);
+            this.scDetailsRight.SplitterDistance = 522;
             // 
             // scDetails
             // 
@@ -172,20 +185,20 @@ namespace EVEMon.SkillPlanner
             // 
             this.scDetails.Panel1.Controls.Add(this.tabControl);
             this.scDetails.Panel1.Controls.Add(this.tlpModifiers);
-            this.scDetails.Size = new System.Drawing.Size(866, 572);
+            this.scDetails.Size = new System.Drawing.Size(866, 630);
             this.scDetails.SplitterDistance = 622;
             // 
             // gbDescription
             // 
             this.gbDescription.Controls.Add(this.pnlAttributes);
-            this.gbDescription.Size = new System.Drawing.Size(240, 464);
+            this.gbDescription.Size = new System.Drawing.Size(240, 522);
             this.gbDescription.Controls.SetChildIndex(this.tbDescription, 0);
             this.gbDescription.Controls.SetChildIndex(this.pnlAttributes, 0);
             // 
             // tbDescription
             // 
             this.tbDescription.BackColor = System.Drawing.SystemColors.Control;
-            this.tbDescription.Size = new System.Drawing.Size(234, 445);
+            this.tbDescription.Size = new System.Drawing.Size(234, 503);
             // 
             // gbRequiredSkills
             // 
@@ -214,12 +227,13 @@ namespace EVEMon.SkillPlanner
             this.tabControl.Controls.Add(this.tpResearchTE);
             this.tabControl.Controls.Add(this.tpCopying);
             this.tabControl.Controls.Add(this.tpInvention);
+            this.tabControl.Controls.Add(this.tpReactions);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.HotTrack = true;
             this.tabControl.Location = new System.Drawing.Point(0, 65);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(622, 507);
+            this.tabControl.Size = new System.Drawing.Size(622, 565);
             this.tabControl.TabIndex = 1;
             this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
             // 
@@ -229,7 +243,7 @@ namespace EVEMon.SkillPlanner
             this.tpManufacturing.Location = new System.Drawing.Point(4, 22);
             this.tpManufacturing.Name = "tpManufacturing";
             this.tpManufacturing.Padding = new System.Windows.Forms.Padding(3);
-            this.tpManufacturing.Size = new System.Drawing.Size(614, 481);
+            this.tpManufacturing.Size = new System.Drawing.Size(614, 539);
             this.tpManufacturing.TabIndex = 0;
             this.tpManufacturing.Text = "Manufacturing";
             this.tpManufacturing.UseVisualStyleBackColor = true;
@@ -241,7 +255,7 @@ namespace EVEMon.SkillPlanner
             this.gbManufBoM.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbManufBoM.Location = new System.Drawing.Point(3, 3);
             this.gbManufBoM.Name = "gbManufBoM";
-            this.gbManufBoM.Size = new System.Drawing.Size(608, 475);
+            this.gbManufBoM.Size = new System.Drawing.Size(608, 533);
             this.gbManufBoM.TabIndex = 1;
             this.gbManufBoM.TabStop = false;
             this.gbManufBoM.Text = "Bill of Materials";
@@ -259,7 +273,7 @@ namespace EVEMon.SkillPlanner
             this.lvManufacturing.Location = new System.Drawing.Point(3, 16);
             this.lvManufacturing.MultiSelect = false;
             this.lvManufacturing.Name = "lvManufacturing";
-            this.lvManufacturing.Size = new System.Drawing.Size(602, 456);
+            this.lvManufacturing.Size = new System.Drawing.Size(602, 514);
             this.lvManufacturing.TabIndex = 0;
             this.lvManufacturing.UseCompatibleStateImageBehavior = false;
             this.lvManufacturing.View = System.Windows.Forms.View.Details;
@@ -287,8 +301,20 @@ namespace EVEMon.SkillPlanner
             this.showInMenuSeparator,
             this.exportToCSVToolStripMenuItem});
             this.BlueprintAttributeContextMenu.Name = "ShipPropertiesContextMenu";
-            this.BlueprintAttributeContextMenu.Size = new System.Drawing.Size(189, 76);
+            this.BlueprintAttributeContextMenu.Size = new System.Drawing.Size(189, 54);
             this.BlueprintAttributeContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.BlueprintAttributeContextMenu_Opening);
+            // 
+            // showInMenuItem
+            // 
+            this.showInMenuItem.Name = "showInMenuItem";
+            this.showInMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.showInMenuItem.Text = "Show In Item Browser";
+            this.showInMenuItem.Click += new System.EventHandler(this.propertiesList_DoubleClick);
+            // 
+            // showInMenuSeparator
+            // 
+            this.showInMenuSeparator.Name = "showInMenuSeparator";
+            this.showInMenuSeparator.Size = new System.Drawing.Size(185, 6);
             // 
             // exportToCSVToolStripMenuItem
             // 
@@ -303,7 +329,7 @@ namespace EVEMon.SkillPlanner
             this.lblNoItemManufacturing.ForeColor = System.Drawing.SystemColors.GrayText;
             this.lblNoItemManufacturing.Location = new System.Drawing.Point(3, 16);
             this.lblNoItemManufacturing.Name = "lblNoItemManufacturing";
-            this.lblNoItemManufacturing.Size = new System.Drawing.Size(602, 456);
+            this.lblNoItemManufacturing.Size = new System.Drawing.Size(602, 514);
             this.lblNoItemManufacturing.TabIndex = 4;
             this.lblNoItemManufacturing.Text = "No item required.";
             this.lblNoItemManufacturing.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -496,6 +522,16 @@ namespace EVEMon.SkillPlanner
             this.lblNoItemInvention.Text = "No item required.";
             this.lblNoItemInvention.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // tpReactions
+            // 
+            this.tpReactions.Controls.Add(this.gbReactionsBoM);
+            this.tpReactions.Location = new System.Drawing.Point(4, 22);
+            this.tpReactions.Name = "tpReactions";
+            this.tpReactions.Size = new System.Drawing.Size(614, 539);
+            this.tpReactions.TabIndex = 5;
+            this.tpReactions.Text = "Reactions";
+            this.tpReactions.UseVisualStyleBackColor = true;
+            // 
             // tlpModifiers
             // 
             this.tlpModifiers.AutoSize = true;
@@ -622,7 +658,7 @@ namespace EVEMon.SkillPlanner
             this.blueprintSelectControl.Location = new System.Drawing.Point(0, 0);
             this.blueprintSelectControl.Margin = new System.Windows.Forms.Padding(0);
             this.blueprintSelectControl.Name = "blueprintSelectControl";
-            this.blueprintSelectControl.Size = new System.Drawing.Size(163, 642);
+            this.blueprintSelectControl.Size = new System.Drawing.Size(163, 700);
             this.blueprintSelectControl.TabIndex = 0;
             // 
             // lblProduce
@@ -913,6 +949,7 @@ namespace EVEMon.SkillPlanner
             // 
             this.pnlAttributes.BackColor = System.Drawing.SystemColors.Control;
             this.pnlAttributes.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pnlAttributes.Controls.Add(this.gbReactions);
             this.pnlAttributes.Controls.Add(this.gbInvention);
             this.pnlAttributes.Controls.Add(this.gbResearching);
             this.pnlAttributes.Controls.Add(this.gbGeneralInfo);
@@ -921,8 +958,57 @@ namespace EVEMon.SkillPlanner
             this.pnlAttributes.Location = new System.Drawing.Point(3, 16);
             this.pnlAttributes.Name = "pnlAttributes";
             this.pnlAttributes.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
-            this.pnlAttributes.Size = new System.Drawing.Size(234, 445);
+            this.pnlAttributes.Size = new System.Drawing.Size(234, 503);
             this.pnlAttributes.TabIndex = 1;
+            // 
+            // gbReactions
+            // 
+            this.gbReactions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbReactions.BackColor = System.Drawing.SystemColors.Control;
+            this.gbReactions.Controls.Add(this.lblReactionCharTime);
+            this.gbReactions.Controls.Add(this.lblReactionTime);
+            this.gbReactions.Controls.Add(this.lblReactionBaseTime);
+            this.gbReactions.Location = new System.Drawing.Point(3, 432);
+            this.gbReactions.Name = "gbReactions";
+            this.gbReactions.Size = new System.Drawing.Size(224, 64);
+            this.gbReactions.TabIndex = 29;
+            this.gbReactions.TabStop = false;
+            this.gbReactions.Text = "REACTIONS";
+            // 
+            // lblReactionCharTime
+            // 
+            this.lblReactionCharTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblReactionCharTime.AutoEllipsis = true;
+            this.lblReactionCharTime.BackColor = System.Drawing.SystemColors.Control;
+            this.lblReactionCharTime.Location = new System.Drawing.Point(16, 42);
+            this.lblReactionCharTime.Name = "lblReactionCharTime";
+            this.lblReactionCharTime.Size = new System.Drawing.Size(200, 13);
+            this.lblReactionCharTime.TabIndex = 24;
+            this.lblReactionCharTime.Text = "You";
+            // 
+            // lblReactionTime
+            // 
+            this.lblReactionTime.AutoSize = true;
+            this.lblReactionTime.BackColor = System.Drawing.SystemColors.Control;
+            this.lblReactionTime.Location = new System.Drawing.Point(6, 16);
+            this.lblReactionTime.Name = "lblReactionTime";
+            this.lblReactionTime.Size = new System.Drawing.Size(79, 13);
+            this.lblReactionTime.TabIndex = 15;
+            this.lblReactionTime.Text = "Reaction Time:";
+            // 
+            // lblReactionBaseTime
+            // 
+            this.lblReactionBaseTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblReactionBaseTime.AutoEllipsis = true;
+            this.lblReactionBaseTime.BackColor = System.Drawing.SystemColors.Control;
+            this.lblReactionBaseTime.Location = new System.Drawing.Point(16, 29);
+            this.lblReactionBaseTime.Name = "lblReactionBaseTime";
+            this.lblReactionBaseTime.Size = new System.Drawing.Size(200, 13);
+            this.lblReactionBaseTime.TabIndex = 16;
+            this.lblReactionBaseTime.Text = "Base Time";
             // 
             // gbInvention
             // 
@@ -973,17 +1059,51 @@ namespace EVEMon.SkillPlanner
             this.lblInventionBaseTime.TabIndex = 16;
             this.lblInventionBaseTime.Text = "Base Time";
             // 
-            // showInMenuItem
+            // gbReactionsBoM
             // 
-            this.showInMenuItem.Name = "showInMenuItem";
-            this.showInMenuItem.Size = new System.Drawing.Size(188, 22);
-            this.showInMenuItem.Text = "Show In Item Browser";
-            this.showInMenuItem.Click += new System.EventHandler(this.propertiesList_DoubleClick);
+            this.gbReactionsBoM.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbReactionsBoM.Controls.Add(this.lvReactions);
+            this.gbReactionsBoM.Location = new System.Drawing.Point(3, 3);
+            this.gbReactionsBoM.Name = "gbReactionsBoM";
+            this.gbReactionsBoM.Size = new System.Drawing.Size(608, 533);
+            this.gbReactionsBoM.TabIndex = 0;
+            this.gbReactionsBoM.TabStop = false;
+            this.gbReactionsBoM.Text = "Reaction Materials";
             // 
-            // showInMenuSeparator
+            // lvReactions
             // 
-            this.showInMenuSeparator.Name = "showInMenuSeparator";
-            this.showInMenuSeparator.Size = new System.Drawing.Size(185, 6);
+            this.lvReactions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
+            this.lvReactions.ContextMenuStrip = this.BlueprintAttributeContextMenu;
+            this.lvReactions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvReactions.FullRowSelect = true;
+            this.lvReactions.HideSelection = false;
+            this.lvReactions.Location = new System.Drawing.Point(3, 16);
+            this.lvReactions.MultiSelect = false;
+            this.lvReactions.Name = "lvReactions";
+            this.lvReactions.Size = new System.Drawing.Size(602, 514);
+            this.lvReactions.TabIndex = 1;
+            this.lvReactions.UseCompatibleStateImageBehavior = false;
+            this.lvReactions.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Item";
+            this.columnHeader1.Width = 120;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Quantity (Base)";
+            this.columnHeader2.Width = 86;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Quantity (You)";
+            this.columnHeader3.Width = 82;
             // 
             // BlueprintBrowserControl
             // 
@@ -991,7 +1111,7 @@ namespace EVEMon.SkillPlanner
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.DoubleBuffered = true;
             this.Name = "BlueprintBrowserControl";
-            this.Size = new System.Drawing.Size(1034, 642);
+            this.Size = new System.Drawing.Size(1034, 700);
             this.Controls.SetChildIndex(this.scObjectBrowser, 0);
             this.scObjectBrowser.Panel1.ResumeLayout(false);
             this.scObjectBrowser.Panel1.PerformLayout();
@@ -1025,6 +1145,7 @@ namespace EVEMon.SkillPlanner
             this.gbCopyBoM.ResumeLayout(false);
             this.tpInvention.ResumeLayout(false);
             this.gbInvBoM.ResumeLayout(false);
+            this.tpReactions.ResumeLayout(false);
             this.tlpModifiers.ResumeLayout(false);
             this.tlpModifiers.PerformLayout();
             this.flpUpper.ResumeLayout(false);
@@ -1038,8 +1159,11 @@ namespace EVEMon.SkillPlanner
             this.gbManufacturing.ResumeLayout(false);
             this.gbManufacturing.PerformLayout();
             this.pnlAttributes.ResumeLayout(false);
+            this.gbReactions.ResumeLayout(false);
+            this.gbReactions.PerformLayout();
             this.gbInvention.ResumeLayout(false);
             this.gbInvention.PerformLayout();
+            this.gbReactionsBoM.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1114,5 +1238,15 @@ namespace EVEMon.SkillPlanner
         private System.Windows.Forms.Label lblNoItemInvention;
         private System.Windows.Forms.ToolStripMenuItem showInMenuItem;
         private System.Windows.Forms.ToolStripSeparator showInMenuSeparator;
+        private System.Windows.Forms.TabPage tpReactions;
+        private System.Windows.Forms.GroupBox gbReactions;
+        private System.Windows.Forms.Label lblReactionCharTime;
+        private System.Windows.Forms.Label lblReactionTime;
+        private System.Windows.Forms.Label lblReactionBaseTime;
+        private System.Windows.Forms.GroupBox gbReactionsBoM;
+        private System.Windows.Forms.ListView lvReactions;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
     }
 }

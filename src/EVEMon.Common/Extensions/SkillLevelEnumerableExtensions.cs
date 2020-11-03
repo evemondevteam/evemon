@@ -44,7 +44,7 @@ namespace EVEMon.Common.Extensions
         /// <param name="skill"></param>
         /// <param name="neededLevel"></param>
         /// <returns></returns>
-        public static bool Contains(this IEnumerable<SkillLevel> src, Skill skill, out Int64 neededLevel)
+        public static bool Contains(this IEnumerable<SkillLevel> src, Skill skill, out long neededLevel)
         {
             neededLevel = 0;
             foreach (SkillLevel prereq in src.Where(prereq => prereq.Skill == skill))
@@ -66,7 +66,7 @@ namespace EVEMon.Common.Extensions
         public static TimeSpan GetTotalTrainingTime(this IEnumerable<SkillLevel> src)
         {
             bool junk = false;
-            return src.GetTotalTrainingTime(new Dictionary<Skill, Int64>(), ref junk);
+            return src.GetTotalTrainingTime(new Dictionary<Skill, long>(), ref junk);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace EVEMon.Common.Extensions
         /// <param name="src">The source.</param>
         /// <param name="alreadyCountedList">The already counted list.</param>
         /// <returns></returns>
-        public static TimeSpan GetTotalTrainingTime(this IEnumerable<SkillLevel> src, Dictionary<Skill, Int64> alreadyCountedList)
+        public static TimeSpan GetTotalTrainingTime(this IEnumerable<SkillLevel> src, Dictionary<Skill, long> alreadyCountedList)
         {
             bool junk = false;
             return src.GetTotalTrainingTime(alreadyCountedList, ref junk);
@@ -88,7 +88,7 @@ namespace EVEMon.Common.Extensions
         /// <param name="isCurrentlyTraining">if set to <c>true</c> [is currently training].</param>
         /// <returns></returns>
         public static TimeSpan GetTotalTrainingTime(this IEnumerable<SkillLevel> src, ref bool isCurrentlyTraining)
-            => src.GetTotalTrainingTime(new Dictionary<Skill, Int64>(), ref isCurrentlyTraining);
+            => src.GetTotalTrainingTime(new Dictionary<Skill, long>(), ref isCurrentlyTraining);
 
         /// <summary>
         /// Gets the time required to train all the prerequisites
@@ -98,7 +98,7 @@ namespace EVEMon.Common.Extensions
         /// <param name="isCurrentlyTraining">if set to <c>true</c> [is currently training].</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">src or alreadyCountedList</exception>
-        public static TimeSpan GetTotalTrainingTime(this IEnumerable<SkillLevel> src, Dictionary<Skill, Int64> alreadyCountedList,
+        public static TimeSpan GetTotalTrainingTime(this IEnumerable<SkillLevel> src, Dictionary<Skill, long> alreadyCountedList,
             ref bool isCurrentlyTraining)
         {
             src.ThrowIfNull(nameof(src));
@@ -112,12 +112,12 @@ namespace EVEMon.Common.Extensions
                 isCurrentlyTraining |= skill.IsTraining;
 
                 // Gets the number of points we're starting from
-                Int64 fromPoints = skill.SkillPoints;
+                long fromPoints = skill.SkillPoints;
                 if (alreadyCountedList.ContainsKey(skill))
                     fromPoints = alreadyCountedList[skill];
 
                 // Gets the number of points we're targeting
-                Int64 toPoints = skill.GetLeftPointsRequiredToLevel(item.Level);
+                long toPoints = skill.GetLeftPointsRequiredToLevel(item.Level);
                 if (fromPoints < toPoints)
                     result += skill.GetTimeSpanForPoints(toPoints - fromPoints);
 

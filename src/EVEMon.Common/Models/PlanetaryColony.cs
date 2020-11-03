@@ -1,8 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using EVEMon.Common.Constants;
 using EVEMon.Common.Data;
 using EVEMon.Common.Enumerations.CCPAPI;
+using EVEMon.Common.Net;
+using EVEMon.Common.Serialization.Esi;
 using EVEMon.Common.Serialization.Eve;
+using System;
+using System.Collections.Generic;
 
 namespace EVEMon.Common.Models
 {
@@ -13,9 +16,7 @@ namespace EVEMon.Common.Models
         private readonly List<PlanetaryLink> m_planetaryLinks = new List<PlanetaryLink>();
 
         private bool m_queryPinsPending;
-        private bool m_queryRoutesPending;
-        private bool m_queryLinksPending;
-
+        private ResponseParams m_layoutResponse;
 
         #region Constructor
 
@@ -24,21 +25,21 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="ccpCharacter">The CCP character.</param>
         /// <param name="src">The source.</param>
-        internal PlanetaryColony(CCPCharacter ccpCharacter, SerializablePlanetaryColony src)
+        internal PlanetaryColony(CCPCharacter ccpCharacter, EsiPlanetaryColonyListItem src)
         {
             Character = ccpCharacter;
             SolarSystem = StaticGeography.GetSolarSystemByID(src.SolarSystemID);
             PlanetID = src.PlanetID;
-            PlanetName = src.PlanetName;
-            PlanetTypeID = src.PlanetTypeID;
-            PlanetTypeName = src.PlanetTypeName;
+            PlanetTypeID = src.PlanetType;
+            PlanetTypeName = StaticItems.GetItemName(PlanetTypeID);
+            PlanetName = SolarSystem.FindPlanetByID(PlanetID)?.Name ?? EveMonConstants.
+                UnknownText;
             LastUpdate = src.LastUpdate;
             UpgradeLevel = src.UpgradeLevel;
             NumberOfPins = src.NumberOfPins;
+            m_layoutResponse = null;
 
-            GetColonyPins();
-            GetColonyRoutes();
-            GetColonyLinks();
+            GetColonyLayout();
         }
 
         #endregion
@@ -57,7 +58,7 @@ namespace EVEMon.Common.Models
         /// <value>
         /// The planet identifier.
         /// </value>
-        public long PlanetID { get; }
+        public int PlanetID { get; }
 
         /// <summary>
         /// Gets the name of the planet.
@@ -65,7 +66,7 @@ namespace EVEMon.Common.Models
         /// <value>
         /// The name of the planet.
         /// </value>
-        public string PlanetName { get; }
+        public string PlanetName { get; private set; }
 
         /// <summary>
         /// Gets the planet type identifier.
@@ -151,186 +152,71 @@ namespace EVEMon.Common.Models
 
 
         #region Helper Methods
-
+        
         /// <summary>
         /// Gets the colony pins.
         /// </summary>
-        private void GetColonyPins()
+        private void GetColonyLayout()
         {
-            // Exit if we are already trying to download
-            if (m_queryPinsPending)
-                return;
-
-            m_queryPinsPending = true;
-
-            // Find the API key associated with planeatry pins
-            APIKey apiKey = Character.Identity.FindAPIKeyWithAccess(CCPAPICharacterMethods.AssetList);
-
-            // Quits if access denied
-            if (apiKey == null)
-                return;
-
-            EveMonClient.APIProviders.CurrentProvider.QueryMethodAsync<SerializableAPIPlanetaryPins>(
-                CCPAPIGenericMethods.PlanetaryPins, apiKey.ID, apiKey.VerificationCode, Character.CharacterID, PlanetID,
-                OnPlanetaryPinsUpdated);
+            if (!m_queryPinsPending && !EsiErrors.IsErrorCountExceeded)
+            {
+                // Find the API key associated with planetary pins
+                ESIKey apiKey = Character.Identity.FindAPIKeyWithAccess(ESIAPICharacterMethods.
+                    PlanetaryLayout);
+                m_queryPinsPending = true;
+                if (apiKey != null)
+                    EveMonClient.APIProviders.CurrentProvider.QueryEsi<EsiAPIPlanetaryColony>(
+                        ESIAPICharacterMethods.PlanetaryLayout, OnPlanetaryPinsUpdated,
+                        new ESIParams(m_layoutResponse, apiKey.AccessToken) {
+                            ParamOne = Character.CharacterID,
+                            ParamTwo = PlanetID
+                        });
+            }
         }
-
-        /// <summary>
-        /// Gets the colony routes.
-        /// </summary>
-        private void GetColonyRoutes()
-        {
-            // Exit if we are already trying to download
-            if (m_queryRoutesPending)
-                return;
-
-            m_queryRoutesPending = true;
-
-            // Find the API key associated with planeatry pins
-            APIKey apiKey = Character.Identity.FindAPIKeyWithAccess(CCPAPICharacterMethods.AssetList);
-
-            // Quits if access denied
-            if (apiKey == null)
-                return;
-
-            EveMonClient.APIProviders.CurrentProvider.QueryMethodAsync<SerializableAPIPlanetaryRoutes>(
-                CCPAPIGenericMethods.PlanetaryRoutes, apiKey.ID, apiKey.VerificationCode, Character.CharacterID, PlanetID,
-                OnPlanetaryRoutesUpdated);
-        }
-
-        /// <summary>
-        /// Gets the colony links.
-        /// </summary>
-        private void GetColonyLinks()
-        {
-            // Exit if we are already trying to download
-            if (m_queryLinksPending)
-                return;
-
-            m_queryLinksPending = true;
-
-            // Find the API key associated with planeatry pins
-            APIKey apiKey = Character.Identity.FindAPIKeyWithAccess(CCPAPICharacterMethods.AssetList);
-
-            // Quits if access denied
-            if (apiKey == null)
-                return;
-
-            EveMonClient.APIProviders.CurrentProvider.QueryMethodAsync<SerializableAPIPlanetaryLinks>(
-                CCPAPIGenericMethods.PlanetaryLinks, apiKey.ID, apiKey.VerificationCode, Character.CharacterID, PlanetID,
-                OnPlanetaryLinksUpdated);
-        }
-
+        
         /// <summary>
         /// Called when planetary pins updated.
         /// </summary>
         /// <param name="result">The result.</param>
-        private void OnPlanetaryPinsUpdated(CCPAPIResult<SerializableAPIPlanetaryPins> result)
+        private void OnPlanetaryPinsUpdated(EsiResult<EsiAPIPlanetaryColony> result, object
+            ignore)
         {
             m_queryPinsPending = false;
-
-            // Notify an error occured
-            if (Character.ShouldNotifyError(result, CCPAPIGenericMethods.PlanetaryPins))
-                EveMonClient.Notifications.NotifyCharacterPlanetaryPinsError(Character, result);
-
-            // Quits if there is an error
-            if (result.HasError)
-                return;
-
-            // Import the data
-            Import(result.Result.Pins);
-
-            // Fires the event regarding planetary pins updated
-            EveMonClient.OnCharacterPlanetaryPinsUpdated(Character);
+            m_layoutResponse = result.Response;
+            // Notify if an error occured
+            if (Character.ShouldNotifyError(result, ESIAPICharacterMethods.PlanetaryLayout))
+                EveMonClient.Notifications.NotifyCharacterPlanetaryLayoutError(Character,
+                    result);
+            if (!result.HasError)
+            {
+                EveMonClient.Notifications.InvalidateCharacterAPIError(Character);
+                if (result.HasData)
+                {
+                    Import(result.Result);
+                    EveMonClient.OnCharacterPlanetaryLayoutUpdated(Character);
+                }
+            }
         }
-
-        /// <summary>
-        /// Called when planetary routes updated.
-        /// </summary>
-        /// <param name="result">The result.</param>
-        private void OnPlanetaryRoutesUpdated(CCPAPIResult<SerializableAPIPlanetaryRoutes> result)
-        {
-            m_queryRoutesPending = false;
-
-            // Notify an error occured
-            if (Character.ShouldNotifyError(result, CCPAPIGenericMethods.PlanetaryRoutes))
-                EveMonClient.Notifications.NotifyCharacterPlanetaryRoutesError(Character, result);
-
-            // Quits if there is an error
-            if (result.HasError)
-                return;
-
-            // Import the data
-            Import(result.Result.Routes);
-
-            // Fires the event regarding planetary routes updated
-            EveMonClient.OnCharacterPlanetaryRoutesUpdated(Character);
-        }
-
-        /// <summary>
-        /// Called when planetary links updated.
-        /// </summary>
-        /// <param name="result">The result.</param>
-        private void OnPlanetaryLinksUpdated(CCPAPIResult<SerializableAPIPlanetaryLinks> result)
-        {
-            m_queryPinsPending = false;
-
-            // Notify an error occured
-            if (Character.ShouldNotifyError(result, CCPAPIGenericMethods.PlanetaryLinks))
-                EveMonClient.Notifications.NotifyCharacterPlanetaryLinksError(Character, result);
-
-            // Quits if there is an error
-            if (result.HasError)
-                return;
-
-            // Import the data
-            Import(result.Result.Links);
-
-            // Fires the event regarding planetary links updated
-            EveMonClient.OnCharacterPlanetaryLinksUpdated(Character);
-        }
-
+        
         #endregion
 
 
         #region Importation
 
         /// <summary>
-        /// Imports the planeatry pins to a list.
+        /// Imports the planeatry layout.
         /// </summary>
         /// <param name="src">The source.</param>
-        private void Import(IEnumerable<SerializablePlanetaryPin> src)
+        private void Import(EsiAPIPlanetaryColony src)
         {
-            foreach (SerializablePlanetaryPin item in src)
-            {
+            foreach (var item in src.Pins)
                 m_planetaryPins.Add(new PlanetaryPin(this, item));
-            }
-        }
-
-        /// <summary>
-        /// Imports the planeatry routes to a list.
-        /// </summary>
-        /// <param name="src">The source.</param>
-        private void Import(IEnumerable<SerializablePlanetaryRoute> src)
-        {
-            foreach (SerializablePlanetaryRoute item in src)
-            {
-                m_planetaryRoutes.Add(new PlanetaryRoute(this, item));
-            }
-        }
-
-        /// <summary>
-        /// Imports the planeatry links to a list.
-        /// </summary>
-        /// <param name="src">The source.</param>
-        private void Import(IEnumerable<SerializablePlanetaryLink> src)
-        {
-            foreach (SerializablePlanetaryLink item in src)
-            {
+            foreach (var item in src.Links)
                 m_planetaryLinks.Add(new PlanetaryLink(this, item));
-            }
+            foreach (var item in src.Routes)
+                m_planetaryRoutes.Add(new PlanetaryRoute(this, item));
         }
-
+        
         #endregion
 
 

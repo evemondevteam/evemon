@@ -84,6 +84,10 @@ namespace EVEMon.Common.SettingsObjects
 
         [Header("Skill Points Required")]
         [Description("Skill Points Required")]
-        SkillPointsRequired = 18
+        SkillPointsRequired = 18,
+
+        [Header("Omega Clone Required")]
+        [Description("Omega Clone Required")]
+        OmegaRequired = 19
     }
 }

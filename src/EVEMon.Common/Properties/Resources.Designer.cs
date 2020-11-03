@@ -91,6 +91,52 @@ namespace EVEMon.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html lang=&quot;en&quot; xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
+        ///    &lt;title&gt;Error&lt;/title&gt;
+        ///    &lt;style&gt;
+        ///        p, body { color: #FFFFFF; font-family: ProximaNova-Regular, Arial }
+        ///		h2 { text-align: center; margin-bottom: 10px; text-shadow: 1px 1px 2px #7F7F7F; font-size: 30px; font-family: &quot;ProximaNova-SemiBold&quot;,Arial }
+        ///        body { background: #000000 url(https://login.eveonline.com/Images/site-bg.jpg) no-repeat center center fixed }
+        ///        #content { bac [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string CallbackFail {
+            get {
+                return ResourceManager.GetString("CallbackFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html lang=&quot;en&quot; xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
+        ///    &lt;title&gt;Authentication Successful&lt;/title&gt;
+        ///    &lt;style&gt;
+        ///        p, body { color: #FFFFFF; font-family: ProximaNova-Regular, Arial }
+        ///		h2 { text-align: center; margin-bottom: 10px; text-shadow: 1px 1px 2px #7F7F7F; font-size: 30px; font-family: &quot;ProximaNova-SemiBold&quot;,Arial }
+        ///        body { background: #000000 url(https://login.eveonline.com/Images/site-bg.jpg) no-repeat center center fixed }
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string CallbackOK {
+            get {
+                return ResourceManager.GetString("CallbackOK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to factionID,factionName,description,raceIDs,solarSystemID,corporationID,sizeFactor,stationCount,stationSystemCount,militiaCorporationID,iconID
+        ///500001,Caldari State,&quot;The Caldari State is ruled by several mega-corporations. There is no central government to speak of - all territories within the State are owned and ruled by corporations. Duty and discipline are required traits in Caldari citizens, plus unquestioning loyalty to the corporation they live to serve. The corporations compete aggressively amongst the [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string chrFactions {
+            get {
+                return ResourceManager.GetString("chrFactions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap Collapse {
@@ -213,6 +259,413 @@ namespace EVEMon.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error querying the wallet balance for {0}..
+        /// </summary>
+        public static string ErrorAccountBalance {
+            get {
+                return ResourceManager.GetString("ErrorAccountBalance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the account status for API key {0}..
+        /// </summary>
+        public static string ErrorAccountStatus {
+            get {
+                return ResourceManager.GetString("ErrorAccountStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the assets of {0}..
+        /// </summary>
+        public static string ErrorAssets {
+            get {
+                return ResourceManager.GetString("ErrorAssets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the learning attributes of {0}..
+        /// </summary>
+        public static string ErrorAttributes {
+            get {
+                return ResourceManager.GetString("ErrorAttributes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error obtaining calendar event attendees for {0}..
+        /// </summary>
+        public static string ErrorCalendarAttendees {
+            get {
+                return ResourceManager.GetString("ErrorCalendarAttendees", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error obtaining calendar event details for {0}..
+        /// </summary>
+        public static string ErrorCalendarDetails {
+            get {
+                return ResourceManager.GetString("ErrorCalendarDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying calendar events for {0}..
+        /// </summary>
+        public static string ErrorCalendarEvents {
+            get {
+                return ResourceManager.GetString("ErrorCalendarEvents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error retrieving character list for {0:D}.
+        ///If you changed your password, you must log in again using File &gt; Add Character..
+        /// </summary>
+        public static string ErrorCharacterList {
+            get {
+                return ResourceManager.GetString("ErrorCharacterList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the character sheet for {0}..
+        /// </summary>
+        public static string ErrorCharacterSheet {
+            get {
+                return ResourceManager.GetString("ErrorCharacterSheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying contacts for {0}..
+        /// </summary>
+        public static string ErrorContacts {
+            get {
+                return ResourceManager.GetString("ErrorContacts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error obtaining contract bids for {0}..
+        /// </summary>
+        public static string ErrorContractBids {
+            get {
+                return ResourceManager.GetString("ErrorContractBids", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error obtaining contract items for {0}..
+        /// </summary>
+        public static string ErrorContractItems {
+            get {
+                return ResourceManager.GetString("ErrorContractItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the contracts of {0}..
+        /// </summary>
+        public static string ErrorContracts {
+            get {
+                return ResourceManager.GetString("ErrorContracts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the employment history of {0}..
+        /// </summary>
+        public static string ErrorEmploymentHistory {
+            get {
+                return ResourceManager.GetString("ErrorEmploymentHistory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the EVE faction war list..
+        /// </summary>
+        public static string ErrorEVEFacWarList {
+            get {
+                return ResourceManager.GetString("ErrorEVEFacWarList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying EVE factional warfare statistics..
+        /// </summary>
+        public static string ErrorEVEFacWarStat {
+            get {
+                return ResourceManager.GetString("ErrorEVEFacWarStat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying mail messages for {0}..
+        /// </summary>
+        public static string ErrorEVEMail {
+            get {
+                return ResourceManager.GetString("ErrorEVEMail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error obtaining mail contents for {0}..
+        /// </summary>
+        public static string ErrorEVEMailBody {
+            get {
+                return ResourceManager.GetString("ErrorEVEMailBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying mailing lists for {0}..
+        /// </summary>
+        public static string ErrorEVEMailLists {
+            get {
+                return ResourceManager.GetString("ErrorEVEMailLists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the faction warfare statistics of {0}..
+        /// </summary>
+        public static string ErrorFacWarStat {
+            get {
+                return ResourceManager.GetString("ErrorFacWarStat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error looking up character identities..
+        /// </summary>
+        public static string ErrorIDToName {
+            get {
+                return ResourceManager.GetString("ErrorIDToName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the implants of {0}..
+        /// </summary>
+        public static string ErrorImplants {
+            get {
+                return ResourceManager.GetString("ErrorImplants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying industry jobs for {0}..
+        /// </summary>
+        public static string ErrorIndustryJobs {
+            get {
+                return ResourceManager.GetString("ErrorIndustryJobs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the jump clones of {0}..
+        /// </summary>
+        public static string ErrorJumpClones {
+            get {
+                return ResourceManager.GetString("ErrorJumpClones", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the jump fatigue of {0}..
+        /// </summary>
+        public static string ErrorJumpFatigue {
+            get {
+                return ResourceManager.GetString("ErrorJumpFatigue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying kill log for {0}..
+        /// </summary>
+        public static string ErrorKillLog {
+            get {
+                return ResourceManager.GetString("ErrorKillLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error obtaining kill mail {0} from the server..
+        /// </summary>
+        public static string ErrorKillMail {
+            get {
+                return ResourceManager.GetString("ErrorKillMail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the location of {0}..
+        /// </summary>
+        public static string ErrorLocation {
+            get {
+                return ResourceManager.GetString("ErrorLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying loyalty point balance of {0}..
+        /// </summary>
+        public static string ErrorLoyalty {
+            get {
+                return ResourceManager.GetString("ErrorLoyalty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the market orders of {0}..
+        /// </summary>
+        public static string ErrorMarketOrders {
+            get {
+                return ResourceManager.GetString("ErrorMarketOrders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying medals for {0}..
+        /// </summary>
+        public static string ErrorMedals {
+            get {
+                return ResourceManager.GetString("ErrorMedals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying EVE notifications for {0}..
+        /// </summary>
+        public static string ErrorNotifications {
+            get {
+                return ResourceManager.GetString("ErrorNotifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error obtaining planetary production layout for {0}..
+        /// </summary>
+        public static string ErrorPlanetLayout {
+            get {
+                return ResourceManager.GetString("ErrorPlanetLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying planetary production information..
+        /// </summary>
+        public static string ErrorPlanets {
+            get {
+                return ResourceManager.GetString("ErrorPlanets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying research points for {0}..
+        /// </summary>
+        public static string ErrorResearchPoints {
+            get {
+                return ResourceManager.GetString("ErrorResearchPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the current ship of {0}..
+        /// </summary>
+        public static string ErrorShip {
+            get {
+                return ResourceManager.GetString("ErrorShip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Erorr querying the skill queue of {0}..
+        /// </summary>
+        public static string ErrorSkillQueue {
+            get {
+                return ResourceManager.GetString("ErrorSkillQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the known skills of {0}..
+        /// </summary>
+        public static string ErrorSkills {
+            get {
+                return ResourceManager.GetString("ErrorSkills", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error logging in to EVE SSO.
+        ///If you changed your password, you must log in again using File &gt; Add Character..
+        /// </summary>
+        public static string ErrorSSO {
+            get {
+                return ResourceManager.GetString("ErrorSSO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the standings of {0}..
+        /// </summary>
+        public static string ErrorStandings {
+            get {
+                return ResourceManager.GetString("ErrorStandings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error looking up station information..
+        /// </summary>
+        public static string ErrorStation {
+            get {
+                return ResourceManager.GetString("ErrorStation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying the EVE server status. Check EVE server uptime on http://eve-offline.net/.
+        /// </summary>
+        public static string ErrorStatus {
+            get {
+                return ResourceManager.GetString("ErrorStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error looking up citadel information..
+        /// </summary>
+        public static string ErrorStructure {
+            get {
+                return ResourceManager.GetString("ErrorStructure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying wallet journal for {0}..
+        /// </summary>
+        public static string ErrorWalletJournal {
+            get {
+                return ResourceManager.GetString("ErrorWalletJournal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error querying wallet transactions for {0}..
+        /// </summary>
+        public static string ErrorWalletTransactions {
+            get {
+                return ResourceManager.GetString("ErrorWalletTransactions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         public static System.Drawing.Icon EVEMon {
@@ -258,10 +711,9 @@ namespace EVEMon.Common.Properties {
         ///  &lt;rowset name=&quot;flags&quot; key=&quot;flagID&quot; columns=&quot;flagID,flagName,flagText&quot;&gt;
         ///    &lt;row flagID=&quot;0&quot; flagName=&quot;None&quot; flagText=&quot;None&quot; /&gt;
         ///    &lt;row flagID=&quot;1&quot; flagName=&quot;Wallet&quot; flagText=&quot;Wallet&quot; /&gt;
-        ///    &lt;row flagID=&quot;2&quot; flagName=&quot;Factory&quot; flagText=&quot;Factory&quot; /&gt;
+        ///    &lt;row flagID=&quot;2&quot; flagName=&quot;Offices&quot; flagText=&quot;OfficeFolder&quot; /&gt;
         ///    &lt;row flagID=&quot;3&quot; flagName=&quot;Wardrobe&quot; flagText=&quot;Wardrobe&quot; /&gt;
-        ///    &lt;row flagID=&quot;4&quot; flagName=&quot;Hangar&quot; flagText=&quot;Hangar&quot; /&gt;
-        ///    [rest of string was truncated]&quot;;.
+        ///    &lt;row flagID=&quot;4&quot; flagName=&quot;Hangar&quot; flagText=&quot;Hangar&quot; /&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         public static string Flags {
             get {
@@ -340,6 +792,42 @@ namespace EVEMon.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This account expires in {0}: {1}..
+        /// </summary>
+        public static string MessageExpiration {
+            get {
+                return ResourceManager.GetString("MessageExpiration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character {0} has less than {1} day{2} of skills queued..
+        /// </summary>
+        public static string MessageLessThanDay {
+            get {
+                return ResourceManager.GetString("MessageLessThanDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character {0} has insufficient funds to fulfill all of its buy orders..
+        /// </summary>
+        public static string MessageMarginTrading {
+            get {
+                return ResourceManager.GetString("MessageMarginTrading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} assigned contract{1}..
+        /// </summary>
+        public static string MessageNewContracts {
+            get {
+                return ResourceManager.GetString("MessageNewContracts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap NeutralStanding {
@@ -354,10 +842,9 @@ namespace EVEMon.Common.Properties {
         ///&lt;eveapi version=&quot;2&quot;&gt;
         ///  &lt;currentTime&gt;&lt;/currentTime&gt;
         ///  &lt;result&gt;
-        ///    &lt;rowset name=&quot;refTypes&quot; key=&quot;refTypeID&quot; columns=&quot;refTypeID,refTypeName,subjectLayout,textLayout&quot;&gt;
-        ///      &lt;row refTypeID=&quot;1&quot; refTypeName=&quot;Old Notifications&quot; subjectLayout=&quot;&quot; textLayout=&quot;&quot;/&gt;
-        ///      &lt;row refTypeID=&quot;2&quot; refTypeName=&quot;Member Biomassed&quot; subjectLayout=&quot;&quot; textLayout=&quot;&quot;/&gt;
-        ///      &lt;row refTypeID=&quot;3&quot; refTypeName=&quot;Medal Awarded&quot; subjectLayout=&quot;You have been awarded the {medalID}&quot; textLayout=&quot;The {medalID} decoratio [rest of string was truncated]&quot;;.
+        ///    &lt;rowset name=&quot;refTypes&quot; key=&quot;refTypeID&quot; columns=&quot;refTypeID,refTypeCode,refTypeName,subjectLayout,textLayout&quot;&gt;
+        ///      &lt;row refTypeID=&quot;1&quot; refTypeCode=&quot;OldLscMessages&quot; refTypeName=&quot;Old Notifications&quot; subjectLayout=&quot;{subject}&quot; textLayout=&quot;{body}&quot;/&gt;
+        ///      &lt;row refTypeID=&quot;2&quot; refTypeCode=&quot;CharTerminationMsg&quot; refTypeName=&quot;Member Biomassed&quot; subjectLayout=&quot;RIP Corporation member {charID}&quot; textLayout=&quot;The untimely death of fel [rest of string was truncated]&quot;;.
         /// </summary>
         public static string NotificationRefTypes {
             get {
@@ -372,6 +859,25 @@ namespace EVEMon.Common.Properties {
             get {
                 object obj = ResourceManager.GetObject("Officer", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;
+        ///&lt;eveapi version=&quot;2&quot;&gt;
+        ///  &lt;currentTime&gt;2018-03-27 00:53:15&lt;/currentTime&gt;
+        ///  &lt;result&gt;
+        ///    &lt;rowset name=&quot;refTypes&quot; key=&quot;refTypeID&quot; columns=&quot;refTypeID,refTypeName&quot;&gt;
+        ///      &lt;row refTypeID=&quot;0&quot; refTypeName=&quot;Undefined&quot; /&gt;
+        ///      &lt;row refTypeID=&quot;1&quot; refTypeName=&quot;Player Trading&quot; /&gt;
+        ///      &lt;row refTypeID=&quot;2&quot; refTypeName=&quot;Market Transaction&quot; /&gt;
+        ///      &lt;row refTypeID=&quot;3&quot; refTypeName=&quot;GM Cash Transfer&quot; /&gt;
+        ///      &lt;row refTypeID=&quot;4&quot; refTypeName=&quot;ATM Withdraw&quot; /&gt;
+        ///      &lt;row refTypeID= [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string RefTypes {
+            get {
+                return ResourceManager.GetString("RefTypes", resourceCulture);
             }
         }
         

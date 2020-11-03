@@ -1,10 +1,7 @@
 namespace EVEMon.XmlGenerator.Models
 {
-    using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     public partial class invTypes
     {
@@ -30,7 +27,7 @@ namespace EVEMon.XmlGenerator.Models
 
         public int? raceID { get; set; }
 
-        [Column(TypeName = "money")]
+        [Column(TypeName = "DECIMAL")]
         public decimal? basePrice { get; set; }
 
         public bool? published { get; set; }

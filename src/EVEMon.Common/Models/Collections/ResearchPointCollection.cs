@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using EVEMon.Common.Collections;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models.Collections
 {
@@ -21,14 +21,14 @@ namespace EVEMon.Common.Models.Collections
         /// Imports an enumeration of API objects.
         /// </summary>
         /// <param name="src">The enumeration of serializable research points from the API.</param>
-        internal void Import(IEnumerable<SerializableResearchListItem> src)
+        internal void Import(IEnumerable<EsiResearchListItem> src)
         {
             Items.Clear();
 
             // Import the research points from the API
-            foreach (SerializableResearchListItem srcResearchPoint in src)
+            foreach (EsiResearchListItem srcResearchPoint in src)
             {
-                Items.Add(new ResearchPoint(srcResearchPoint));
+                Items.Add(new ResearchPoint(srcResearchPoint, m_character));
             }
         }
     }

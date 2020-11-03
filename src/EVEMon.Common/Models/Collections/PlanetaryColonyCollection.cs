@@ -5,7 +5,7 @@ using EVEMon.Common.Collections;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Enumerations.CCPAPI;
 using EVEMon.Common.Interfaces;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models.Collections
 {
@@ -47,7 +47,7 @@ namespace EVEMon.Common.Models.Collections
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void EveMonClient_TimerTick(object sender, EventArgs e)
         {
-            IQueryMonitor charPlanetaryColoniesMonitor = m_ccpCharacter.QueryMonitors[CCPAPIGenericMethods.PlanetaryColonies];
+            IQueryMonitor charPlanetaryColoniesMonitor = m_ccpCharacter.QueryMonitors[ESIAPICharacterMethods.PlanetaryColonies];
 
             if (charPlanetaryColoniesMonitor == null || !charPlanetaryColoniesMonitor.Enabled)
                 return;
@@ -64,12 +64,12 @@ namespace EVEMon.Common.Models.Collections
         /// Imports an enumeration of API objects.
         /// </summary>
         /// <param name="src">The enumeration of serializable planetary colony log from the API.</param>
-        internal void Import(IEnumerable<SerializablePlanetaryColony> src)
+        internal void Import(IEnumerable<EsiPlanetaryColonyListItem> src)
         {
             Items.Clear();
 
             // Import the palnetary colony from the API
-            foreach (SerializablePlanetaryColony srcColony in src)
+            foreach (EsiPlanetaryColonyListItem srcColony in src)
             {
                 Items.Add(new PlanetaryColony(m_ccpCharacter, srcColony));
             }
@@ -90,8 +90,8 @@ namespace EVEMon.Common.Models.Collections
                 return;
 
             // Add the not notified idle pins to the completed list
-            List<PlanetaryPin> pinsCompleted = Items.SelectMany(x => x.Pins).Where(
-                pin => pin.State == PlanetaryPinState.Idle && pin.TTC.Length == 0 && !pin.NotificationSend).ToList();
+            var pinsCompleted = Items.SelectMany(x => x.Pins).Where(pin => pin.State !=
+                PlanetaryPinState.None && pin.TTC.Length == 0 && !pin.NotificationSend).ToList();
 
             pinsCompleted.ForEach(pin => pin.NotificationSend = true);
 

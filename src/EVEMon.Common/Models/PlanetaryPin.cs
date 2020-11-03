@@ -5,7 +5,7 @@ using EVEMon.Common.Constants;
 using EVEMon.Common.Data;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Extensions;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models
 {
@@ -22,25 +22,47 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="colony">The colony.</param>
         /// <param name="src">The source.</param>
-        internal PlanetaryPin(PlanetaryColony colony, SerializablePlanetaryPin src)
+        internal PlanetaryPin(PlanetaryColony colony, EsiPlanetaryPin src)
         {
+            var type = StaticItems.GetItemByID(src.TypeID);
+            var extractor = src.ExtractorDetails;
+            var contents = src.Contents;
+            type.ThrowIfNull(nameof(type));
+
             Colony = colony;
             ID = src.PinID;
             TypeID = src.TypeID;
-            TypeName = GetPinName(src.TypeName);
+            TypeName = type.Name;
             SchematicID = src.SchematicID;
-            CycleTime = src.CycleTime;
-            QuantityPerCycle = src.QuantityPerCycle;
-            ContentQuantity = src.ContentQuantity;
-            ContentTypeID = src.ContentTypeID;
-            ContentTypeName = src.ContentTypeName;
-            LastLaunchTime = src.LastLaunchTime;
             InstallTime = src.InstallTime;
             ExpiryTime = src.ExpiryTime;
             State = GetState();
+
+            if (extractor != null)
+            {
+                CycleTime = (short)extractor.CycleTime;
+                QuantityPerCycle = extractor.QuantityPerCycle;
+            }
+
+            // Old EVEMon could only handle one item in contents
+            if (contents != null && contents.Count > 0)
+            {
+                var firstItem = contents[0];
+                int typeID = firstItem.TypeID;
+                ContentQuantity = firstItem.Amount;
+                ContentTypeID = typeID;
+                ContentTypeName = StaticItems.GetItemName(typeID);
+            }
+            else
+            {
+                ContentQuantity = 0;
+                ContentTypeID = 0;
+                ContentTypeName = string.Empty;
+            }
+            LastLaunchTime = src.LastCycleStart;
             ContentVolume = GetVolume();
 
-            GroupName = StaticItems.GetItemByID(src.TypeID).GroupName;
+            GroupName = type.GroupName;
         }
 
         #endregion
@@ -168,10 +190,8 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the estimated time to completion.
         /// </summary>
-        public string TTC 
-            => State == PlanetaryPinState.Extracting
-            ? ExpiryTime.ToRemainingTimeDigitalDescription(DateTimeKind.Utc)
-            : String.Empty;
+        public string TTC => State == PlanetaryPinState.Extracting ? ExpiryTime.
+            ToRemainingTimeDigitalDescription(DateTimeKind.Utc) : string.Empty;
 
         /// <summary>
         /// Gets the linked to.
@@ -179,11 +199,10 @@ namespace EVEMon.Common.Models
         /// <value>
         /// The linked to.
         /// </value>
-        public IEnumerable<PlanetaryPin> LinkedTo
-            => Colony.Links
-                .Where(link => link.SourcePinID == ID || link.DestinationPinID == ID)
-                .SelectMany(link => Colony.Pins
-                    .Where(pin => pin.ID != ID && (pin.ID == link.SourcePinID || pin.ID == link.DestinationPinID)));
+        public IEnumerable<PlanetaryPin> LinkedTo => Colony.Links.Where(
+            link => link.SourcePinID == ID || link.DestinationPinID == ID).SelectMany(
+            link => Colony.Pins.Where(pin => pin.ID != ID && (pin.ID == link.SourcePinID ||
+            pin.ID == link.DestinationPinID)));
 
         /// <summary>
         /// Gets the routed to.
@@ -191,11 +210,10 @@ namespace EVEMon.Common.Models
         /// <value>
         /// The routed to.
         /// </value>
-        public IEnumerable<PlanetaryPin> RoutedTo
-            => Colony.Routes
-                .Where(route => route.SourcePinID == ID || route.DestinationPinID == ID)
-                .SelectMany(route => Colony.Pins
-                    .Where(pin => pin.ID != ID && (pin.ID == route.SourcePinID || pin.ID == route.DestinationPinID)));
+        public IEnumerable<PlanetaryPin> RoutedTo => Colony.Routes.Where(
+            route => route.SourcePinID == ID || route.DestinationPinID == ID).SelectMany(
+            route => Colony.Pins.Where(pin => pin.ID != ID && (pin.ID == route.SourcePinID ||
+            pin.ID == route.DestinationPinID)));
 
         /// <summary>
         /// Gets the name of the group.
@@ -223,7 +241,7 @@ namespace EVEMon.Common.Models
         private string GetPinName(string typeName)
         {
             int lenght = m_baseString.Length - 1;
-            string pinNameID = String.Empty;
+            string pinNameID = string.Empty;
 
             for (int i = 0; i < 5; i++)
             {
@@ -240,11 +258,8 @@ namespace EVEMon.Common.Models
         private PlanetaryPinState GetState()
         {
             if (DBConstants.EcuTypeIDs.Contains(TypeID))
-            {
-                return ExpiryTime > DateTime.UtcNow
-                    ? PlanetaryPinState.Extracting
-                    : PlanetaryPinState.Idle;
-            }
+                return ExpiryTime > DateTime.UtcNow ? PlanetaryPinState.Extracting :
+                    PlanetaryPinState.Idle;
 
             return PlanetaryPinState.None;
         }
@@ -256,9 +271,8 @@ namespace EVEMon.Common.Models
         private double GetVolume()
         {
             Item item = StaticItems.GetItemByID(ContentTypeID);
-            return item != null && m_volumeProperty != null
-                ? m_volumeProperty.GetNumericValue(item) * ContentQuantity
-                : 0d;
+            return item != null && m_volumeProperty != null ? m_volumeProperty.
+                GetNumericValue(item) * ContentQuantity : 0.0;
         }
 
         #endregion

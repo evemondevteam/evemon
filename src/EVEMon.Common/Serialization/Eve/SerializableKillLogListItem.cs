@@ -28,7 +28,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return KillTime.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     KillTime = value.TimeStringToDateTime();
             }
         }

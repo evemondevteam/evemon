@@ -13,7 +13,7 @@ namespace EVEMon.Common.Serialization.Eve
         public string CorporationNameXml
         {
             get { return CorporationName; }
-            set { CorporationName = value?.HtmlDecode() ?? String.Empty; }
+            set { CorporationName = value?.HtmlDecode() ?? string.Empty; }
         }
 
         [XmlAttribute("startDate")]
@@ -22,7 +22,7 @@ namespace EVEMon.Common.Serialization.Eve
             get { return StartDate.DateTimeToTimeString(); }
             set
             {
-                if (!String.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                     StartDate = value.TimeStringToDateTime();
             }
         }

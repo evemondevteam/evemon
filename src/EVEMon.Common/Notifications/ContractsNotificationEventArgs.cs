@@ -15,7 +15,7 @@ namespace EVEMon.Common.Notifications
         /// <param name="sender">The sender.</param>
         /// <param name="contracts">The contracts.</param>
         /// <exception cref="System.ArgumentNullException">contracts</exception>
-        public ContractsNotificationEventArgs(Object sender, IEnumerable<Contract> contracts)
+        public ContractsNotificationEventArgs(object sender, IEnumerable<Contract> contracts)
             : base(sender, NotificationCategory.ContractsEnded)
         {
             contracts.ThrowIfNull(nameof(contracts));
@@ -57,7 +57,7 @@ namespace EVEMon.Common.Notifications
         /// </summary>
         private void UpdateDescription()
         {
-            Description = $"{Contracts.Count} contract{(Contracts.Count > 1 ? "s" : String.Empty)} finished or needs attention.";
+            Description = $"{Contracts.Count} contract{(Contracts.Count > 1 ? "s" : string.Empty)} finished or needs attention.";
         }
     }
 }

@@ -8,7 +8,7 @@ using EVEMon.Common.Serialization.Settings;
 
 namespace EVEMon.Common.Collections.Global
 {
-    public class GlobalAPIKeyCollection : ReadonlyKeyedCollection<long, APIKey>
+    public class GlobalAPIKeyCollection : ReadonlyKeyedCollection<long, ESIKey>
     {
 
         #region Indexer
@@ -17,13 +17,13 @@ namespace EVEMon.Common.Collections.Global
         /// Gets the API key with the provided id, null when not found
         /// </summary>
         /// <value>
-        /// The <see cref="APIKey"/>.
+        /// The <see cref="ESIKey"/>.
         /// </value>
         /// <param name="id">The id to look for</param>
         /// <returns>
         /// The searched API key when found; null otherwise.
         /// </returns>
-        public APIKey this[long id] => Items.Values.FirstOrDefault(apiKey => apiKey.ID == id);
+        public ESIKey this[long id] => Items.Values.FirstOrDefault(apiKey => apiKey.ID == id);
 
         #endregion
 
@@ -36,14 +36,14 @@ namespace EVEMon.Common.Collections.Global
         /// <param name="apiKey">The API key to remove</param>
         /// <exception cref="System.InvalidOperationException">The API key does not exist in the list.</exception>
         /// <exception cref="System.ArgumentNullException">apiKey</exception>
-        public void Remove(APIKey apiKey)
+        public void Remove(ESIKey apiKey)
         {
             apiKey.ThrowIfNull(nameof(apiKey));
 
             // Removes the API key on the owned identities
-            foreach (CharacterIdentity identity in apiKey.CharacterIdentities.Where(x => x.APIKeys.Contains(apiKey)))
+            foreach (CharacterIdentity identity in apiKey.CharacterIdentities.Where(x => x.ESIKeys.Contains(apiKey)))
             {
-                identity.APIKeys.Remove(apiKey);
+                identity.ESIKeys.Remove(apiKey);
 
                 if (identity.CCPCharacter != null)
                     EveMonClient.OnCharacterUpdated(identity.CCPCharacter);
@@ -56,17 +56,17 @@ namespace EVEMon.Common.Collections.Global
             // Dispose
             apiKey.Dispose();
 
-            EveMonClient.OnAPIKeyCollectionChanged();
+            EveMonClient.OnESIKeyCollectionChanged();
         }
 
         /// <summary>
         /// Adds an API key to this collection.
         /// </summary>
         /// <param name="apiKey"></param>
-        internal void Add(APIKey apiKey)
+        internal void Add(ESIKey apiKey)
         {
             Items.Add(apiKey.ID, apiKey);
-            EveMonClient.OnAPIKeyCollectionChanged();
+            EveMonClient.OnESIKeyCollectionChanged();
         }
 
         #endregion
@@ -78,20 +78,20 @@ namespace EVEMon.Common.Collections.Global
         /// Imports the serialized API key.
         /// </summary>
         /// <param name="serial"></param>
-        internal void Import(IEnumerable<SerializableAPIKey> serial)
+        internal void Import(IEnumerable<SerializableESIKey> serial)
         {
             // Unsubscribe events
-            foreach (APIKey apiKey in Items.Values)
+            foreach (ESIKey apiKey in Items.Values)
             {
                 apiKey.Dispose();
             }
 
             Items.Clear();
-            foreach (SerializableAPIKey apikey in serial)
+            foreach (SerializableESIKey apikey in serial)
             {
                 try
                 {
-                    Items.Add(apikey.ID, new APIKey(apikey));
+                    Items.Add(apikey.ID, new ESIKey(apikey));
                 }
                 catch (ArgumentException ex)
                 {
@@ -100,14 +100,14 @@ namespace EVEMon.Common.Collections.Global
                 }
             }
 
-            EveMonClient.OnAPIKeyCollectionChanged();
+            EveMonClient.OnESIKeyCollectionChanged();
         }
 
         /// <summary>
         /// Exports the data to a serialization object.
         /// </summary>
         /// <returns></returns>
-        internal IEnumerable<SerializableAPIKey> Export() => Items.Values.Select(apikey => apikey.Export());
+        internal IEnumerable<SerializableESIKey> Export() => Items.Values.Select(apikey => apikey.Export());
 
         #endregion
     }

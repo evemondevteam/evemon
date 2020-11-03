@@ -13,12 +13,12 @@ namespace EVEMon.Common.Serialization.Exportation
         public ImplantSlots Attribute { get; set; }
 
         [XmlAttribute("description")]
-        public String Description { get; set; }
+        public string Description { get; set; }
 
         [XmlAttribute("bonus")]
-        public Int64 Bonus { get; set; }
+        public long Bonus { get; set; }
 
         [XmlAttribute("name")]
-        public String Name { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace EVEMon.Common.Net
     /// </summary>
     public static class NetworkMonitor
     {
-        private static readonly Object s_syncLock = new Object();
+        private static readonly object s_syncLock = new object();
 
         private static List<WeakReference<INetworkChangeSubscriber>> s_subscribers;
         private static bool s_networkAvailable;

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using EVEMon.Common.Attributes;
+using EVEMon.Common.Models;
 
 namespace EVEMon.Common.Extensions
 {
@@ -36,6 +37,13 @@ namespace EVEMon.Common.Extensions
         /// <param name="item"></param>
         /// <returns></returns>
         public static string GetHeader(this Enum item) => GetAttribute<HeaderAttribute>(item).Header;
+
+        /// <summary>
+        /// Checks whether the given member has a specific parent.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static bool HasParent(this Enum item, Enum other) => GetAttribute<ParentAttribute>(item)?.Parents?.Any(e => other.Equals(e)) ?? false;
 
         /// <summary>
         /// Gets the period bound to the given enumeration member.
@@ -124,5 +132,47 @@ namespace EVEMon.Common.Extensions
         public static Enum GetValueFromDescription<TEnum>(string description)
             => Enum.GetValues(typeof(TEnum)).Cast<Enum>().FirstOrDefault(item => item.GetDescription() == description);
 
+
+        #region Account Status
+
+        // pessimist mode on.
+        private const float trainingRateUnknown = 0.5f;
+        private const float trainingRateAlpha = 0.5f;
+        private const float trainingRateOmega = 1.0f;
+
+        /// <summary>
+        /// Returns true if this status denotes an Alpha clone.
+        /// </summary>
+        /// <param name="status">The current account status</param>
+        /// <returns>true if the account is Alpha, or false otherwise</returns>
+        public static bool IsAlpha(this AccountStatus status)
+        {
+            return status == AccountStatus.Alpha;
+        }
+
+        /// <summary>
+        /// Returns the SP training rate adjusted for account status.
+        /// </summary>
+        /// <param name="status">The current account status</param>
+        /// <returns>The skill point accrual rate (1.0 = base) modifier</returns>
+        public static float GetTrainingRate(this AccountStatus status)
+        {
+            float rate = trainingRateUnknown;
+            switch (status)
+            {
+            case AccountStatus.Alpha:
+                rate = trainingRateAlpha;
+                break;
+            case AccountStatus.Omega:
+                rate = trainingRateOmega;
+                break;
+            case AccountStatus.Unknown:
+                rate = trainingRateUnknown;
+                break;
+            }
+            return rate;
+        }
+
+        #endregion
     }
 }

@@ -69,7 +69,7 @@ namespace Tests.EVEMon.Common
         [Fact]
         public static void ConvertEmptyCCPDateTimeToDateTime()
         {
-            DateTime result = String.Empty.TimeStringToDateTime();
+            DateTime result = string.Empty.TimeStringToDateTime();
             Assert.Equal(DateTime.MinValue, result);
         }
 

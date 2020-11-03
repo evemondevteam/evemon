@@ -6,7 +6,6 @@ using EVEMon.Common.Controls;
 using EVEMon.Common.Enumerations.UISettings;
 using EVEMon.Common.Factories;
 using EVEMon.Common.Models;
-using EVEMon.Common.SettingsObjects;
 
 namespace EVEMon.SkillPlanner
 {
@@ -107,7 +106,7 @@ namespace EVEMon.SkillPlanner
 
             foreach (PlanEntry entry in m_plan.ObsoleteEntries)
             {
-                ListViewItem lvi = new ListViewItem(entry.ToString());
+                var lvi = new ListViewItem(entry.ToString());
 
                 if (entry.CharacterSkill.LastConfirmedLvl >= entry.Level)
                 {

@@ -84,7 +84,7 @@ namespace EVEMon.Common.Controls
         /// <param name="treeView"></param>
         /// <param name="tag">The tag to search for, using object references comparison</param>
         /// <returns>The matching node if found, null otherwise</returns>
-        public static TreeNode GetNodeWithTag(this TreeView treeView, Object tag)
+        public static TreeNode GetNodeWithTag(this TreeView treeView, object tag)
             => GetAllNodes(treeView).FirstOrDefault(node => ReferenceEquals(node.Tag, tag));
 
         /// <summary>

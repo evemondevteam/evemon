@@ -11,7 +11,7 @@ namespace EVEMon.SkillPlanner
 {
     public partial class BlueprintSelectControl : EveObjectSelectControl
     {
-        private Func<Item, Boolean> m_metaGroupPredicate = x => true;
+        private Func<Item, bool> m_metaGroupPredicate = x => true;
 
         private bool m_init;
 
@@ -21,6 +21,7 @@ namespace EVEMon.SkillPlanner
         public BlueprintSelectControl()
         {
             InitializeComponent();
+            UsabilityPredicate = SelectAll;
         }
 
         /// <summary>
@@ -108,7 +109,7 @@ namespace EVEMon.SkillPlanner
                 m_metaGroupPredicate = x => (x.MetaGroup & settings.MetagroupFilter) != ItemMetaGroup.None;
 
                 tbSearchText.Text = settings.TextSearch;
-                lbSearchTextHint.Visible = String.IsNullOrEmpty(tbSearchText.Text);
+                lbSearchTextHint.Visible = string.IsNullOrEmpty(tbSearchText.Text);
 
                 return;
             }

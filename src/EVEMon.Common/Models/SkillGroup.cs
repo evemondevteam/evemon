@@ -94,7 +94,7 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the total number of SP in this group
         /// </summary>
-        public Int64 TotalSP => Items.Values.Sum(gs => gs.SkillPoints);
+        public long TotalSP => Items.Values.Sum(gs => gs.SkillPoints);
 
         #endregion
     }

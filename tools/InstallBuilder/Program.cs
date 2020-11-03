@@ -105,7 +105,7 @@ namespace EVEMon.InstallBuilder
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_solutionDir))
+                if (string.IsNullOrWhiteSpace(s_solutionDir))
                 {
                     s_solutionDir = Regex.Match(Directory.GetCurrentDirectory(), @"[a-zA-Z]+:.*\\(?=tools)",
                         RegexOptions.Compiled | RegexOptions.IgnoreCase).ToString();
@@ -122,7 +122,7 @@ namespace EVEMon.InstallBuilder
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_projectDir))
+                if (string.IsNullOrWhiteSpace(s_projectDir))
                 {
                     s_projectDir = Regex.Match(Directory.GetCurrentDirectory(), @"[a-zA-Z]+:.*\\(?=bin)",
                         RegexOptions.Compiled | RegexOptions.IgnoreCase).ToString();
@@ -139,7 +139,7 @@ namespace EVEMon.InstallBuilder
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_outputPath))
+                if (string.IsNullOrWhiteSpace(s_outputPath))
                 {
                     s_outputPath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase.Remove(0, ProjectDirectory.Length);
                 }
@@ -155,7 +155,7 @@ namespace EVEMon.InstallBuilder
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_sourceFilesDir))
+                if (string.IsNullOrWhiteSpace(s_sourceFilesDir))
                 {
                     s_sourceFilesDir = Path.GetFullPath(Path.Combine(SolutionDirectory, @"src\EVEMon\", OutputPath));
                 }
@@ -171,7 +171,7 @@ namespace EVEMon.InstallBuilder
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_installerDir))
+                if (string.IsNullOrWhiteSpace(s_installerDir))
                 {
                     s_installerDir = GetInstallbuilderDirectory("Installer");
                 }
@@ -187,7 +187,7 @@ namespace EVEMon.InstallBuilder
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_snapshotDir))
+                if (string.IsNullOrWhiteSpace(s_snapshotDir))
                 {
                     s_snapshotDir = GetInstallbuilderDirectory("Snapshot");
                 }
@@ -203,7 +203,7 @@ namespace EVEMon.InstallBuilder
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(s_binariesDir))
+                if (string.IsNullOrWhiteSpace(s_binariesDir))
                 {
                     s_binariesDir = GetInstallbuilderDirectory("Binaries");
                 }
@@ -237,7 +237,7 @@ namespace EVEMon.InstallBuilder
         private static bool CheckNsisPresent()
         {
             s_nsisExe = FindMakeNsisExe();
-            Console.WriteLine("NSIS : {0}", String.IsNullOrEmpty(s_nsisExe)
+            Console.WriteLine("NSIS : {0}", string.IsNullOrEmpty(s_nsisExe)
                 ? "Not Found - Installer will not be created."
                 : s_nsisExe);
 
@@ -254,7 +254,7 @@ namespace EVEMon.InstallBuilder
             }
             Console.WriteLine();
 
-            return !String.IsNullOrEmpty(s_nsisExe);
+            return !string.IsNullOrEmpty(s_nsisExe);
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace EVEMon.InstallBuilder
         private static string FindMakeNsisExe()
         {
             string path = Path.Combine(ProjectDirectory, @"NSIS\makensis.exe");
-            return File.Exists(path) ? path : String.Empty;
+            return File.Exists(path) ? path : string.Empty;
         }
 
         /// <summary>
@@ -297,9 +297,9 @@ namespace EVEMon.InstallBuilder
             DeleteFiles(directory);
 
             string filename = s_isSnapshot
-                ? String.Format(CultureInfo.InvariantCulture, "EVEMon_{0}_{1:yyyy-MM-dd}.zip",
+                ? string.Format(CultureInfo.InvariantCulture, "EVEMon_{0}_{1:yyyy-MM-dd}.zip",
                     s_fileVersionInfo.ProductPrivatePart, DateTime.Now)
-                : String.Format(CultureInfo.InvariantCulture, "EVEMon-binaries-{0}.zip", s_fileVersionInfo.ProductVersion);
+                : string.Format(CultureInfo.InvariantCulture, "EVEMon-binaries-{0}.zip", s_fileVersionInfo.ProductVersion);
 
             string zipFileName = Path.Combine(directory, filename);
 
@@ -320,7 +320,7 @@ namespace EVEMon.InstallBuilder
 
                     foreach (string file in filenames.Where(file => !file.Contains("vshost") && !file.Contains(".config")))
                     {
-                        string entryName = String.Format(CultureInfo.InvariantCulture, "EVEMon\\{0}",
+                        string entryName = string.Format(CultureInfo.InvariantCulture, "EVEMon\\{0}",
                             file.Remove(0, SourceFilesDirectory.Length));
                         Console.WriteLine("Zipping {0}", entryName);
                         ZipEntry entry = new ZipEntry(entryName) { DateTime = DateTime.Now };
@@ -366,22 +366,20 @@ namespace EVEMon.InstallBuilder
             {
                 string nsisScript = Path.Combine(ProjectDirectory, OutputPath, "EVEMonInstallerScript.nsi");
                 string resourcesDir = Path.Combine(SolutionDirectory, @"src\\EVEMon.Common\Resources");
-                string appCopyright =
-                    ((AssemblyCopyrightAttribute)
-                        Attribute.GetCustomAttribute(typeof(Program).Assembly, typeof(AssemblyCopyrightAttribute)))
-                        .Copyright;
-                string productName = String.Format(CultureInfo.InvariantCulture, "/DPRODUCTNAME=\"{0}\"", Application.ProductName);
-                string companyName = String.Format(CultureInfo.InvariantCulture, "/DCOMPANYNAME=\"{0}\"", Application.CompanyName);
-                string copyright = String.Format(CultureInfo.InvariantCulture, "/DCOPYRIGHT=\"{0}\"", appCopyright);
-                string description = String.Format(CultureInfo.InvariantCulture, "/DDESCRIPTION=\"{0}\"", Application.ProductName);
-                string version = String.Format(CultureInfo.InvariantCulture, "/DVERSION={0}", s_fileVersionInfo.ProductVersion);
-                string fullVersion = String.Format(CultureInfo.InvariantCulture, "/DFULLVERSION={0}",
+                string appCopyright = ((AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(
+                    typeof(Program).Assembly, typeof(AssemblyCopyrightAttribute))).Copyright;
+                string productName = string.Format(CultureInfo.InvariantCulture, "/DPRODUCTNAME=\"{0}\"", Application.ProductName);
+                string companyName = string.Format(CultureInfo.InvariantCulture, "/DCOMPANYNAME=\"{0}\"", Application.CompanyName);
+                string copyright = string.Format(CultureInfo.InvariantCulture, "/DCOPYRIGHT=\"{0}\"", appCopyright);
+                string description = string.Format(CultureInfo.InvariantCulture, "/DDESCRIPTION=\"{0}\"", Application.ProductName);
+                string version = string.Format(CultureInfo.InvariantCulture, "/DVERSION={0}", s_fileVersionInfo.ProductVersion);
+                string fullVersion = string.Format(CultureInfo.InvariantCulture, "/DFULLVERSION={0}",
                     s_fileVersionInfo.FileVersion);
-                string installerDir = String.Format(CultureInfo.InvariantCulture, "/DOUTDIR={0}", InstallerDirectory);
-                string sourceDir = String.Format(CultureInfo.InvariantCulture, "/DSOURCEDIR={0}", SourceFilesDirectory);
-                string resourceDir = String.Format(CultureInfo.InvariantCulture, "/DRESOURCESDIR={0}", resourcesDir);
+                string installerDir = string.Format(CultureInfo.InvariantCulture, "/DOUTDIR={0}", InstallerDirectory);
+                string sourceDir = string.Format(CultureInfo.InvariantCulture, "/DSOURCEDIR={0}", SourceFilesDirectory);
+                string resourceDir = string.Format(CultureInfo.InvariantCulture, "/DRESOURCESDIR={0}", resourcesDir);
 
-                string param = String.Format(CultureInfo.InvariantCulture, "{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}",
+                string param = string.Format(CultureInfo.InvariantCulture, "{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}",
                     productName, companyName, copyright, description, version, fullVersion, installerDir, sourceDir, resourceDir,
                     nsisScript);
 

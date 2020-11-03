@@ -25,7 +25,7 @@ namespace EVEMon.ResFileCreator
         private static void Main()
         {
             s_rcexe = FindRcExe();
-            if (String.IsNullOrEmpty(s_rcexe))
+            if (string.IsNullOrEmpty(s_rcexe))
             {
                 Console.WriteLine("RC.exe : Not Found - Resource file will not be created.");
                 return;
@@ -71,7 +71,7 @@ namespace EVEMon.ResFileCreator
             string substring = assemblyInfoFileContent.Substring(index);
             int length = substring.IndexOf(")", StringComparison.Ordinal) - 1;
             string value = assemblyInfoFileContent.Substring(index, length)
-                .Replace("(\"", String.Empty).Replace("\")", String.Empty);
+                .Replace("(\"", string.Empty).Replace("\")", string.Empty);
             return value;
         }
 
@@ -81,7 +81,7 @@ namespace EVEMon.ResFileCreator
         /// <returns></returns>
         private static bool GenerateRcFile()
         {
-            s_resScriptfile = Path.GetFullPath(String.Format(CultureInfo.InvariantCulture,
+            s_resScriptfile = Path.GetFullPath(string.Format(CultureInfo.InvariantCulture,
                 "src\\EVEMon\\{0}.rc", s_dictionary["AssemblyTitle"]));
 
             StringBuilder sb = new StringBuilder();
@@ -208,7 +208,7 @@ namespace EVEMon.ResFileCreator
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = s_rcexe,
-                Arguments = String.Format(CultureInfo.InvariantCulture, "/v /nologo /r \"{0}\"", s_resScriptfile),
+                Arguments = string.Format(CultureInfo.InvariantCulture, "/v /nologo /r \"{0}\"", s_resScriptfile),
                 UseShellExecute = false,
                 RedirectStandardOutput = true
             };
@@ -252,7 +252,7 @@ namespace EVEMon.ResFileCreator
         /// <returns></returns>
         private static string GetSolutionDirectory()
         {
-            if (String.IsNullOrWhiteSpace(s_solutionDir))
+            if (string.IsNullOrWhiteSpace(s_solutionDir))
             {
                 s_solutionDir = Regex.Match(Directory.GetCurrentDirectory(), @"[a-zA-Z]+:.*\\(?=tools)",
                                             RegexOptions.Compiled | RegexOptions.IgnoreCase).ToString();
@@ -266,7 +266,7 @@ namespace EVEMon.ResFileCreator
         /// <returns></returns>
         private static string GetProjectDirectory()
         {
-            if (String.IsNullOrWhiteSpace(s_projectDir))
+            if (string.IsNullOrWhiteSpace(s_projectDir))
             {
                 s_projectDir = Regex.Match(Directory.GetCurrentDirectory(), @"[a-zA-Z]+:.*\\(?=bin)",
                                             RegexOptions.Compiled | RegexOptions.IgnoreCase).ToString();

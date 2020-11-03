@@ -19,7 +19,7 @@ namespace EVEMon.Common.Serialization.FittingClf
             get { return CreationDate.DateTimeToTimeString("ddd, dd MMM yyyy HH:mm:ss +0000"); }
             set
             {
-                if (!String.IsNullOrWhiteSpace(value))
+                if (!string.IsNullOrWhiteSpace(value))
                     CreationDate = value.TimeStringToDateTime();
             }
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using EVEMon.Common.Enumerations.CCPAPI;
 using EVEMon.Common.Extensions;
 using EVEMon.Common.Models;
@@ -8,32 +7,68 @@ using EVEMon.Common.Serialization.Eve;
 namespace EVEMon.Common.QueryMonitor
 {
     /// <summary>
-    /// Represents a monitor for all queries related to characters and their corporations.
+    /// Represents a monitor for all queries related to characters.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public sealed class CharacterQueryMonitor<T> : QueryMonitor<T>
+    /// <typeparam name="T">The result type.</typeparam>
+    public sealed class CharacterQueryMonitor<T> : CCPQueryMonitorBase<T> where T : class
     {
-        private readonly Character m_character;
-        private APIKey m_apiKey;
+        /// <summary>
+        /// Handles the response from an ESI query.
+        /// </summary>
+        /// <param name="character">The character to monitor.</param>
+        /// <param name="method">The method to use.</param>
+        /// <param name="ifNoData">Whether to invoke the success callback on a "No Data"
+        /// response.</param>
+        /// <param name="result">The result of the query.</param>
+        /// <param name="onSuccess">An action to call on success.</param>
+        /// <param name="onFailure">The callback to use upon failure.</param>
+        private static void HandleQuery(CCPCharacter character, Enum method, bool ifNoData,
+            EsiResult<T> result, Action<T> onSuccess, NotifyErrorCallback onFailure)
+        {
+            // Character may have been set to not be monitored
+            if (character.Monitored)
+            {
+                bool hasData = result.HasData;
+                if (character.ShouldNotifyError(result, method))
+                    onFailure.Invoke(character, result);
+                if (!result.HasError && (ifNoData || hasData))
+                    onSuccess.Invoke(hasData ? result.Result : null);
+            }
+            foreach (var monitor in character.QueryMonitors)
+                if (monitor.Method.HasParent(method))
+                    character.QueryMonitors.Query(monitor.Method);
+        }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="character"></param>
-        /// <param name="method"></param>
-        /// <param name="onUpdated"></param>
-        internal CharacterQueryMonitor(Character character, Enum method, Action<CCPAPIResult<T>> onUpdated)
-            : base(method, onUpdated)
+        /// <param name="character">The character to monitor.</param>
+        /// <param name="method">The method to use.</param>
+        /// <param name="onSuccess">An action to call on success.</param>
+        /// <param name="onFailure">The callback to use upon failure.</param>
+        /// <param name="ifNoData">If true, the success callback is invoked even if the
+        /// response returned "Not Modified" or "No Data"; if false (default), no action is
+        /// called if the response is empty</param>
+        internal CharacterQueryMonitor(CCPCharacter character, Enum method, Action<T>
+            onSuccess, NotifyErrorCallback onFailure, bool ifNoData = false) : base(character,
+            method, (result) => {
+                HandleQuery(character, method, ifNoData, result, onSuccess, onFailure);
+            })
         {
-            m_character = character;
         }
 
         /// <summary>
-        /// Gets the required API key information are known.
+        /// Retrieves the parameters required for the ESI request.
         /// </summary>
-        /// <returns>False if an API key was required and not found.</returns>
-        protected override bool HasAPIKey => m_character.Identity.APIKeys.Any(apiKey => apiKey.IsCharacterOrAccountType);
-
+        /// <returns>The ESI request parameters.</returns>
+        internal override ESIParams GetESIParams()
+        {
+            return new ESIParams(LastResult?.Response, m_apiKey.AccessToken)
+            {
+                ParamOne = m_character.CharacterID
+            };
+        }
+        
         /// <summary>
         /// Gets a value indicating whether this monitor has access to data.
         /// </summary>
@@ -44,22 +79,10 @@ namespace EVEMon.Common.QueryMonitor
         {
             get
             {
-                m_apiKey = m_character.Identity.FindAPIKeyWithAccess((CCPAPICharacterMethods)Method);
+                m_apiKey = m_character.Identity.FindAPIKeyWithAccess((ESIAPICharacterMethods)
+                    Method);
                 return m_apiKey != null;
             }
-        }
-
-        /// <summary>
-        /// Performs the query to the provider, passing the required arguments.
-        /// </summary>
-        /// <param name="provider">The API provider to use.</param>
-        /// <param name="callback">The callback invoked on the UI thread after a result has been queried.</param>
-        /// <exception cref="System.ArgumentNullException">provider</exception>
-        protected override void QueryAsyncCore(APIProvider provider, Action<CCPAPIResult<T>> callback)
-        {
-            provider.ThrowIfNull(nameof(provider));
-
-            provider.QueryMethodAsync(Method, m_apiKey.ID, m_apiKey.VerificationCode, m_character.CharacterID, callback);
         }
     }
 }

@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using EVEMon.Common.Constants;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Extensions;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Helpers;
 using EVEMon.Common.Service;
+using EVEMon.Common.Serialization.Esi;
 
 namespace EVEMon.Common.Models
 {
@@ -16,8 +17,9 @@ namespace EVEMon.Common.Models
 
         #region Fields
 
-        private readonly int m_entityID;
+        private readonly long m_entityID;
         private readonly Character m_character;
+        private string m_entityName;
         private Image m_image;
 
         #endregion
@@ -30,12 +32,12 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="character"></param>
         /// <param name="src"></param>
-        internal Standing(Character character, SerializableStandingsListItem src)
+        internal Standing(Character character, EsiStandingsListItem src)
         {
             m_character = character;
 
             m_entityID = src.ID;
-            EntityName = src.Name;
+            m_entityName = EveMonConstants.UnknownText;
             StandingValue = src.StandingValue;
             Group = src.Group;
         }
@@ -49,7 +51,8 @@ namespace EVEMon.Common.Models
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
-        public string EntityName { get; }
+        public string EntityName => m_entityName.IsEmptyOrUnknown() ?
+            (m_entityName = EveIDToName.GetIDToName(m_entityID)) : m_entityName;
 
         /// <summary>
         /// Gets or sets the standing value.
@@ -88,10 +91,9 @@ namespace EVEMon.Common.Models
         {
             get
             {
-                Int64 skillLevel = (StandingValue < 0
-                    ? m_character.Skills[DBConstants.DiplomacySkillID]
-                    : m_character.Skills[DBConstants.ConnectionsSkillID]).LastConfirmedLvl;
-                return StandingValue + (10 - StandingValue) * (skillLevel * 0.04);
+                int skillLevel = m_character.LastConfirmedSkillLevel((StandingValue < 0) ?
+                    DBConstants.DiplomacySkillID : DBConstants.ConnectionsSkillID);
+                return StandingValue + (10.0 - StandingValue) * (skillLevel * 0.04);
             }
         }
 
@@ -140,27 +142,15 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the entity image.
         /// </summary>
-        /// <param name="useFallbackUri">if set to <c>true</c> [use fallback URI].</param>
-        private async Task GetImageAsync(bool useFallbackUri = false)
+        private async Task GetImageAsync()
         {
-            while (true)
+            Image img = await ImageService.GetImageAsync(GetImageUrl()).ConfigureAwait(false);
+            if (img != null)
             {
-                Image img = await ImageService.GetImageAsync(GetImageUrl(useFallbackUri)).ConfigureAwait(false);
-
-                if (img == null)
-                {
-                    if (useFallbackUri)
-                        return;
-
-                    useFallbackUri = true;
-                    continue;
-                }
-
                 m_image = img;
 
                 // Notify the subscriber that we got the image
                 StandingImageUpdated?.ThreadSafeInvoke(this, EventArgs.Empty);
-                break;
             }
         }
 
@@ -185,22 +175,23 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Gets the image URL.
         /// </summary>
-        /// <param name="useFallbackUri">if set to <c>true</c> [use fallback URI].</param>
-        /// <returns></returns>
-        private Uri GetImageUrl(bool useFallbackUri)
+        private Uri GetImageUrl()
         {
-            string path = Group == StandingGroup.Agents
-                ? String.Format(CultureConstants.InvariantCulture,
-                    NetworkConstants.CCPPortraits,
-                    m_entityID, (int)EveImageSize.x32)
-                : String.Format(CultureConstants.InvariantCulture,
-                    NetworkConstants.CCPIconsFromImageServer,
-                    Group == StandingGroup.Factions ? "alliance" : "corporation",
-                    m_entityID, (int)EveImageSize.x32);
-
-            return useFallbackUri
-                ? ImageService.GetImageServerBaseUri(path)
-                : ImageService.GetImageServerCdnUri(path);
+            Uri uri;
+            switch (Group)
+            {
+            case StandingGroup.NPCCorporations:
+                uri = ImageHelper.GetCorporationImageURL(m_entityID);
+                break;
+            case StandingGroup.Factions:
+                uri = ImageHelper.GetAllianceImageURL(m_entityID);
+                break;
+            case StandingGroup.Agents:
+            default:
+                uri = ImageHelper.GetPortraitUrl(m_entityID);
+                break;
+            }
+            return uri;
         }
 
         #endregion

@@ -36,12 +36,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
     <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
+    <DefineConstants>
+    </DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Snapshot|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -75,26 +77,20 @@
     <Compile Include="About\AboutWindow.Designer.cs">
       <DependentUpon>AboutWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="CharacterManagement\CharacterManagement.cs">
+    <Compile Include="ApiCredentialsManagement\EsiKeyDeletionWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CharacterManagement\CharacterManagement.Designer.cs">
-      <DependentUpon>CharacterManagement.cs</DependentUpon>
+    <Compile Include="ApiCredentialsManagement\EsiKeyDeletionWindow.Designer.cs">
+      <DependentUpon>EsiKeyDeletionWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="ApiCredentialsManagement\ApiKeyDeletionWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ApiCredentialsManagement\ApiKeyDeletionWindow.Designer.cs">
-      <DependentUpon>ApiKeyDeletionWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ApiCredentialsManagement\ApiKeysListBox.cs">
+    <Compile Include="ApiCredentialsManagement\EsiKeysListBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ApiCredentialsManagement\ApiKeysManagementWindow.cs">
+    <Compile Include="ApiCredentialsManagement\EsiKeysManagementWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ApiCredentialsManagement\ApiKeysManagementWindow.Designer.cs">
-      <DependentUpon>ApiKeysManagementWindow.cs</DependentUpon>
+    <Compile Include="ApiCredentialsManagement\EsiKeysManagementWindow.Designer.cs">
+      <DependentUpon>EsiKeysManagementWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="ApiCredentialsManagement\CharacterDeletionWindow.cs">
       <SubType>Form</SubType>
@@ -120,23 +116,23 @@
     <Compile Include="ApiErrorHandling\HttpTimeoutTroubleshooter.Designer.cs">
       <DependentUpon>HttpTimeoutTroubleshooter.cs</DependentUpon>
     </Compile>
-    <Compile Include="ApiCredentialsManagement\ApiKeyUpdateOrAdditionWindow.cs">
+    <Compile Include="ApiCredentialsManagement\EsiKeyUpdateOrAdditionWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ApiCredentialsManagement\ApiKeyUpdateOrAdditionWindow.Designer.cs">
-      <DependentUpon>ApiKeyUpdateOrAdditionWindow.cs</DependentUpon>
+    <Compile Include="ApiCredentialsManagement\EsiKeyUpdateOrAdditionWindow.Designer.cs">
+      <DependentUpon>EsiKeyUpdateOrAdditionWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="ApiCredentialsManagement\EveMonFeaturesWindow.cs">
+    <Compile Include="BlankCharacter\BlankCharacterControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BlankCharacter\BlankCharacterControl.Designer.cs">
+      <DependentUpon>BlankCharacterControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BlankCharacter\BlankCharacterWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ApiCredentialsManagement\EveMonFeaturesWindow.Designer.cs">
-      <DependentUpon>EveMonFeaturesWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ApiTester\ApiTesterWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ApiTester\ApiTesterWindow.Designer.cs">
-      <DependentUpon>ApiTesterWindow.cs</DependentUpon>
+    <Compile Include="BlankCharacter\BlankCharacterWindow.Designer.cs">
+      <DependentUpon>BlankCharacterWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="CharacterMonitoring\AssetsColumnsSelectWindow.cs">
       <SubType>Form</SubType>
@@ -164,6 +160,12 @@
     </Compile>
     <Compile Include="CharacterMonitoring\CharacterKillLogList.Designer.cs">
       <DependentUpon>CharacterKillLogList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CharacterMonitoring\CharacterLoyaltyList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CharacterMonitoring\CharacterLoyaltyList.Designer.cs">
+      <DependentUpon>CharacterLoyaltyList.cs</DependentUpon>
     </Compile>
     <Compile Include="CharacterMonitoring\CharacterMedalsList.cs">
       <SubType>UserControl</SubType>
@@ -523,17 +525,14 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CharacterManagement\CharacterManagement.resx">
-      <DependentUpon>CharacterManagement.cs</DependentUpon>
+    <EmbeddedResource Include="ApiCredentialsManagement\EsiKeyDeletionWindow.resx">
+      <DependentUpon>EsiKeyDeletionWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ApiCredentialsManagement\ApiKeyDeletionWindow.resx">
-      <DependentUpon>ApiKeyDeletionWindow.cs</DependentUpon>
+    <EmbeddedResource Include="ApiCredentialsManagement\EsiKeysManagementWindow.resx">
+      <DependentUpon>EsiKeysManagementWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ApiCredentialsManagement\ApiKeysManagementWindow.resx">
-      <DependentUpon>ApiKeysManagementWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ApiCredentialsManagement\ApiKeyUpdateOrAdditionWindow.resx">
-      <DependentUpon>ApiKeyUpdateOrAdditionWindow.cs</DependentUpon>
+    <EmbeddedResource Include="ApiCredentialsManagement\EsiKeyUpdateOrAdditionWindow.resx">
+      <DependentUpon>EsiKeyUpdateOrAdditionWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ApiCredentialsManagement\CharacterDeletionWindow.resx">
       <DependentUpon>CharacterDeletionWindow.cs</DependentUpon>
@@ -541,11 +540,11 @@
     <EmbeddedResource Include="ApiCredentialsManagement\CharacterImportationWindow.resx">
       <DependentUpon>CharacterImportationWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ApiCredentialsManagement\EveMonFeaturesWindow.resx">
-      <DependentUpon>EveMonFeaturesWindow.cs</DependentUpon>
+    <EmbeddedResource Include="BlankCharacter\BlankCharacterControl.resx">
+      <DependentUpon>BlankCharacterControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ApiTester\ApiTesterWindow.resx">
-      <DependentUpon>ApiTesterWindow.cs</DependentUpon>
+    <EmbeddedResource Include="BlankCharacter\BlankCharacterWindow.resx">
+      <DependentUpon>BlankCharacterWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CharacterMonitoring\CharacterAssetsList.resx">
       <DependentUpon>CharacterAssetsList.cs</DependentUpon>
@@ -558,6 +557,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CharacterMonitoring\CharacterKillLogList.resx">
       <DependentUpon>CharacterKillLogList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CharacterMonitoring\CharacterLoyaltyList.resx">
+      <DependentUpon>CharacterLoyaltyList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CharacterMonitoring\CharacterMedalsList.resx">
       <DependentUpon>CharacterMedalsList.cs</DependentUpon>
@@ -689,12 +691,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>UpdateNotifyForm.cs</DependentUpon>
     </EmbeddedResource>
-    <Compile Include="SettingsUI\APISettingsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SettingsUI\APISettingsForm.Designer.cs">
-      <DependentUpon>APISettingsForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="SettingsUI\NotificationsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1121,10 +1117,6 @@
       <DependentUpon>NotificationList.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SettingsUI\APISettingsForm.resx">
-      <DependentUpon>APISettingsForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="SettingsUI\NotificationsControl.resx">
       <DependentUpon>NotificationsControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1164,36 +1156,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\EVEAuthGateway\EVEMon.Gateways.csproj">
-      <Project>{16be72bb-4bcd-4cfc-b292-f54de40970f8}</Project>
-      <Name>EVEMon.Gateways</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\EVEMon.Clients.Winforms\EVEMon.Clients.Winforms.csproj">
-      <Project>{449ee2f8-179a-42d4-a0f0-9a4c925c0d11}</Project>
-      <Name>EVEMon.Clients.Winforms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\EVEMon.Entities\EVEMon.Entities.csproj">
-      <Project>{69910606-a534-49ce-8c8b-7df694988f7e}</Project>
-      <Name>EVEMon.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\EVEMon.Services.CharacterService\EVEMon.Services.csproj">
-      <Project>{544d3c20-3092-4271-a225-c9839ad14011}</Project>
-      <Name>EVEMon.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\IO.Swagger\IO.Swagger.csproj">
-      <Project>{b2580be4-cde5-49e7-b929-bdacccebf019}</Project>
-      <Name>IO.Swagger</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EVEMon.Common\EVEMon.Common.csproj">
       <Project>{C0665275-3E0B-4117-81B0-751206ED03CD}</Project>
       <Name>EVEMon.Common</Name>
       <Private>True</Private>
       <Properties>SkipValidatePackageReferences=true</Properties>
-    </ProjectReference>
-    <ProjectReference Include="..\EVEMon.LogitechG15\EVEMon.LogitechG15.csproj">
-      <Project>{3067BDFB-C02D-4CAF-96AA-4D8F9F986180}</Project>
-      <Name>EVEMon.LogitechG15</Name>
-      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\EVEMon.Watchdog\EVEMon.Watchdog.csproj">
       <Project>{8C4A87A0-780E-4765-ADD0-146091FE26F4}</Project>
@@ -1210,9 +1177,7 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AuthenticationManager\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

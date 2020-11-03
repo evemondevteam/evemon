@@ -25,7 +25,7 @@ namespace EVEMon.Common.Serialization.Settings
         public string SkillName { get; set; }
 
         [XmlAttribute("level")]
-        public Int64 Level { get; set; }
+        public long Level { get; set; }
 
         [XmlAttribute("priority")]
         public int Priority { get; set; }

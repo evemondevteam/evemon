@@ -12,7 +12,7 @@ namespace EVEMon.Common.Interfaces
         int ArrayIndex { get; }
         string Name { get; }
 
-        Int64 Rank { get; }
+        long Rank { get; }
         long Cost { get; }
         StaticSkillGroup Group { get; }
 

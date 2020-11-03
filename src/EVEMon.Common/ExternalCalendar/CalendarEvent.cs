@@ -18,7 +18,7 @@ namespace EVEMon.Common.ExternalCalendar
         {
             StartDate = DateTime.Now;
             EndDate = DateTime.Now.AddDays(1);
-            Subject = String.Empty;
+            Subject = string.Empty;
             ItemReminder = true;
             Minutes = 5;
             AlternateReminder = false;

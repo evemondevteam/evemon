@@ -66,15 +66,15 @@ namespace EVEMon.Common.Models.Comparers
                 case 0:
                     return x.KillTime.CompareTo(y.KillTime);
                 case 1:
-                    return String.Compare(x.Victim.ShipTypeName, y.Victim.ShipTypeName, StringComparison.CurrentCulture);
+                    return string.Compare(x.Victim.ShipTypeName, y.Victim.ShipTypeName, StringComparison.CurrentCulture);
                 case 2:
-                    return String.Compare(x.Victim.Name, y.Victim.Name, StringComparison.CurrentCulture);
+                    return string.Compare(x.Victim.Name, y.Victim.Name, StringComparison.CurrentCulture);
                 case 3:
-                    return String.Compare(x.Victim.CorporationName, y.Victim.CorporationName, StringComparison.CurrentCulture);
+                    return string.Compare(x.Victim.CorporationName, y.Victim.CorporationName, StringComparison.CurrentCulture);
                 case 4:
-                    return String.Compare(x.Victim.AllianceName, y.Victim.AllianceName, StringComparison.CurrentCulture);
+                    return string.Compare(x.Victim.AllianceName, y.Victim.AllianceName, StringComparison.CurrentCulture);
                 case 5:
-                    return String.Compare(x.Victim.FactionName, y.Victim.FactionName, StringComparison.CurrentCulture);
+                    return string.Compare(x.Victim.FactionName, y.Victim.FactionName, StringComparison.CurrentCulture);
                 default:
                     return 0;
             }

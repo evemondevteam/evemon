@@ -46,7 +46,7 @@ namespace EVEMon.Common.Models.Collections
         /// <param name="eveMailMessagesIDs">The eve mail messages IDs.</param>
         internal void Import(string eveMailMessagesIDs)
         {
-            if (String.IsNullOrEmpty(eveMailMessagesIDs))
+            if (string.IsNullOrEmpty(eveMailMessagesIDs))
                 return;
 
             Items.Clear();
@@ -108,7 +108,7 @@ namespace EVEMon.Common.Models.Collections
         /// </summary>
         /// <returns></returns>
         // Store only the mail messages IDs from the inbox in a descending order
-        internal String Export() => String.Join(",", Items.Where(x => x.SenderName != m_ccpCharacter.Name).OrderByDescending(
+        internal string Export() => string.Join(",", Items.Where(x => x.SenderName != m_ccpCharacter.Name).OrderByDescending(
             x => x.MessageID).Select(message => message.MessageID.ToString(CultureConstants.InvariantCulture)));
 
         #endregion

@@ -23,7 +23,7 @@ namespace Tests.EVEMon.Common
                 .ToList();
 
             Assert.False(messages.Any(),
-                $"Async void methods found!{Environment.NewLine}{String.Join(Environment.NewLine, messages)}");
+                $"Async void methods found!{Environment.NewLine}{string.Join(Environment.NewLine, messages)}");
         }
     }
 }

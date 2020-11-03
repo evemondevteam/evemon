@@ -1,22 +1,66 @@
-using System;
+using EVEMon.Common.Constants;
 using EVEMon.Common.Data;
 using EVEMon.Common.Enumerations;
 using EVEMon.Common.Enumerations.CCPAPI;
 using EVEMon.Common.Extensions;
-using EVEMon.Common.Serialization.Eve;
+using EVEMon.Common.Serialization.Esi;
 using EVEMon.Common.Serialization.Settings;
+using EVEMon.Common.Service;
+using System;
 
 namespace EVEMon.Common.Models
 {
     public sealed class IndustryJob
     {
-        private long m_installedItemLocationID;
+        #region Static Helpers
 
         /// <summary>
-        /// The maximum number of days after job ended. Beyond this limit, we do not import jobs anymore.
+        /// Gets the maximum number of active manufacturing jobs allowed by a character's
+        /// skills.
+        /// </summary>
+        /// <param name="character">The character to query.</param>
+        /// <returns>The number of concurrent manufacturing jobs which can be run based on
+        /// the last confirmed skill levels of that character.</returns>
+        public static int MaxManufacturingJobsFor(Character character)
+        {
+            return 1 + character.LastConfirmedSkillLevel(DBConstants.MassProductionSkillID) +
+                character.LastConfirmedSkillLevel(DBConstants.AdvancedMassProductionSkillID);
+        }
+
+        /// <summary>
+        /// Gets the maximum number of active research jobs allowed by a character's skills.
+        /// </summary>
+        /// <param name="character">The character to query.</param>
+        /// <returns>The number of concurrent research jobs which can be run based on the last
+        /// confirmed skill levels of that character.</returns>
+        public static int MaxResearchJobsFor(Character character)
+        {
+            return character.LastConfirmedSkillLevel(DBConstants.LaboratoryOperationSkillID) +
+                1 + character.LastConfirmedSkillLevel(DBConstants.
+                AdvancedLaboratoryOperationSkillID);
+        }
+
+        /// <summary>
+        /// Gets the maximum number of active reaction jobs allowed by a character's skills.
+        /// </summary>
+        /// <param name="character">The character to query.</param>
+        /// <returns>The number of concurrent reaction jobs which can be run based on the last
+        /// confirmed skill levels of that character.</returns>
+        public static int MaxReactionJobsFor(Character character)
+        {
+            return 1 + character.LastConfirmedSkillLevel(DBConstants.MassReactionsSkillID) +
+                character.LastConfirmedSkillLevel(DBConstants.AdvancedMassReactionsSkillID);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// The maximum number of days after job ended. Beyond this limit, we do not import
+        /// jobs anymore.
         /// </summary>
         internal const int MaxEndedDays = 7;
 
+        private long m_installedItemLocationID;
 
         #region Constructor
 
@@ -24,12 +68,14 @@ namespace EVEMon.Common.Models
         /// Constructor from the API.
         /// </summary>
         /// <param name="src">The source.</param>
+        /// <param name="issuedFor">Whether this jobs was issued for the corporation or
+        /// character.</param>
         /// <exception cref="System.ArgumentNullException">src</exception>
-        internal IndustryJob(SerializableJobListItem src)
+        internal IndustryJob(EsiJobListItem src, IssuedFor issuedFor)
         {
             src.ThrowIfNull(nameof(src));
 
-            PopulateJobInfo(src);
+            PopulateJobInfo(src, issuedFor);
             State = GetState(src);
             LastStateChange = DateTime.UtcNow;
             ActiveJobState = GetActiveJobState();
@@ -92,12 +138,11 @@ namespace EVEMon.Common.Models
             get
             {
                 if (State == JobState.Paused)
-                    return new DateTime(EndDate.Subtract(PauseDate).Ticks).ToRemainingTimeDigitalDescription(DateTimeKind.Utc);
-
+                    return new DateTime(EndDate.Subtract(PauseDate).Ticks).
+                        ToRemainingTimeDigitalDescription(DateTimeKind.Utc);
                 if (State == JobState.Active && EndDate > DateTime.UtcNow)
                     return EndDate.ToRemainingTimeDigitalDescription(DateTimeKind.Utc);
-
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -212,15 +257,15 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="src"></param>
         /// <returns></returns>
-        private bool MatchesWith(SerializableJobListItem src) => src.JobID == ID;
+        private bool MatchesWith(EsiJobListItem src) => src.JobID == ID;
 
         /// <summary>
         /// Checks whether the given API object has been modified.
         /// </summary>
         /// <param name="src"></param>
         /// <returns></returns>
-        private bool IsModified(SerializableJobListItem src) => src.EndDate != EndDate
-                                                                || src.PauseDate != PauseDate;
+        private bool IsModified(EsiJobListItem src) => src.EndDate != EndDate ||
+            src.PauseDate != PauseDate;
 
         #endregion
 
@@ -245,82 +290,78 @@ namespace EVEMon.Common.Models
         /// Try to update this job with a serialization object from the API.
         /// </summary>
         /// <param name="src">The serializable source.</param>
+        /// <param name="issuedFor">Whether this jobs was issued for the corporation or
+        /// character.</param>
+        /// <param name="character">The character owning this job.</param>
         /// <returns>True if import sucessful otherwise, false.</returns>
-        internal bool TryImport(SerializableJobListItem src)
+        internal bool TryImport(EsiJobListItem src, IssuedFor issuedFor, CCPCharacter character)
         {
-            // Note that, before a match is found, all jobs have been marked for deletion : m_markedForDeletion == true
-
-            // Checks whether ID is the same
-            if (!MatchesWith(src))
-                return false;
-
-            // Prevent deletion
-            MarkedForDeletion = false;
-
-            // Update infos (if ID is the same it may have been modified)
-            if (IsModified(src))
+            bool matches = MatchesWith(src);
+            // Note that, before a match is found, all jobs have been marked for deletion:
+            // m_markedForDeletion == true
+            if (matches)
             {
+                MarkedForDeletion = false;
+                // Update information (if ID is the same it may have been modified)
+                if (IsModified(src))
+                {
+                    // Job is from a serialized object, so populate the missing info
+                    if (InstalledItem == null)
+                        PopulateJobInfo(src, issuedFor);
+                    else
+                    {
+                        EndDate = src.EndDate;
+                        PauseDate = src.PauseDate;
+                    }
+                    State = (PauseDate == DateTime.MinValue) ? JobState.Active : JobState.
+                        Paused;
+                    ActiveJobState = GetActiveJobState();
+                    LastStateChange = DateTime.UtcNow;
+                }
                 // Job is from a serialized object, so populate the missing info
                 if (InstalledItem == null)
-                    PopulateJobInfo(src);
-                else
+                    PopulateJobInfo(src, issuedFor, character);
+                var state = GetState(src);
+                if (state != State)
                 {
-                    EndDate = src.EndDate;
-                    PauseDate = src.PauseDate;
+                    State = state;
+                    LastStateChange = DateTime.UtcNow;
                 }
-
-                State = PauseDate == DateTime.MinValue ? JobState.Active : JobState.Paused;
-                ActiveJobState = GetActiveJobState();
-                LastStateChange = DateTime.UtcNow;
             }
-
-            // Job is from a serialized object, so populate the missing info
-            if (InstalledItem == null)
-                PopulateJobInfo(src);
-
-            // Update state
-            JobState state = GetState(src);
-            if (State == JobState.Paused || state == State)
-                return true;
-
-            State = state;
-            LastStateChange = DateTime.UtcNow;
-
-            return true;
+            return matches;
         }
 
         /// <summary>
         /// Populates the serialization object job with the info from the API.
         /// </summary>
         /// <param name="src">The source.</param>
-        private void PopulateJobInfo(SerializableJobListItem src)
+        /// <param name="issuedFor">Whether this jobs was issued for the corporation or
+        /// character.</param>
+        /// <param name="character">The character owning this job.</param>
+        private void PopulateJobInfo(EsiJobListItem src, IssuedFor issuedFor,
+            CCPCharacter character = null)
         {
             ID = src.JobID;
             InstallerID = src.InstallerID;
             InstalledItem = StaticBlueprints.GetBlueprintByID(src.BlueprintTypeID);
             Runs = src.Runs;
-            SolarSystem = StaticGeography.GetSolarSystemByID(src.SolarSystemID);
             Cost = src.Cost;
             Probability = src.Probability;
             SuccessfulRuns = src.SuccessfulRuns;
-            //InstalledTime = src.InstallTime;
-            //InstalledME = src.InstalledItemMaterialLevel;
-            //InstalledPE = src.InstalledItemProductivityLevel;
             StartDate = src.StartDate;
             EndDate = src.EndDate;
             PauseDate = src.PauseDate;
-            IssuedFor = src.IssuedFor;
-            m_installedItemLocationID = src.StationID;
+            IssuedFor = issuedFor;
+            m_installedItemLocationID = src.FacilityID;
 
-            UpdateInstallation();
+            UpdateLocation(character);
+            UpdateInstallation(character);
 
             if (Enum.IsDefined(typeof(BlueprintActivity), src.ActivityID))
-                Activity = (BlueprintActivity)Enum.ToObject(typeof(BlueprintActivity), src.ActivityID);
+                Activity = (BlueprintActivity)Enum.ToObject(typeof(BlueprintActivity),
+                    src.ActivityID);
 
             OutputItem = GetOutputItem(src.ProductTypeID);
-
-            //if (Enum.IsDefined(typeof(BlueprintType), src.InstalledItemCopy))
-            //    BlueprintType = (BlueprintType)Enum.ToObject(typeof(BlueprintType), src.InstalledItemCopy);
         }
 
         #endregion
@@ -338,7 +379,8 @@ namespace EVEMon.Common.Models
             switch (Activity)
             {
                 case BlueprintActivity.Manufacturing:
-                    return StaticBlueprints.GetBlueprintByID(InstalledItem.ID).ProducesItem ?? StaticItems.GetItemByID(0);
+                    return StaticBlueprints.GetBlueprintByID(InstalledItem.ID).ProducesItem ??
+                        StaticItems.GetItemByID(0);
                 case BlueprintActivity.ResearchingMaterialEfficiency:
                 case BlueprintActivity.ResearchingTimeEfficiency:
                 case BlueprintActivity.Copying:
@@ -346,6 +388,9 @@ namespace EVEMon.Common.Models
                 case BlueprintActivity.Invention:
                 case BlueprintActivity.ReverseEngineering:
                     return StaticBlueprints.GetBlueprintByID(id) ?? StaticItems.GetItemByID(0);
+                case BlueprintActivity.SimpleReactions:
+                case BlueprintActivity.Reactions:
+                    return StaticItems.GetItemByID(InstalledItem?.ReactionOutcome?.Item?.ID ?? 0);
                 default:
                     return StaticItems.GetItemByID(0);
             }
@@ -356,29 +401,10 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="id">The ID of the installation.</param>
         /// <returns>Name of the installation.</returns>
-        private string GetInstallation(long id)
+        private string GetInstallation(long id, CCPCharacter character)
         {
-            Station station = null;
-            ConquerableStation outpost = null;
-
-            // If 'id' is a 32bit number it may be a conquerable outpost station or station,
-            // so we look it up in our datafile
-            if (id <= Int32.MaxValue)
-            {
-                station = Station.GetByID((int)id);
-                outpost = station as ConquerableStation;
-            }
-
-            // In case the 'id' doesn't correspond to a station, it's a starbase structure
-            // and installation will be assigned manually based on activity
-            // otherwise assigns the station name
-            return station == null
-                ? Activity == BlueprintActivity.Manufacturing
-                    ? "POS - Assembly Array"
-                    : "POS - Laboratory"
-                : outpost != null
-                    ? outpost.FullName
-                    : station.Name;
+            return EveIDToStation.GetIDToStation(id, character)?.Name ?? EveMonConstants.
+                UnknownText;
         }
 
         /// <summary>
@@ -386,18 +412,15 @@ namespace EVEMon.Common.Models
         /// </summary>
         /// <param name="src">The serializable source.</param>
         /// <returns>State of the seriallzable job.</returns>
-        private static JobState GetState(SerializableJobListItem src)
+        private static JobState GetState(EsiJobListItem src)
         {
-            //if (src.CompletedDate != DateTime.MinValue)
-            //    return JobState.Active;
-
-            switch ((CCPJobCompletedStatus)src.Status)
+            switch (src.Status)
             {
                 // Active States
-                case CCPJobCompletedStatus.Installed:
+                case CCPJobCompletedStatus.Active:
                     return JobState.Active;
-                // Canceled States
-                case CCPJobCompletedStatus.Canceled:
+                // Cancelled States
+                case CCPJobCompletedStatus.Cancelled:
                     return JobState.Canceled;
                 // Failed States
                 case CCPJobCompletedStatus.Reverted:
@@ -436,9 +459,24 @@ namespace EVEMon.Common.Models
         /// <summary>
         /// Updates the installation.
         /// </summary>
-        public void UpdateInstallation()
+        public void UpdateInstallation(CCPCharacter character)
         {
-            Installation = GetInstallation(m_installedItemLocationID);
+            Installation = GetInstallation(m_installedItemLocationID, character);
+        }
+
+        /// <summary>
+        /// Updates the location.
+        /// </summary>
+        /// <returns></returns>
+        public void UpdateLocation(CCPCharacter character)
+        {
+            // If location not already determined
+            if (m_installedItemLocationID != 0L && (SolarSystem == null || SolarSystem.ID == 0))
+            {
+                var station = EveIDToStation.GetIDToStation(m_installedItemLocationID,
+                    character);
+                SolarSystem = station?.SolarSystem ?? SolarSystem.UNKNOWN;
+            }
         }
 
         #endregion

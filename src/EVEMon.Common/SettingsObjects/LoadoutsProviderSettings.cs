@@ -20,7 +20,7 @@ namespace EVEMon.Common.SettingsObjects
                 s_loadoutsProviders[provider.Name] = provider;
             }
 
-            ProviderName = s_loadoutsProviders.FirstOrDefault().Key ?? String.Empty;
+            ProviderName = s_loadoutsProviders.FirstOrDefault().Key ?? string.Empty;
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace EVEMon.Common.SettingsObjects
                 if (s_loadoutsProviders.ContainsKey(ProviderName))
                     return s_loadoutsProviders[ProviderName];
 
-                ProviderName = s_loadoutsProviders.FirstOrDefault().Key ?? String.Empty;
+                ProviderName = s_loadoutsProviders.FirstOrDefault().Key ?? string.Empty;
 
                 return s_loadoutsProviders.FirstOrDefault().Value;
             }

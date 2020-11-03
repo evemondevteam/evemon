@@ -63,19 +63,19 @@ namespace EVEMon.Common.Models.Comparers
                 case WalletJournalColumn.Date:
                     return x.Date.CompareTo(y.Date);
                 case WalletJournalColumn.Type:
-                    return String.Compare(x.Type, y.Type, StringComparison.CurrentCulture);
+                    return string.Compare(x.Type, y.Type, StringComparison.CurrentCulture);
                 case WalletJournalColumn.Amount:
                     return x.Amount.CompareTo(y.Amount);
                 case WalletJournalColumn.Balance:
                     return x.Balance.CompareTo(y.Balance);
                 case WalletJournalColumn.Reason:
-                    return String.Compare(x.Reason, y.Reason, StringComparison.CurrentCulture);
+                    return string.Compare(x.Reason, y.Reason, StringComparison.CurrentCulture);
                 case WalletJournalColumn.Issuer:
-                    return String.Compare(x.Issuer, y.Issuer, StringComparison.CurrentCulture);
+                    return string.Compare(x.Issuer, y.Issuer, StringComparison.CurrentCulture);
                 case WalletJournalColumn.Recipient:
-                    return String.Compare(x.Recipient, y.Recipient, StringComparison.CurrentCulture);
+                    return string.Compare(x.Recipient, y.Recipient, StringComparison.CurrentCulture);
                 case WalletJournalColumn.TaxReceiver:
-                    return String.Compare(x.TaxReceiver, y.TaxReceiver, StringComparison.CurrentCulture);
+                    return string.Compare(x.TaxReceiver, y.TaxReceiver, StringComparison.CurrentCulture);
                 case WalletJournalColumn.TaxAmount:
                     return x.TaxAmount.CompareTo(y.TaxAmount);
                 case WalletJournalColumn.ID:
